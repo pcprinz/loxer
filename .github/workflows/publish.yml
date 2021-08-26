@@ -4,7 +4,7 @@ on:
     types: [published]
 jobs:
   build:
-    runs-on: windows
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
