@@ -436,8 +436,8 @@ class LoxerInstance implements LoxerType {
     } else {
       // colored option
       const { box, message, moduleText, timeText } = this._config?.disableColors
-        ? outputLox.colored
-        : outputLox;
+        ? outputLox
+        : outputLox.colored;
       const str = moduleText + box + message + timeText;
       outputLox.item ? console.log(str, outputLox.item) : console.log(str);
     }

@@ -1,4 +1,4 @@
-const {Loxer} = require('./dist');
+const {Loxer} = require('../dist');
 
 Loxer.init();
 Loxer.highlight().log('it works!', '...very well');

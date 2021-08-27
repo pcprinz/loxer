@@ -1,4 +1,7 @@
 # Loxer
+
+![Loxer_Logo](assets/Logo.png)
+
 Take a look at the [API Reference](https://pcprinz.github.io/loxer/index.html)
 ## Work in progress
 Loxer will be an advanced Logger, where you (currently) can:
