@@ -1,23 +1,11 @@
-import { is } from './Helpers';
-import { Loxer } from './Loxer';
-import { LogLevelType, LoxerOptions } from './types';
-
-/**
- * This class decorator initializes the Loxer immediately when the before the class is used.
- * Use this if the initialization has to be done fast.
- *
- * ---
- * @param options the options for the `Loxer.init(options: LoxerOptions)` method
- * @returns a class decorator
- */
-export function initLoxer(options: LoxerOptions) {
-  Loxer.init(options);
-}
+import { is } from '../Helpers';
+import { Loxer } from '../Loxer';
+import { LogLevelType } from '../types';
 
 /**
  * The Options for the `@trace(options: TracerOptions | string)` decorator
  */
-interface TraceOptions {
+export interface TraceOptions {
   /** the corresponding key of a `LoxerModule` provided in the `LoxerOptions.modules` for the `Loxer.init(options: LoxerOptions)` initialization */
   moduleId?: string;
   /** the level of the log. defaults to `1` */
@@ -47,7 +35,7 @@ interface TraceOptions {
    *   is clear that it's a class, when a method is decorated)
    * - `'result'`: prints `"myFunction done. returns: {val: "test", count: 5}"`
    * - `'prettyResult'`: prints:
-   *   ```string
+   *   ```typescript
    *   myFunction done. returns:
    *   {
    *       val: "test",

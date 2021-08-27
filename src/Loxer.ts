@@ -28,7 +28,7 @@ import {
   LoxerConfig,
   LoxerModules,
   LoxerOptions,
-  LoxerType,
+  Loxer as LoxerType,
   OfLoxes,
 } from './types';
 
@@ -240,7 +240,7 @@ class LoxerInstance implements LoxerType {
     if (!is(openLox)) {
       return {
         add: (message: string, item?: any) => {
-          Loxer.internalError(
+          this.internalError(
             new LoxerError(
               'add() on a not (anymore) existing Lox. MESSAGE: ' + message
             ),
@@ -250,7 +250,7 @@ class LoxerInstance implements LoxerType {
           );
         },
         close: (message: string, item?: any) => {
-          Loxer.internalError(
+          this.internalError(
             new LoxerError(
               'close() on a not (anymore) existing Lox. MESSAGE: ' + message
             ),
@@ -260,7 +260,7 @@ class LoxerInstance implements LoxerType {
           );
         },
         error: (error: ErrorType, item?: any) => {
-          Loxer.internalError(
+          this.internalError(
             ensureError(
               error,
               'error() on a not (anymore) existing Lox. ERROR: '
@@ -274,14 +274,14 @@ class LoxerInstance implements LoxerType {
     } else {
       return {
         add: (message: string, item?: any) => {
-          Loxer.appendLox('single', openLox, message, item);
+          this.appendLox('single', openLox, message, item);
         },
         close: (message: string, item?: any) => {
-          Loxer.appendLox('close', openLox, message, item);
-          Loxer._loxes[openLox.id] = undefined;
+          this.appendLox('close', openLox, message, item);
+          this._loxes[openLox.id] = undefined;
         },
         error: (error: ErrorType, item?: any) => {
-          Loxer.internalError(
+          this.internalError(
             error,
             openLox.id,
             this._loxes[openLox.id]?.moduleId,
@@ -629,4 +629,4 @@ class LoxerInstance implements LoxerType {
   }
 }
 
-export const Loxer = new LoxerInstance();
+export const Loxer: LoxerType = new LoxerInstance();

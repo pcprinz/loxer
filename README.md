@@ -1,5 +1,6 @@
 # Loxer
 ## Work in progress
+see [Documentation](guide/index.md)
 Loxer will be an advanced Logger, where you (currently) can:
 - use levels to switch logs on / off dependent on their importance
 - categorize logs in modules

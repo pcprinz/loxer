@@ -1,8 +1,7 @@
 import { Lox } from './Lox';
+/** @module OutputLox */
 
-/** This is a log streamed to the `devLog`or `prodLog` output stream defined at the {@link LoxerCallbacks}.
- * It extends the basic {@link Lox}.
- */
+/** This is a log streamed to the `devLog`or `prodLog` output stream defined at the {@link LoxerCallbacks}. */
 export class OutputLox extends Lox {
   /** the possibly sliced text of the logs corresponding module
    * - is `''` if no module (`NONE`) or the default module (`DEFAULT`) was given
@@ -25,11 +24,12 @@ export class OutputLox extends Lox {
    *   uncolored strings
    *
    * You can easily switch between colored / uncolored versions like that:
-   * @example
+   * 
    * ```typescript
    * const useColored = true; // switch here
    * const { box, message, moduleText, timeText } = useColored ? outputLox.colored : outputlox;
    * ```
+   * 
    * This is possible because the keys are named exactly the same. Loxer internally
    */
   colored: {
@@ -41,6 +41,7 @@ export class OutputLox extends Lox {
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
 
+  /** @internal */
   constructor(prelog: Lox, coloredMessage: string) {
     super(prelog);
     this.colored = {

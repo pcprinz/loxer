@@ -1,9 +1,8 @@
 import { Lox } from './Lox';
 import { OutputLox } from './OutputLox';
+/** @module ErrorLox */
 
-/** This is a log streamed to the `devError`or `prodError` output stream defined at the {@link LoxerCallbacks}.
- * It extends the {@link OutputLox} wich itself extends the basic {@link Lox}.
- */
+/** This is a log streamed to the `devError`or `prodError` output stream defined at the {@link LoxerCallbacks}. */
 export class ErrorLox extends OutputLox {
   /** the error that was initially given, or created by Loxer */
   error: Error;
@@ -15,6 +14,7 @@ export class ErrorLox extends OutputLox {
    */
   history: (OutputLox | ErrorLox)[] = [];
 
+  /** @internal */
   constructor(prelog: Lox, error: Error, coloredMessage: string) {
     super(prelog, coloredMessage);
     this.error = error;

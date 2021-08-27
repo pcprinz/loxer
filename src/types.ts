@@ -1,9 +1,10 @@
+/** @module Loxer */
 import { BoxLayoutStyleType } from './ColorCode';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 
 /** this is the main type of {@link Loxer} */
-export interface LoxerType {
+export interface Loxer {
   /** ## Initialize Loxer.
    * This is a required function to initialize Loxer.
    *
@@ -29,7 +30,7 @@ export interface LoxerType {
   getModuleLevel: (moduleID: string) => LevelType;
   /** ## Highlight a log
    * To highlight any log, just chain this function like that:
-   * @example
+   * 
    * ```typescript
    * Loxer.highlight().log(...)
    * Loxer.highlight().open(...)
@@ -46,7 +47,7 @@ export interface LoxerType {
    */
   highlight: (doit?: boolean) => this;
   /** ## Highlight a log (shortcut)
-   * this is a shortcut for {@link LoxerType.highlight | `Loxer.highlight()`}
+   * this is a shortcut for {@link Loxer.highlight | `Loxer.highlight()`}
    *
    * ---
    * @param doit should the log be highlighted
@@ -55,7 +56,6 @@ export interface LoxerType {
   /** ## Set the LogLevel for a log
    * To set the LogLevel for a log, simply chain this function like that:
    *
-   * @example
    * ```typescript
    * Loxer.level(number).log(...)
    * Loxer.level(number).open(...)
@@ -78,7 +78,7 @@ export interface LoxerType {
    */
   level: (level: LogLevelType) => this;
   /** ## Set the LogLevel for a log (shortcut)
-   * - this is a shortcut for {@link LoxerType.level | `Loxer.level(number)`}
+   * - this is a shortcut for {@link Loxer.level}
    * ---
    * @param level the level of the log
    */
@@ -86,7 +86,6 @@ export interface LoxerType {
   /** ## Assign a module to a log
    * To assign a module to a log, simply chain this function like that:
    *
-   * @example
    * ```typescript
    * Loxer.module(string).log(...)
    * Loxer.module(string).open(...)
@@ -104,7 +103,7 @@ export interface LoxerType {
    */
   module(moduleId?: string | undefined): this;
   /** ## Assign a module to a log (shortcut)
-   * - this is a shortcut for {@link LoxerType.module | `Loxer.module(string)`}
+   * - this is a shortcut for {@link Loxer.module | `Loxer.module(string)`}
    * ---
    * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
    */
@@ -168,7 +167,6 @@ export interface LoxerType {
    * This function provides functions to add logs / errors and close the box of the given `id`'s opened log.
    * Usage:
    *
-   * @example
    * ```typescript
    * // this has to be done before:
    * const id = Loxer.open('opening message');
@@ -213,7 +211,7 @@ export interface LoxerType {
 /** this is any possible type that a `catch` could return */
 export type ErrorType = Error | string | number | boolean | object;
 
-/** these are the functions returned from the {@link LoxerType.of} method */
+/** these are the functions returned from the {@link Loxer.of} method */
 export interface OfLoxes {
   /** assigns a single log to a log box and imitates the behavior of {@link Loxer.log} */
   add: (message: string, item?: any) => void;
@@ -228,10 +226,10 @@ export interface LoxerOptions {
   /** ## An object containing all loggable modules
    * an exemplary module "Persons" would look like this:
    *
-   * @example
    * ```typescript
    *   PERS: { fullname: 'Persons', color: '#0ff', develLevel: 3, prodLevel: 1 }
    * ```
+   * 
    * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
    * - the fullname will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
    *   string at the box layouted output
@@ -245,17 +243,21 @@ export interface LoxerOptions {
    * ### The NONE module
    * will be automatically set when there is no `.module(...)` chained on `Loxer.log()`, `Loxer.open()` or `Loxer.of()`
    * when the opening log had no module too. The default is defined as:
+   * 
    * ```typescript
    *   NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
    * ```
+   * 
    * This module will not have a module name or a box layout at the output.
    *
    * ### The DEFAULT module
    * will be automatically set when `Loxer.log()` or `Loxer.open()` logs are chained with an empty `.module()`.
    * The default is defined as:
+   * 
    * ```typescript
    *   DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
    * ```
+   * 
    * This module will have an empty module name, but a box layout at the output.
    *
    * ### The INVALID module
@@ -263,9 +265,11 @@ export interface LoxerOptions {
    * `Loxer.init(options)`. This module is a visual indicator for misspelled or missing moduleIds. **Additionally this
    * module is serves as a fallback mechanism and should therefore never be overwritten with `undefined`!**
    * The default is defined as:
+   * 
    * ```typescript
    *   INVALID: { fullname: 'INVALIDMODULE', color: '#f00', develLevel: 1, prodLevel: 0 }
    * ```
+   * 
    * This module will have a moduleName (`INVALIDMODULE`), but no box layout at the output.
    */
   modules?: LoxerModules;

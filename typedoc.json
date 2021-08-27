@@ -1,0 +1,15 @@
+{
+    "entryPoints": [
+        "src/types.ts", 
+        "src/decorators/index.ts", 
+        "src/loxes/index.ts",
+        "guide/index.md"
+    ],
+    "name": "Loxer",
+    "includeVersion": true,
+    "disableSources": true,
+    "out": "docs",
+    "sort": ["instance-first", "source-order"],
+    "excludeInternal": true,
+    "theme": "node_modules/eledoc/bin/default/"
+}

@@ -1,7 +1,9 @@
 import { LevelType } from '../types';
+/** @module Lox */
 
 export type LoxType = 'single' | 'open' | 'close' | 'error';
 
+/** @internal */
 export interface LoxProps {
   id: number;
   message: string;
@@ -37,6 +39,7 @@ export class Lox {
   /** the {@link Date} the log was declared */
   timestamp: Date;
 
+  /** @internal */
   constructor(props: LoxProps) {
     this.id = props.id;
     this.message = props.message;
