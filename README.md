@@ -1,6 +1,6 @@
 # Loxer
+Take a look at the [API Reference](https://pcprinz.github.io/loxer/index.html)
 ## Work in progress
-see [Documentation](guide/index.md)
 Loxer will be an advanced Logger, where you (currently) can:
 - use levels to switch logs on / off dependent on their importance
 - categorize logs in modules
@@ -15,8 +15,8 @@ Loxer will be an advanced Logger, where you (currently) can:
 This all should already work (as alpha) and is documented as tsdoc so you can either grab through the `src/types.ts`, just add the project and see what it is exporting, or wait until the page is ready to go.
 
 ## Soon
-- There will be a documentation and an API-reference.
-- There will be test sto verify the functionality of the existing code
+- There will be a documentation / guide.
+- There will be tests to verify the functionality of the existing code
 - There will be a playground to demonstrate everything
 - There will also be a try catch guardian (Decorator?), that will handle error recovery mechanisms like 'retry', 'replace' and 'resume'
 ## Installation 
