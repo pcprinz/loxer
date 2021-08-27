@@ -24,12 +24,12 @@ export class OutputLox extends Lox {
    *   uncolored strings
    *
    * You can easily switch between colored / uncolored versions like that:
-   * 
+   *
    * ```typescript
    * const useColored = true; // switch here
    * const { box, message, moduleText, timeText } = useColored ? outputLox.colored : outputlox;
    * ```
-   * 
+   *
    * This is possible because the keys are named exactly the same. Loxer internally
    */
   colored: {

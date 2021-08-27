@@ -30,7 +30,7 @@ export interface Loxer {
   getModuleLevel: (moduleID: string) => LevelType;
   /** ## Highlight a log
    * To highlight any log, just chain this function like that:
-   * 
+   *
    * ```typescript
    * Loxer.highlight().log(...)
    * Loxer.highlight().open(...)
@@ -229,7 +229,7 @@ export interface LoxerOptions {
    * ```typescript
    *   PERS: { fullname: 'Persons', color: '#0ff', develLevel: 3, prodLevel: 1 }
    * ```
-   * 
+   *
    * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
    * - the fullname will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
    *   string at the box layouted output
@@ -243,21 +243,21 @@ export interface LoxerOptions {
    * ### The NONE module
    * will be automatically set when there is no `.module(...)` chained on `Loxer.log()`, `Loxer.open()` or `Loxer.of()`
    * when the opening log had no module too. The default is defined as:
-   * 
+   *
    * ```typescript
    *   NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
    * ```
-   * 
+   *
    * This module will not have a module name or a box layout at the output.
    *
    * ### The DEFAULT module
    * will be automatically set when `Loxer.log()` or `Loxer.open()` logs are chained with an empty `.module()`.
    * The default is defined as:
-   * 
+   *
    * ```typescript
    *   DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
    * ```
-   * 
+   *
    * This module will have an empty module name, but a box layout at the output.
    *
    * ### The INVALID module
@@ -265,11 +265,11 @@ export interface LoxerOptions {
    * `Loxer.init(options)`. This module is a visual indicator for misspelled or missing moduleIds. **Additionally this
    * module is serves as a fallback mechanism and should therefore never be overwritten with `undefined`!**
    * The default is defined as:
-   * 
+   *
    * ```typescript
    *   INVALID: { fullname: 'INVALIDMODULE', color: '#f00', develLevel: 1, prodLevel: 0 }
    * ```
-   * 
+   *
    * This module will have a moduleName (`INVALIDMODULE`), but no box layout at the output.
    */
   modules?: LoxerModules;
