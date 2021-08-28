@@ -1,10 +1,10 @@
 const { Loxer } = require('../dist');
 
 Loxer.init({
-    config: {
-        moduleTextSlice: 16,
-        endTitleOpacity: 0.8,
-    },
+  config: {
+    moduleTextSlice: 16,
+    endTitleOpacity: 0.8,
+  },
   modules: {
     OUT: {
       color: '#f00',
@@ -50,34 +50,34 @@ Loxer.init({
 const logo2 = [
   '                                                         ',
   '   ###          #####    ###   ###  #########  #######   ',
-   '  ###         #######    ### ###   ###        ###   ### ',
-   '  ###        ###   ###    #####    ###        ###   ### ',
-    ' ###        ###   ###     ###     #######    #######   ',
-     '###        ###   ###    #####    ###        ### ###   ',
-     '#########   #######    ### ###   ###        ###  ###  ',
-     '#########    #####    ###   ###  #########  ###   ### ',
-     '                                                      ',
-     'Logger, Tracer and ... Box?  -->  Loxer!              ',
-    '  ... ah yes, and Error detector / dataflow visualizer ',
+  '  ###         #######    ### ###   ###        ###   ### ',
+  '  ###        ###   ###    #####    ###        ###   ### ',
+  ' ###        ###   ###     ###     #######    #######   ',
+  '###        ###   ###    #####    ###        ### ###   ',
+  '#########   #######    ### ###   ###        ###  ###  ',
+  '#########    #####    ###   ###  #########  ###   ### ',
+  '                                                      ',
+  'Logger, Tracer and ... Box?  -->  Loxer!              ',
+  '  ... ah yes, and Error detector / dataflow visualizer ',
   '       ... and many other fancy buzz words!              ',
 ];
 
 const logo = [
   '                                                           ',
   '      _       _____ _    _ _______ ______                  ',
-   '    | |     / ___ \\ \\  / (_______(_____ \\                 ',
-   '    | |    | |   | \\ \\/ / _____   _____) )                ',
-    '   | |    | |   | |)  ( |  ___) (_____ (                 ',
-     '  | |____| |___| / /\\ \\| |_____      \\ \\_____|\\            ',
-     '  |_______)_____/_/  \\_\\_______)      \\______  )          ',
-     '                                             |/           ',
-     '  Logger, Tracer and ... Box?  -->  Loxer!              ',
-     '   ... ah yes, and Error detector / dataflow visualizer ',
-    '       ... and many other fancy buzz words!              ',
+  '    | |     / ___ \\ \\  / (_______(_____ \\                 ',
+  '    | |    | |   | \\ \\/ / _____   _____) )                ',
+  '   | |    | |   | |)  ( |  ___) (_____ (                 ',
+  '  | |____| |___| / /\\ \\| |_____      \\ \\_____|\\            ',
+  '  |_______)_____/_/  \\_\\_______)      \\______  )          ',
+  '                                             |/           ',
+  '  Logger, Tracer and ... Box?  -->  Loxer!              ',
+  '   ... ah yes, and Error detector / dataflow visualizer ',
+  '       ... and many other fancy buzz words!              ',
   '                                                           ',
 ];
 
-Loxer.log('\n\n')
+Loxer.log('\n\n');
 const box = Loxer.m('BOX').open(logo[0]);
 Loxer.m('LOG').log(logo[1]);
 const see = Loxer.m('SEE').open(logo[2]);
@@ -90,5 +90,23 @@ Loxer.of(see).close(logo[8]);
 Loxer.of(error).close(logo[9]);
 Loxer.of(trace).close(logo[10]);
 Loxer.of(box).close(logo[11]);
-Loxer.error('I always do the catchiest slogans')
-Loxer.log('\n\n')
+Loxer.error('I always do the catchiest slogans');
+Loxer.log('\n\n');
+
+const person = { name: 'John Doe', age: 69 };
+console.log('This is the person', person);
+Loxer.log('This is the person', person);
+
+Loxer.highlight().log('this will be seen easily');
+Loxer.h().log('this too');
+
+// conditionally highlight
+const shouldHighlight = Math.random() > 0.5;
+Loxer.h(shouldHighlight).log('This message will be conditionally highlighted');
+
+Loxer.init({
+  defaultLevels: {
+    develLevel: 3,
+    prodLevel: 1,
+  },
+});
