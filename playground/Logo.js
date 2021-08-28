@@ -14,7 +14,7 @@ Loxer.init({
     },
     LOG: { color: '#0f0', fullname: 'set levels', develLevel: 1, prodLevel: 1 },
     SEE: {
-      color: '#00f',
+      color: '#33f',
       fullname: 'see dataflow',
       develLevel: 1,
       prodLevel: 1,
@@ -47,7 +47,7 @@ Loxer.init({
   },
 });
 
-const logo = [
+const logo2 = [
   '                                                         ',
   '   ###          #####    ###   ###  #########  #######   ',
    '  ###         #######    ### ###   ###        ###   ### ',
@@ -60,6 +60,21 @@ const logo = [
      'Logger, Tracer and ... Box?  -->  Loxer!              ',
     '  ... ah yes, and Error detector / dataflow visualizer ',
   '       ... and many other fancy buzz words!              ',
+];
+
+const logo = [
+  '                                                           ',
+  '      _       _____ _    _ _______ ______                  ',
+   '    | |     / ___ \\ \\  / (_______(_____ \\                 ',
+   '    | |    | |   | \\ \\/ / _____   _____) )                ',
+    '   | |    | |   | |)  ( |  ___) (_____ (                 ',
+     '  | |____| |___| / /\\ \\| |_____      \\ \\_____|\\            ',
+     '  |_______)_____/_/  \\_\\_______)      \\______  )          ',
+     '                                             |/           ',
+     '  Logger, Tracer and ... Box?  -->  Loxer!              ',
+     '   ... ah yes, and Error detector / dataflow visualizer ',
+    '       ... and many other fancy buzz words!              ',
+  '                                                           ',
 ];
 
 Loxer.log('\n\n')
@@ -75,5 +90,5 @@ Loxer.of(see).close(logo[8]);
 Loxer.of(error).close(logo[9]);
 Loxer.of(trace).close(logo[10]);
 Loxer.of(box).close(logo[11]);
-Loxer.error('\t\t\tI always do the catchiest slogans')
+Loxer.error('I always do the catchiest slogans')
 Loxer.log('\n\n')
