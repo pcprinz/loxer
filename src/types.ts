@@ -288,8 +288,19 @@ export interface LoxerOptions {
    * - `prodError`: errors occuring in production environment
    */
   callbacks?: LoxerCallbacks;
-  /** The {@link LoxerConfig Configuration} of Loxer.  */
+  /** The {@link LoxerConfig Configuration} of Loxer. */
   config?: LoxerConfig;
+  /** The default levels to show logs in production or development. These will automatically be adapted to the default
+   * module `NONE` and `DEFAULT`. If you want to set them differently, then you have to override them in the `modules`
+   * option.
+   * - both default to `develLevel: 1` and `prodLevel: 0`
+   */
+  defaultLevels?: {
+    /** the actual level to show logs in development mode */
+    develLevel: LevelType;
+    /** the actual level to show logs in production mode */
+    prodLevel: LevelType;
+  };
 }
 
 /** these are the modules for the {@link LoxerOptions} */
@@ -297,9 +308,9 @@ export type LoxerModules = { [moduleId: string]: Module };
 
 /** the structure of a loggable module for the {@link LoxerModules} */
 export interface Module {
-  /** the current level to show logs in development mode */
+  /** the actual level to show logs in development mode */
   develLevel: LevelType;
-  /** the current level to show logs in production mode */
+  /** the actual level to show logs in production mode */
   prodLevel: LevelType;
   /** the full name for the logged module */
   fullname: string;

@@ -73,6 +73,12 @@ class LoxerInstance implements LoxerType {
         ? !this._dev
         : false;
     }
+    if (props?.defaultLevels) {
+      DEFAULT_MODULES[0].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES[1].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES[0].prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES[1].prodLevel = props?.defaultLevels.prodLevel;
+    }
     this._modules = {
       ...DEFAULT_MODULES,
       ...props?.modules,

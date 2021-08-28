@@ -64,8 +64,8 @@ export class LoxerError extends Error {
 
 /** @internal */
 export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 },
-  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 },
+  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
+  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
   INVALID: {
     fullname: 'INVALIDMODULE',
     color: '#f00',
