@@ -1,6 +1,7 @@
 # Loxer
+Logger, Tracer, Error detector, dataflow visualizer
 
-![Loxer_Logo](assets/Logo.png)
+![Loxer_Logo](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png)
 
 Take a look at the [API Reference](https://pcprinz.github.io/loxer/index.html)
 ## Work in progress

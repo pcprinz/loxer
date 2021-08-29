@@ -104,9 +104,17 @@ Loxer.h().log('this too');
 const shouldHighlight = Math.random() > 0.5;
 Loxer.h(shouldHighlight).log('This message will be conditionally highlighted');
 
-Loxer.init({
-  defaultLevels: {
-    develLevel: 3,
-    prodLevel: 1,
-  },
-});
+Loxer.error('this is a string error');
+Loxer.error(404);
+Loxer.error(false);
+Loxer.error({ type: 'ServerError', code: 404 });
+Loxer.error(new RangeError('this is a range error'));
+
+// if using .highlight() on an error, then the stack ALWAYS will be printed:
+Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
+
+console.error('this is a string error');
+console.error(404);
+console.error(false);
+console.error({ type: 'ServerError', code: 404 });
+console.error(new RangeError('this is a range error'));
