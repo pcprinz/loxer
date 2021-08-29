@@ -35,12 +35,14 @@ export interface Loxer {
    * Loxer.highlight().log(...)
    * Loxer.highlight().open(...)
    * Loxer.highlight().of(...)
+   * Loxer.highlight().error(...)
    * ```
    *
    * - by default the `foregroundColor` and `backgroundColor` of the log will be inverted.
    * - a different highlight color can be set at {@link LoxerConfig.highlightColor} in the {@link LoxerOptions.config} declared in `Loxer.init(options)`
    * - the parameter `doit?: boolean` can conditionally highlight the log with `true`
    * - this function can be chained with any other chaining function like `.level(...)` or `.module(...)`
+   * - highlighting error logs does not color the message differently but append the stack to the default console output
    *
    * ---
    * @param doit should the log be highlighted
@@ -138,8 +140,10 @@ export interface Loxer {
    * - a history of logs will be appended if enabled
    * - can be chained with `.module().error(...)` or `.m().error(...)` to assign a module to the error - otherwise
    *   it's `NONE`
-   * - chaining with `.highlight().error(...)` or `.h().error(...)` or `.level().error(...)` or `.l().error(...)` will
-   *   not take any effect on the error log (except that `level` and `highlighted` will be attributes of the output)
+   * - chaining with `.highlight().error(...)` or `.h().error(...)` does not color the message differently but append
+   *   the stack to the default console output
+   * - chaining with `.level().error(...)` or `.l().error(...)` will
+   *   not take any effect on the error log (except that `level` will be a property of the output)
    * ---
    * @param error an `Error` or `string` | `number`| `boolean` | `object` (converted to an Error)
    * @param item to append
