@@ -1,40 +1,119 @@
-# Usage
+# 1. Usage
+TODO toc
 
-## Simple initialization
-- TODO options
-- more in the coming sections
+TODO quick overview
 
-----------------------------------------------------------------------------------------------------
+## 1.1 Initialization
+In order to be able to use Loxer, it must first be initialized. To do this, the method `Loxer.init(options?: LoxerOptions)` must be called once. Loxer can be configured with `LoxerOptions` during initialization. For the simple initialization, the optional options can also be left out.
 
-## Simple logs
-To make a simple log, all you have to do is call `Loxer.log(message: string, item?: any)`. In the default - unless otherwise specified in `Loxer.init(options.callbacks)` - `message` and `item` are logged with `console.log(message, item)`. All you have to do is replacing `console`with `Loxer`.
+###### Simple initialization
+```typescript
+Loxer.init();
+```
 
-Example
+This method can be called anywhere in your application.
+
+> - There is also a method decorator `@initLoxer(options?: LoxerOptions)` that does the same thing.
+> - It is recommended to declare a separate `const options: LoxerOptions` that is passed to the init method, because the more detailed the configuration, the larger the parameter.
+
+
+### LoxerOptions:
+Anyways, the options are an object with the following structure: 
+
+```typescript
+  // An object containing all loggable modules
+  modules?: LoxerModules;
+  // determines if Loxer is running in a development or production environment
+  dev?: boolean;
+  // Functions called as an output stream for Loxer 
+  callbacks?: LoxerCallbacks;
+  // The configuration of Loxer
+  config?: LoxerConfig;
+  // The default levels to show logs in production or development
+  defaultLevels?: {
+    // the actual level to show logs in development mode
+    develLevel: LevelType;
+    // the actual level to show logs in production mode
+    prodLevel: LevelType;
+  };
+```
+
+More about the details of the options can be found in the following sections.
+
+<!-- ------------------------------------------------------------------------------------------- -->
+
+
+## 1.2 Simple logs
+To make a simple log, all you have to do is call `Loxer.log(message: string, item?: any)`. In the default - unless otherwise specified in `Loxer.init(options.callbacks)` - `message` and `item` are logged with `console.log(message, item)`. All you have to do is replacing `console` with `Loxer`.
+
+
+###### Example
 ```typescript
 const person = {name: "John Doe", age: 69};
 console.log('This is the person:', person);  // => This is the person: { name: 'John Doe', age: 69 }
 Loxer.log('This is the person:', person);    // => This is the person: { name: 'John Doe', age: 69 }
 ```
 
+
 To see what `item` does take a look at the [MDN Web API](https://developer.mozilla.org/de/docs/Web/API/Console/log)
 
-> Loxer comes with some improvements:
+> Loxer comes with some improvements for logs:
 > - Logs can be highlighted.
 > - Logs can be given levels.
 > - Logs can be categorized in modules.
 > - Logs can be distributed to different output streams.
+> - More on that in the sections about boxes and output.
 
-----------------------------------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------------------------- -->
 
-## Simple error logs
-TODO
 
-----------------------------------------------------------------------------------------------------
+## 1.3 Simple error logs
+Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: any)`. By default this log will not be proceeded to `console.error()` but `console.log()`, though this would break the box layout and does not bring any benefit.
 
-## Highlighting
+The error parameter must be of `type ErrorType = Error | string | number | boolean | object`, because these are the types that an error of a `catch(error)` phrase can take. The `item?: any` behaves the same way like in the `.log()` method.
+
+###### Example
+```typescript
+Loxer.error('this is a string error');
+Loxer.error(404);
+Loxer.error(false);
+Loxer.error({ type: 'ServerError', code: 404 });
+Loxer.error(new RangeError('this is a range error'));
+
+// if using .highlight() of .h() on an error, then the stack ALWAYS will be printed:
+Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
+```
+
+###### Console output
+
+```console
+Error: this is a string error
+Error: 404
+Error: false
+Error: {"type":"ServerError","code":404}
+RangeError: this is a range error
+Error: this is a highlighted error that prints the stack!!!
+    at Object.<anonymous> (C:\dev\loxer\playground\playground.js:18:19)
+    at Module._compile (node:internal/modules/cjs/loader:1101:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:79:12)
+    at node:internal/main/run_main_module:17:47
+```
+
+Loxer internally creates an `Error` out of any other message type than `Error` though it enables to get a Stack even if the thrown error has none.
+
+> More on that in the sections about boxes and output.
+
+<!-- ------------------------------------------------------------------------------------------- -->
+
+
+## 1.4 Highlighting
+TODO colored images
 Highlighting logs has the advantage of being able to view a certain log relatively quickly from a large number of logs. To highlight a log, it just needs to be chained with `.highlight()` or `.h()`, with the last one being a shortcut. The output message will then have inverted background and text colors.
 
-Example
+###### Example
 ```typescript
 Loxer.highlight().log('this will be seen easily');
 Loxer.h().log('this too');
@@ -46,12 +125,14 @@ Loxer.h(shouldHighlight).log('This message will be conditionally highlighted');
 ```
 
 > - The highlight methods can be chained with **any other logging** method like `Loxer.error()`, `Loxer.open()` and `Loxer.of()`.
+> - highlighting error logs will append the stack to the output stream
 > - They can also be chained with **any other chaining method** like `.level()` and `module()` in **any order**.
 > - The highlighting will only take effect on the `colored.message` property on the output streams logs / errors.
 
-----------------------------------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------------------------- -->
 
-## Levels
+
+## 1.5 Levels
 Giving levels is a common feature for any logger. Loxer provides a simple, but extendable solution for this case.
 
 ### Levels on logs
@@ -59,7 +140,7 @@ Adding levels to logs is done in the same way as highlighting. Therefore you hav
 
 Possible Levels are `type LogLevelType = 1 | 2 | 3` where 1 = high, 2 = medium and 3 = low.
 
-Example
+###### Example
 ```typescript
 Loxer.level(3).log('this log has the level 3 = low');
 Loxer.l(2).log('this has the level 2 = medium');
@@ -73,7 +154,7 @@ Loxer.log('this too, because 1 is default');
 Providing logs with levels would make no sense if you couldn't set which level the logger should display / log. Therefore you have to declare the levels as part of the `LoxerOptions` when you initialize `Loxer`.
 
 
-Example
+###### Example
 ```typescript
 Loxer.init({
     defaultLevels: {
@@ -91,9 +172,11 @@ If you declare modules then you can set separate levels for every module, giving
 
 > Setting the `prodLevel` to `0` (off) is an easy way of disabling logs in the production environment, though even without declared outputStreams the `console` will never be used.
 
-----------------------------------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------------------------- -->
 
-## Modules
+
+## 1.6 Modules
+TODO colored images
 Modules are one way of categorizing logs in order to:
 - To create clarity in the output (with coloring)
 - Set log levels for individual categories
@@ -103,7 +186,7 @@ Modules are one way of categorizing logs in order to:
 ### Modules on logs
 Assigning modules to logs is again done in the same way as highlighting or leveling. Therefore you have to chain them with the `.module(moduleId: string)` or `.m(moduleId: string)`
 
-Example
+###### Example
 ```typescript
 Loxer.module('PERS').log('this log is assigned to the module with the key PERS');
 Loxer.m('PERS').log('this too');
@@ -120,7 +203,7 @@ A `Module` must be structured as `{ develLevel: LevelType; prodLevel: LevelType;
 
 The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color](https://www.npmjs.com/package/color) package.
 
-Example
+###### Example
 ```typescript
 Loxer.init({
   modules: {
@@ -134,7 +217,8 @@ Loxer.init({
 > - You are free to set any string key for a `moduleId`, but it will be efficient to choose short ones, because you probably have to write them often.
 
 ### Default modules
-There are 3 default modules, that are predefined:
+TODO images
+###### There are 3 default modules, that are predefined:
 ```typescript
 export const DEFAULT_MODULES: LoxerModules = {
   NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
@@ -153,12 +237,155 @@ The `INVALID` module is automatically assigned, when logs are tried to be assign
 > - **ATTENTION**: beware of forcefully setting any of these modules to a falsy value like `null` or `undefined` because this will definitely cause Loxer to crash.
 > - If you want to disable them, set their levels to `0`. 
 
-----------------------------------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------------------------- -->
 
-## Output steams / Callbacks
-TODO
 
-# Creating Boxes
+## 1.7 Output / Callbacks
+Loxer isn't just an extension for the console. It is an independent logger that in the default case uses the console as an output medium in the development environment. There are 4 different output streams available, which can be specified as `modules: LoxerCallbacks` in the `Loxer.init(options)`.
+
+The `type LoxerCallbacks` has the following structure:
+```typescript
+{
+  /** Function called when logging in development mode. */
+  devLog?: (outputLog: OutputLox) => void;
+  /** Function called when logging in production mode. */
+  prodLog?: (outputLog: OutputLox) => void;
+  /** Function called when errors are recorded in production mode. */
+  prodError?: (errorLog: ErrorLox) => void;
+  /** Function called when errors are recorded in development mode. */
+  devError?: (errorLog: ErrorLox) => void;
+}
+```
+
+Whenever a log with its level fulfills the requirements of the default levels or its module level, it is forwarded (depending on the environment) to the `devLog` or` prodLog` output stream. Error logs are always forwarded to the corresponding output stream (`devError` or `prodError`).
+
+The `devLog` and `devError` callbacks default to printing the colored logs to the console. `prodLog` and `prodError` default to log nothing in order to keep the application clean in production environment. This is expressed in the fact that the production streams only interact with the user-specific ones and have no defaults.
+
+In order to occupy a stream itself, the corresponding output log is passed to the callback.
+
+### Output logs
+To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the `OutputLox` contains the additional declared properties level, highlight and module. In addition, a time stamp and properties that arise from the box layout. `ErrorLox` have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
+
+###### OutputLox
+```typescript
+{
+  /** the internal identifier of the log */
+  id: number;
+  /** the message of the log */
+  message: string;
+  /** determines if the log was highlighted with `Loxer.highlight()` or `Loxer.h()` */
+  highlighted: boolean;
+  /** an optional item */
+  item: any | Error | undefined;
+  /** the type of the log */
+  type: LoxType;
+  /** the corresponding key of a module from `LoxerOptions.modules` */
+  moduleId: string;
+  /** the log level that was given with `Loxer.level(number)` or `Loxer.l(number)` */
+  level: LevelType;
+  /** the time the log appeared */
+  timestamp: Date;
+  /** the possibly sliced text of the logs corresponding module fullname */
+  moduleText: string | '' = '';
+  /** the box layout of the log */
+  box: string | '' = '';
+  /** a string that represents the time consumption from the opening log's `timestamp` until this log appeared */
+  timeText: string | '' = '';
+  /** the time consumption (in `ms`) from the opening log's `timestamp` until this log appeared */
+  timeConsumption: number | undefined;
+  /** The colored versions of the log's `message`, `moduleText`, `box` and `timeText` */
+  colored: {
+    message: string;
+    moduleText: string | '';
+    box: string | '';
+    timeText: string | '';
+  };
+  /** determines if the log has not fulfilled the level that the corresponding module has set */
+  hidden: boolean = false;
+}
+```
+
+###### ErrorLox
+```typescript
+  // ... all the Properties from OutputLox +
+  /** the error that was initially given, or created by Loxer */
+  error: Error;
+  /** a list of opened `OutputLox` which have not been closed until the occurrence of this error log */
+  openLoxes: OutputLox[] = [];
+  /** a full history of "all" `OutputLox` and `ErrorLox` which have occurred before this error log */
+  history: (OutputLox | ErrorLox)[] = [];
+```
+
+> For more detailed information about the Lox's properties (as well as all other components of Loxer), a look at the [API reference](TODO) is recommended.
+
+### History
+The history, which is attached to the `ErrorLox`, can also be accessed directly with `Loxer.history`. It is an inverted stack, which means that the most recent log is at `history [0]`. Only those logs / errors are recorded in the history, which (depending on the levels) are also directed into the output stream.
+
+**IMPORTANT**: In the default case, the history is always empty for performance reasons. To "activate" it, its size must be specified as `options.config.historyCacheSize` in the`Loxer.init (options)`.
+
+> The history can be used if a user wants to send feedback on the behavior of the application. For this, however, the production levels must also be set accordingly.
+
+### Callbacks
+Now that we know how the output streams work and what the transferred `*Lox` look like, it is a good idea to take a look at how the `dev*` streams are used internally.
+
+###### devLog internally
+```typescript
+private devLogOut(outputLox: OutputLox) {
+  if (this._callbacks?.devLog) {
+    this._callbacks.devLog(outputLox);
+  } else {
+    // colored option
+    const { box, message, moduleText, timeText } = this._config?.disableColors
+      ? outputLox
+      : outputLox.colored;
+    const str = moduleText + box + message + timeText;
+    outputLox.item ? console.log(str, outputLox.item) : console.log(str);
+  }
+}
+```
+
+As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. The `ErrorLox` can be used in the same way:
+
+###### devError internally
+```typescript
+private devErrorOut(errorLox: ErrorLox) {
+  if (this._callbacks?.devError) {
+    this._callbacks.devError(errorLox);
+  } else {
+    const { message, box, moduleText, timeText } = this._config?.disableColors
+      ? errorLox
+      : errorLox.colored;
+    const msg = moduleText + box + message + timeText;
+    const stack =
+      errorLox.highlighted && errorLox.error.stack
+        ? errorLox.error.stack
+        : '';
+    const openLogs =
+      errorLox.highlighted && errorLox.openLoxes.length > 0
+        ? `\nOPEN_LOGS: [${errorLox.openLoxes
+            .map(outputLox => outputLox.message)
+            .join(' <> ')}]`
+        : '';
+
+    errorLox.item
+      ? console.error(msg + stack + openLogs, errorLox.item)
+      : console.error(msg + stack + openLogs);
+  }
+}
+```
+
+The `prod*` streams are both just forwarded to the user callbacks. These can be used to interact with other 3rd party services like [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/).
+
+
+## 1.8 Boxes
+Another main function of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
+
+In addition, a box layout is created that shows the course of the box, but with the degree of nesting in relation to other boxes or individual logs. This enables connections between synchronous and asynchronous processes to be recognized and potential sources of error to be tracked down. Furthermore, it can easily be determined whether processes are not terminating, are taking too long, are too short, or are not being carried out at all.
+
+- open
+
+
+
 TODO
 # Use cases
 - visualize data flows
