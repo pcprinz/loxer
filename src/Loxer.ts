@@ -24,11 +24,11 @@ import { OutputLox } from './loxes/OutputLox';
 import {
   ErrorType,
   LogLevelType,
+  Loxer as LoxerType,
   LoxerCallbacks,
   LoxerConfig,
   LoxerModules,
   LoxerOptions,
-  Loxer as LoxerType,
   OfLoxes,
 } from './types';
 
@@ -72,6 +72,12 @@ class LoxerInstance implements LoxerType {
       this._disabled = props?.config?.disabledInProductionMode
         ? !this._dev
         : false;
+    }
+    if (props?.defaultLevels) {
+      DEFAULT_MODULES[0].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES[1].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES[0].prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES[1].prodLevel = props?.defaultLevels.prodLevel;
     }
     this._modules = {
       ...DEFAULT_MODULES,
@@ -178,13 +184,14 @@ class LoxerInstance implements LoxerType {
   }
 
   error(error: ErrorType, item?: any) {
-    this.internalError(error, undefined, undefined, item);
+    this.internalError(error, undefined, undefined, undefined, item);
   }
 
   private internalError(
     error: ErrorType,
     logId: number = this.getId(),
     moduleId: string = this._moduleId,
+    messagePrefix: string = '',
     item?: any
   ) {
     const sureError = ensureError(error);
@@ -194,7 +201,7 @@ class LoxerInstance implements LoxerType {
         highlighted: this._highlighted,
         item,
         level: this._level ?? 1,
-        message: sureError.message,
+        message: messagePrefix + sureError.message,
         moduleId,
         type: 'error',
       }),
@@ -241,32 +248,28 @@ class LoxerInstance implements LoxerType {
       return {
         add: (message: string, item?: any) => {
           this.internalError(
-            new LoxerError(
-              'add() on a not (anymore) existing Lox. MESSAGE: ' + message
-            ),
+            new LoxerError(message),
             id,
             this._loxes[id]?.moduleId,
+            'add() on a not (anymore) existing Lox. MESSAGE: ',
             item
           );
         },
         close: (message: string, item?: any) => {
           this.internalError(
-            new LoxerError(
-              'close() on a not (anymore) existing Lox. MESSAGE: ' + message
-            ),
+            new LoxerError(message),
             id,
             this._loxes[id]?.moduleId,
+            'close() on a not (anymore) existing Lox. MESSAGE: ',
             item
           );
         },
         error: (error: ErrorType, item?: any) => {
           this.internalError(
-            ensureError(
-              error,
-              'error() on a not (anymore) existing Lox. ERROR: '
-            ),
+            error,
             id,
             this._loxes[id]?.moduleId,
+            'error() on a not (anymore) existing Lox. ERROR: ',
             item
           );
         },
@@ -285,6 +288,7 @@ class LoxerInstance implements LoxerType {
             error,
             openLox.id,
             this._loxes[openLox.id]?.moduleId,
+            undefined,
             item
           );
         },
@@ -378,13 +382,13 @@ class LoxerInstance implements LoxerType {
     } else if (lox.type === 'error') {
       const errorLox = this.generateErrorLox(lox, error!);
       this.addToHistory(errorLox);
-      this.errorOut(errorLox);
+      this._dev ? this.devErrorOut(errorLox) : this.prodErrorOut(errorLox);
     } else {
       const outputLox = this.generateOutputLox(lox);
       if (!outputLox.hidden) {
         this.addToBuffer(lox);
         this.addToHistory(outputLox);
-        this._dev ? this.devOut(outputLox) : this.prodOut(outputLox);
+        this._dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
         this.removeFromBuffer(lox);
       }
     }
@@ -409,28 +413,38 @@ class LoxerInstance implements LoxerType {
     return errorLox;
   }
 
-  private errorOut(errorLox: ErrorLox) {
-    if (this._dev) {
-      if (this._callbacks?.devError) {
-        this._callbacks.devError(errorLox);
-      } else {
-        // colored option
-        if (this._config?.disableColors) {
-          console.log(errorLox.moduleText + errorLox.box + errorLox.error);
-        } else {
-          console.log(
-            errorLox.colored.moduleText +
-              errorLox.colored.box +
-              errorLox.colored.message
-          );
-        }
-      }
-    } else if (this._callbacks?.prodError) {
+  private devErrorOut(errorLox: ErrorLox) {
+    if (this._callbacks?.devError) {
+      this._callbacks.devError(errorLox);
+    } else {
+      const { message, box, moduleText, timeText } = this._config?.disableColors
+        ? errorLox
+        : errorLox.colored;
+      const msg = moduleText + box + message + timeText;
+      const stack =
+        errorLox.highlighted && errorLox.error.stack
+          ? errorLox.error.stack
+          : '';
+      const openLogs =
+        errorLox.highlighted && errorLox.openLoxes.length > 0
+          ? `\nOPEN_LOGS: [${errorLox.openLoxes
+              .map(outputLox => outputLox.message)
+              .join(' <> ')}]`
+          : '';
+
+      errorLox.item
+        ? console.error(msg + stack + openLogs, errorLox.item)
+        : console.error(msg + stack + openLogs);
+    }
+  }
+
+  private prodErrorOut(errorLox: ErrorLox) {
+    if (this._callbacks?.prodError) {
       this._callbacks.prodError(errorLox);
     }
   }
 
-  private devOut(outputLox: OutputLox) {
+  private devLogOut(outputLox: OutputLox) {
     if (this._callbacks?.devLog) {
       this._callbacks.devLog(outputLox);
     } else {
@@ -443,7 +457,7 @@ class LoxerInstance implements LoxerType {
     }
   }
 
-  private prodOut(outputLox: OutputLox) {
+  private prodLogOut(outputLox: OutputLox) {
     if (this._callbacks?.prodLog) {
       this._callbacks.prodLog(outputLox);
     }

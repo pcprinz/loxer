@@ -35,12 +35,14 @@ export interface Loxer {
    * Loxer.highlight().log(...)
    * Loxer.highlight().open(...)
    * Loxer.highlight().of(...)
+   * Loxer.highlight().error(...)
    * ```
    *
    * - by default the `foregroundColor` and `backgroundColor` of the log will be inverted.
    * - a different highlight color can be set at {@link LoxerConfig.highlightColor} in the {@link LoxerOptions.config} declared in `Loxer.init(options)`
    * - the parameter `doit?: boolean` can conditionally highlight the log with `true`
    * - this function can be chained with any other chaining function like `.level(...)` or `.module(...)`
+   * - highlighting error logs does not color the message differently but append the stack to the default console output
    *
    * ---
    * @param doit should the log be highlighted
@@ -138,8 +140,10 @@ export interface Loxer {
    * - a history of logs will be appended if enabled
    * - can be chained with `.module().error(...)` or `.m().error(...)` to assign a module to the error - otherwise
    *   it's `NONE`
-   * - chaining with `.highlight().error(...)` or `.h().error(...)` or `.level().error(...)` or `.l().error(...)` will
-   *   not take any effect on the error log (except that `level` and `highlighted` will be attributes of the output)
+   * - chaining with `.highlight().error(...)` or `.h().error(...)` does not color the message differently but append
+   *   the stack to the default console output
+   * - chaining with `.level().error(...)` or `.l().error(...)` will
+   *   not take any effect on the error log (except that `level` will be a property of the output)
    * ---
    * @param error an `Error` or `string` | `number`| `boolean` | `object` (converted to an Error)
    * @param item to append
@@ -191,7 +195,7 @@ export interface Loxer {
    * - `add: (message: string, item?: any)` - assigns a single log to the box
    * - `error: (error?: Error | string)` - assigns an error log to the box
    * - `close: (message: string, item?: any)` - assigns a log to the box, that also closes the box (and its box layout)
-   * - **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box will not be appended to the box but
+   * - **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but
    *   logged anyways with a Warning
    * ---
    * @param id the id returned from `Loxer.open()` to reference this log to
@@ -288,8 +292,19 @@ export interface LoxerOptions {
    * - `prodError`: errors occuring in production environment
    */
   callbacks?: LoxerCallbacks;
-  /** The {@link LoxerConfig Configuration} of Loxer.  */
+  /** The {@link LoxerConfig Configuration} of Loxer. */
   config?: LoxerConfig;
+  /** The default levels to show logs in production or development. These will automatically be adapted to the default
+   * module `NONE` and `DEFAULT`. If you want to set them differently, then you have to override them in the `modules`
+   * option.
+   * - both default to `develLevel: 1` and `prodLevel: 0`
+   */
+  defaultLevels?: {
+    /** the actual level to show logs in development mode */
+    develLevel: LevelType;
+    /** the actual level to show logs in production mode */
+    prodLevel: LevelType;
+  };
 }
 
 /** these are the modules for the {@link LoxerOptions} */
@@ -297,9 +312,9 @@ export type LoxerModules = { [moduleId: string]: Module };
 
 /** the structure of a loggable module for the {@link LoxerModules} */
 export interface Module {
-  /** the current level to show logs in development mode */
+  /** the actual level to show logs in development mode */
   develLevel: LevelType;
-  /** the current level to show logs in production mode */
+  /** the actual level to show logs in production mode */
   prodLevel: LevelType;
   /** the full name for the logged module */
   fullname: string;

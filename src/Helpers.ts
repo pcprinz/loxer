@@ -38,19 +38,37 @@ export function isError(arg: any): arg is Error {
 
 /** @internal */
 export function ensureError(
-  error: Error | string | number | boolean | object,
-  addition?: string
+  error: Error | string | number | boolean | object
 ): Error {
+  let result;
   if (isError(error)) {
-    const message = error.message;
-    error.message = addition ? addition + message : message;
-
-    return error;
+    result = error;
+    result.stack = result.stack
+      ? eraseBeginningLines(result.stack, 1)
+      : undefined;
   } else {
-    const message = (addition ? addition : '') + error.toString();
-
-    return new Error(message);
+    if (typeof error === 'object') {
+      result = new Error(JSON.stringify(error));
+    } else {
+      result = new Error(error.toString());
+    }
+    result.stack = result.stack
+      ? eraseBeginningLines(result.stack, 4)
+      : undefined;
   }
+
+  return result;
+}
+
+/** @internal */
+export function eraseBeginningLines(message: string, count: number) {
+  let position = 0;
+  do {
+    position = message.indexOf('\n', position + 1);
+    count--;
+  } while (count > 0);
+
+  return message.slice(position);
 }
 
 /** @internal */
@@ -64,8 +82,8 @@ export class LoxerError extends Error {
 
 /** @internal */
 export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 },
-  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 },
+  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
+  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
   INVALID: {
     fullname: 'INVALIDMODULE',
     color: '#f00',
