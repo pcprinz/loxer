@@ -195,7 +195,7 @@ export interface Loxer {
    * - `add: (message: string, item?: any)` - assigns a single log to the box
    * - `error: (error?: Error | string)` - assigns an error log to the box
    * - `close: (message: string, item?: any)` - assigns a log to the box, that also closes the box (and its box layout)
-   * - **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box will not be appended to the box but
+   * - **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but
    *   logged anyways with a Warning
    * ---
    * @param id the id returned from `Loxer.open()` to reference this log to

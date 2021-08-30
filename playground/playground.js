@@ -16,3 +16,10 @@ Loxer.error(new RangeError('this is a range error'));
 
 // if using .highlight() on an error, then the stack ALWAYS will be printed:
 Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
+
+
+
+const id = Loxer.m().open('This is the opening log');
+Loxer.of(id).add('this is a single added log');
+Loxer.of(id).error('this is an added error');
+Loxer.of(id).close('this is the closing log');

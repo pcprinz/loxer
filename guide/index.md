@@ -68,7 +68,7 @@ To see what `item` does take a look at the [MDN Web API](https://developer.mozil
 
 
 ## 1.3 Simple error logs
-Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: any)`. By default this log will not be proceeded to `console.error()` but `console.log()`, though this would break the box layout and does not bring any benefit.
+Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: any)`. By default this log will be proceeded to `console.error()`.
 
 The error parameter must be of `type ErrorType = Error | string | number | boolean | object`, because these are the types that an error of a `catch(error)` phrase can take. The `item?: any` behaves the same way like in the `.log()` method.
 
@@ -229,7 +229,7 @@ export const DEFAULT_MODULES: LoxerModules = {
 
 The `NONE` module is automatically assigned when there is no module method chained in a logging method. The output will have no box layout and no module name as prefix.
 
-The `DEFAULT` module is automatically assigned, when logs are chained with an empty module method like `.m()`. The output will have a boxlayout and an empty module name.
+The `DEFAULT` module is automatically assigned, when logs are chained with an empty module method like `.m()`. The output will have a box layout and an empty module name.
 
 The `INVALID` module is automatically assigned, when logs are tried to be assigned with non existing modules (giving false moduleIds). The output will have no boxlayout, but the prominent fullname as module name.
 
@@ -257,7 +257,7 @@ The `type LoxerCallbacks` has the following structure:
 }
 ```
 
-Whenever a log with its level fulfills the requirements of the default levels or its module level, it is forwarded (depending on the environment) to the `devLog` or` prodLog` output stream. Error logs are always forwarded to the corresponding output stream (`devError` or `prodError`).
+Whenever a log with its level fulfills the requirements of the default levels or its module level, it is forwarded (depending on the environment) to the `devLog` or` prodLog` output stream. Error logs are always forwarded to the corresponding output stream (`devError` or `prodError`). You can tell Loxer the environment as `options.dev: boolean` in the `Loxer.init(options)`. In the default case it is `dev = process.env.NODE_ENV === 'development'`.
 
 The `devLog` and `devError` callbacks default to printing the colored logs to the console. `prodLog` and `prodError` default to log nothing in order to keep the application clean in production environment. This is expressed in the fact that the production streams only interact with the user-specific ones and have no defaults.
 
@@ -378,12 +378,38 @@ The `prod*` streams are both just forwarded to the user callbacks. These can be 
 
 
 ## 1.8 Boxes
-Another main function of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
+// TODO colored images
+Another main feature of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
 
 In addition, a box layout is created that shows the course of the box, but with the degree of nesting in relation to other boxes or individual logs. This enables connections between synchronous and asynchronous processes to be recognized and potential sources of error to be tracked down. Furthermore, it can easily be determined whether processes are not terminating, are taking too long, are too short, or are not being carried out at all.
 
-- open
+### Create boxes
 
+To use a box, it must be opened with `Loxer.open(message: string, item?: any)`. The `.open()` method returns the `id: number` of the log, which is used to connect other logs to this one. The rest of the structure and functionality is analogous to the `.log()` method. It can also be chained with `.highlight()`, `.level()` and `.module()`, just like the rest of the box methods. **As a reminder**, if the box layout is to be generated, **a module** or at least the default module (`.m()`) **must be assigned** to the log that opens.
+
+###### Open a box
+```typescript
+const id = Loxer.module().open('this is an opening message')
+```
+
+If an open box is to be closed, or further logs / errors are to be added, the `Loxer.of(id: number)` method must be used. This method returns an object with 3 other methods, which enables the next method to be added as a chain. There are 3 methods available for this:
+- `add(message: string, item?: any)` - adds a log to the box and works in the same way as `Loxer.log()`
+- `error(error: ErrorType, item?: any)` - adds an error to the box and works in the same way as `Loxer.error()`
+- `close(message: string, item?: any)` - closes the box and works in the same way as `Loxer.log()`
+
+**ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but logged anyways with a Warning
+
+###### Assigning / closing a box
+```typescript
+const id = Loxer.m().open('This is the opening log');
+Loxer.of(id).add('this is a single added log');
+Loxer.of(id).error('this is an added error');
+Loxer.of(id).close('this is the closing log');
+```
+
+> - When using `Loxer.of()`, `.level()` and `.module()` do not necessarily have to be specified again, since `.of()` automatically uses the values of the opening log as default.
+> - Otherwise, `.level()` can be chained **before** the `.of`.
+> - It is not possible to specify a different `.module()`, since **always** the module of the opening log is used!
 
 
 TODO
