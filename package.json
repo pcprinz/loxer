@@ -3,6 +3,7 @@
   "license": "MIT",
   "name": "loxer",
   "author": "Christian Prinz",
+  "keywords": ["logger", "log", "error", "trace", "dataflow", "log level", "box"],
   "module": "dist/loxer.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
