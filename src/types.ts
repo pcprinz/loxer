@@ -1,5 +1,5 @@
 /** @module Loxer */
-import { BoxLayoutStyleType } from './ColorCode';
+import { BoxLayoutStyle } from './ColorCode';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 
@@ -373,12 +373,12 @@ export interface LoxerConfig {
    * - defaults to `0` which means "hidden"
    */
   endTitleOpacity?: number;
-  /** the style of the Box-layout
+  /** the style of the default Box-layout
    * - possible values are "round" | "light" | "heavy" | "double" | "off"
-   * - of does not print any Layout but saves the insets, that the box layout would need
+   * - 'off' does not print any Layout but saves the insets, that the box layout would need
    * - defaults to `'round'`
    */
-  boxLayoutStyle?: BoxLayoutStyleType;
+  boxLayoutStyle?: BoxLayoutStyle;
   /** disables Loxer in production mode.
    * - if Loxer is initialized with `options.config.disabledInProductionMode: true` then - in production environment - the
    *   cache is erased and upcoming logs will not be cached anymore

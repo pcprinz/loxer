@@ -301,7 +301,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
   /** the possibly sliced text of the logs corresponding module fullname */
   moduleText: string | '' = '';
   /** the box layout of the log */
-  box: string | '' = '';
+  box: Box = [];
   /** a string that represents the time consumption from the opening log's `timestamp` until this log appeared */
   timeText: string | '' = '';
   /** the time consumption (in `ms`) from the opening log's `timestamp` until this log appeared */
@@ -348,9 +348,11 @@ private devLogOut(outputLox: OutputLox) {
     this._callbacks.devLog(outputLox);
   } else {
     // colored option
-    const { box, message, moduleText, timeText } = this._config?.disableColors
+    const { message, moduleText, timeText } = this._config?.disableColors
       ? outputLox
       : outputLox.colored;
+    // here the box is stringified with unicode boy layouts
+    const box = this.getBoxString(outputLox.box, !this._config?.disableColors);
     const str = moduleText + box + message + timeText;
     outputLox.item ? console.log(str, outputLox.item) : console.log(str);
   }
@@ -365,9 +367,11 @@ private devErrorOut(errorLox: ErrorLox) {
   if (this._callbacks?.devError) {
     this._callbacks.devError(errorLox);
   } else {
-    const { message, box, moduleText, timeText } = this._config?.disableColors
+    const { message, moduleText, timeText } = this._config?.disableColors
       ? errorLox
       : errorLox.colored;
+    // here the box is stringified with unicode boy layouts
+    const box = this.getBoxString(errorLox.box, !this._config?.disableColors);
     const msg = moduleText + box + message + timeText;
     const stack =
       errorLox.highlighted && errorLox.error.stack
@@ -412,7 +416,7 @@ If an open box is to be closed, or further logs / errors are to be added, the `L
 
 **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but logged anyways with a Warning
 
-###### Assigning / closing a box - [`Loxer.of()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#of)
+###### Assigning / closing a box - [`Loxer.of()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#of):
 ```typescript
 const id = Loxer.m().open('This is the opening log');
 Loxer.of(id).add('this is a single added log');
@@ -423,3 +427,32 @@ Loxer.of(id).close('this is the closing log');
 > - When using `Loxer.of()`, `.level()` and `.module()` do not necessarily have to be specified again, since `.of()` automatically uses the values of the opening log as default.
 > - Otherwise, `.level()` can be chained **before** the `.of`.
 > - It is not possible to specify a different `.module()`, since **always** the module of the opening log is used!
+
+### The Box Layout
+The box layout which is output to the console by default consists of unicode box drawing characters. For this purpose, during the processing of the log, it is determined which row of characters belongs to a log. In addition, the characters are assigned the colors of the respective modules. The resulting list is then added to the log as a property. This list can then be evaluated.
+
+The following is an example of how the box layout is processed internally for the default console output:
+
+###### Getting the box as a colored string: 
+```typescript
+private getBoxString(box: Box, colored: boolean | undefined) {
+  return box
+    .map(segment => {
+      // this happens when there is empty space behind a box line
+      if (segment === 'empty') { return ' '; } 
+      else if (colored) {
+        return (
+          // this function converts the HEX or RGB string to ANSI-Code 
+          getServiceColor(segment.color) +
+          BoxLayouts[this._config.boxLayoutStyle!][segment.box] +
+          ANSI_CODE.Reset
+        );
+      } else {
+        return BoxLayouts[this._config.boxLayoutStyle!][segment.box];
+      }
+    })
+    .join('');
+}
+```
+
+The BoxLayouts are a collection of unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/). This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). You are free to set own symbols for the personal output streams.

@@ -1,6 +1,6 @@
 import Color from 'color';
 
-export interface BoxLayout {
+export interface BoxSymbol {
   openEnd: string;
   openEdge: string;
   vertical: string;
@@ -10,8 +10,10 @@ export interface BoxLayout {
   closeEdge: string;
   closeEnd: string;
 }
-export type BoxLayoutStyleType = 'round' | 'light' | 'heavy' | 'double' | 'off';
-export type BoxLayoutsType = { [id in BoxLayoutStyleType]: BoxLayout };
+export type BoxSegment = { box: keyof BoxSymbol; color: string };
+export type Box = (BoxSegment | 'empty')[];
+export type BoxLayoutStyle = 'round' | 'light' | 'heavy' | 'double' | 'off';
+export type BoxLayoutCollection = { [id in BoxLayoutStyle]: BoxSymbol };
 
 // ANSI CODE
 
@@ -27,7 +29,7 @@ export const ANSI_CODE = {
 };
 
 /** @internal */
-export const BoxLayouts: BoxLayoutsType = {
+export const BoxLayouts: BoxLayoutCollection = {
   round: {
     openEnd: '\u2190',
     closeEnd: '\u2192',
@@ -87,7 +89,7 @@ export function fCol(r: number, g: number, b: number): string {
   return `\x1b[38;2;${r.toString()};${g.toString()};${b.toString()}m`;
 }
 
-/** @internal backgroundcolor */
+/** @internal background color */
 export function bCol(r: number, g: number, b: number): string {
   return `\x1b[48;2;${r.toString()};${g.toString()};${b.toString()}m`;
 }

@@ -1,5 +1,6 @@
 import {
   ANSI_CODE,
+  Box,
   BoxLayouts,
   closeLogColor,
   getServiceColor,
@@ -401,7 +402,7 @@ class LoxerInstance implements LoxerType {
     const errorLox = new ErrorLox(lox, error, coloredMessage);
 
     errorLox.setModuleText(this.getModuleText(errorLox));
-    errorLox.setBox(this.getOfLogBox(errorLox));
+    errorLox.box = this.getOfLogBox(errorLox);
     const openLoxes = filterDef(this._openLoxIdBuffer).map(
       openLogId => this._loxes[openLogId]
     );
@@ -417,9 +418,10 @@ class LoxerInstance implements LoxerType {
     if (this._callbacks?.devError) {
       this._callbacks.devError(errorLox);
     } else {
-      const { message, box, moduleText, timeText } = this._config?.disableColors
+      const { message, moduleText, timeText } = this._config?.disableColors
         ? errorLox
         : errorLox.colored;
+      const box = this.getBoxString(errorLox.box, !this._config?.disableColors);
       const msg = moduleText + box + message + timeText;
       const stack =
         errorLox.highlighted && errorLox.error.stack
@@ -449,9 +451,13 @@ class LoxerInstance implements LoxerType {
       this._callbacks.devLog(outputLox);
     } else {
       // colored option
-      const { box, message, moduleText, timeText } = this._config?.disableColors
+      const { message, moduleText, timeText } = this._config?.disableColors
         ? outputLox
         : outputLox.colored;
+      const box = this.getBoxString(
+        outputLox.box,
+        !this._config?.disableColors
+      );
       const str = moduleText + box + message + timeText;
       outputLox.item ? console.log(str, outputLox.item) : console.log(str);
     }
@@ -476,16 +482,16 @@ class LoxerInstance implements LoxerType {
     if (!outputLox.hidden) {
       switch (lox.type) {
         case 'open':
-          outputLox.setBox(this.getOpenLogBox(lox));
+          outputLox.box = this.getOpenLogBox(lox);
           break;
         case 'close':
-          outputLox.setBox(this.getOfLogBox(lox));
+          outputLox.box = this.getOfLogBox(lox);
           outputLox.colored.message = this._highlighted
             ? coloredMessage
             : closeLogColor(lox.message);
           break;
         case 'single':
-          outputLox.setBox(this.getOfLogBox(lox));
+          outputLox.box = this.getOfLogBox(lox);
       }
     }
 
@@ -529,7 +535,7 @@ class LoxerInstance implements LoxerType {
     return { moduleText, coloredModuleText };
   }
 
-  private getModuleColor(loxId: number | undefined) {
+  private getLoxColor(loxId: number | undefined): string {
     if (!is(loxId)) {
       return '';
     }
@@ -537,109 +543,113 @@ class LoxerInstance implements LoxerType {
     if (!is(loxLog) || !is(loxLog?.moduleId)) {
       return '';
     }
-    const module = this._modules[loxLog.moduleId];
+
+    return this.getModuleColor(loxLog.moduleId);
+  }
+
+  private getModuleColor(moduleId: string): string {
+    const module = this._modules[moduleId];
     if (!is(module) || !is(module.color)) {
       return '';
     }
 
-    return getServiceColor(module.color);
+    return module.color;
   }
 
   // boxes ##################################################################
 
-  private getOpenLogBox(lox: Lox) {
+  private getOpenLogBox(lox: Lox): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
-      return { box: '', cBox: '' };
+      return [];
     }
-    const color = this._modules[lox.moduleId]?.color ?? '';
-    const mColor = getServiceColor(color);
-    let box = '';
-    let cBox = '';
+    const box: Box = [];
+    const color = this.getModuleColor(lox.moduleId);
     // print the depth before the start
     for (const openLoxId of this._openLoxIdBuffer) {
       if (openLoxId === lox.id) {
         break;
       }
-      const itemColor = this.getModuleColor(openLoxId);
-      cBox += openLoxId
-        ? itemColor +
-          BoxLayouts[this._config.boxLayoutStyle!].vertical +
-          ANSI_CODE.Reset
-        : ' ';
-      box += openLoxId
-        ? BoxLayouts[this._config.boxLayoutStyle!].vertical
-        : ' ';
+      box.push(
+        openLoxId
+          ? { box: 'vertical', color: this.getLoxColor(openLoxId) }
+          : 'empty'
+      );
     }
     // print the start of the box
-    cBox +=
-      mColor +
-      BoxLayouts[this._config.boxLayoutStyle!].openEdge +
-      BoxLayouts[this._config.boxLayoutStyle!].openEnd +
-      ANSI_CODE.Reset +
-      ' ';
-    box +=
-      BoxLayouts[this._config.boxLayoutStyle!].openEdge +
-      BoxLayouts[this._config.boxLayoutStyle!].openEnd +
-      ' ';
+    box.push({ box: 'openEdge', color });
+    box.push({ box: 'openEnd', color });
 
-    return { box, cBox };
+    return box;
   }
 
-  private getOfLogBox(lox: Lox) {
+  private getOfLogBox(lox: Lox): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
-      return { box: '', cBox: '' };
+      return [];
     }
-    const color = this._modules[lox.moduleId]?.color ?? '';
-    const mColor = getServiceColor(color);
-    let cBox = '';
-    let box = '';
+    const box: Box = [];
+    const color = this.getModuleColor(lox.moduleId);
     let found = false;
-    for (const openLoxLogId of this._openLoxIdBuffer) {
-      const itemColor = this.getModuleColor(openLoxLogId);
+    for (const id of this._openLoxIdBuffer) {
+      const itemColor = this.getLoxColor(id);
       if (!found) {
-        if (openLoxLogId !== lox.id) {
+        if (id !== lox.id) {
           // print depth before occurrence
-          cBox += openLoxLogId
-            ? itemColor +
-              BoxLayouts[this._config.boxLayoutStyle!].vertical +
-              ANSI_CODE.Reset
-            : ' ';
-          box += openLoxLogId
-            ? BoxLayouts[this._config.boxLayoutStyle!].vertical
-            : ' ';
+          box.push(
+            id
+              ? {
+                  box: 'vertical',
+                  color: itemColor,
+                }
+              : 'empty'
+          );
         } else {
           // print occurrence
-          const occ =
-            lox.type === 'close'
-              ? BoxLayouts[this._config.boxLayoutStyle!].closeEdge
-              : BoxLayouts[this._config.boxLayoutStyle!].single;
-          cBox += mColor + occ + ANSI_CODE.Reset;
-          box += occ;
+          box.push({
+            box: lox.type === 'close' ? 'closeEdge' : 'single',
+            color,
+          });
           found = true;
         }
       } else {
         // print depth after occurrence
-        cBox += openLoxLogId
-          ? itemColor +
-            BoxLayouts[this._config.boxLayoutStyle!].cross +
-            ANSI_CODE.Reset
-          : mColor +
-            BoxLayouts[this._config.boxLayoutStyle!].horizontal +
-            ANSI_CODE.Reset;
-        box += openLoxLogId
-          ? BoxLayouts[this._config.boxLayoutStyle!].cross
-          : BoxLayouts[this._config.boxLayoutStyle!].horizontal;
+        box.push(
+          id
+            ? {
+                box: 'cross',
+                color: itemColor,
+              }
+            : {
+                box: 'horizontal',
+                color,
+              }
+        );
       }
     }
     // print line end
-    const end =
-      lox.type === 'close'
-        ? BoxLayouts[this._config.boxLayoutStyle!].closeEnd
-        : BoxLayouts[this._config.boxLayoutStyle!].horizontal;
-    cBox += mColor + end + ANSI_CODE.Reset + ' ';
-    box += end + ' ';
+    box.push({
+      box: lox.type === 'close' ? 'closeEnd' : 'horizontal',
+      color,
+    });
 
-    return { cBox, box };
+    return box;
+  }
+
+  private getBoxString(box: Box, colored: boolean | undefined) {
+    return box
+      .map(segment => {
+        if (segment === 'empty') {
+          return ' ';
+        } else if (colored) {
+          return (
+            getServiceColor(segment.color) +
+            BoxLayouts[this._config.boxLayoutStyle!][segment.box] +
+            ANSI_CODE.Reset
+          );
+        } else {
+          return BoxLayouts[this._config.boxLayoutStyle!][segment.box];
+        }
+      })
+      .join('');
   }
 }
 

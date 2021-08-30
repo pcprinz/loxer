@@ -1,3 +1,4 @@
+import { Box } from '../ColorCode';
 import { Lox } from './Lox';
 /** @module OutputLox */
 
@@ -7,8 +8,11 @@ export class OutputLox extends Lox {
    * - is `''` if no module (`NONE`) or the default module (`DEFAULT`) was given
    */
   moduleText: string | '' = '';
-  /** the box layout of the log */
-  box: string | '' = '';
+  /** the box layout of the log which an array of `type { box: keyof BoxSymbol; color: string }`, where:
+   * - `keyof BoxSymbol` is a string which represents the form of the box segment (character)
+   * - `color` is the string color of the box segment (represents the corresponding module color)
+   */
+  box: Box = [];
   /** a string that represents the time consumption from the opening log's `timestamp` until this log appeared
    * - is `''` when the log is a single `Loxer.log()` or an opening log itself
    */
@@ -18,16 +22,16 @@ export class OutputLox extends Lox {
    */
   timeConsumption: number | undefined;
   /**
-   * The colored versions of the log's `message`, `moduleText`, `box` and `timeText`
+   * The colored versions of the log's `message`, `moduleText` and `timeText`
    * - the coloring is done by wrapping the strings in {@link https://talyian.github.io/ansicolors/ ANSI Color Codes}
-   * - some consoles / platforms don't support the `\x1b[m` color codes. in that case it's reccommended to use the
-   *   uncolored strings
+   * - some consoles / platforms don't support the `\x1b[m` color codes. in that case it's recommended to use the
+   *   uncolored strings (the color is the module color)
    *
    * You can easily switch between colored / uncolored versions like that:
    *
    * ```typescript
    * const useColored = true; // switch here
-   * const { box, message, moduleText, timeText } = useColored ? outputLox.colored : outputlox;
+   * const { message, moduleText, timeText } = useColored ? outputLox.colored : outputlox;
    * ```
    *
    * This is possible because the keys are named exactly the same. Loxer internally
@@ -35,19 +39,17 @@ export class OutputLox extends Lox {
   colored: {
     message: string;
     moduleText: string | '';
-    box: string | '';
     timeText: string | '';
   };
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
 
   /** @internal */
-  constructor(prelog: Lox, coloredMessage: string) {
-    super(prelog);
+  constructor(preLog: Lox, coloredMessage: string) {
+    super(preLog);
     this.colored = {
       message: coloredMessage,
       moduleText: '',
-      box: '',
       timeText: '',
     };
   }
@@ -67,11 +69,5 @@ export class OutputLox extends Lox {
   setModuleText(texts: { moduleText: string; coloredModuleText: string }) {
     this.moduleText = texts.moduleText;
     this.colored.moduleText = texts.coloredModuleText;
-  }
-
-  /** @internal */
-  setBox(boxes: { box: string; cBox: string }) {
-    this.box = boxes.box;
-    this.colored.box = boxes.cBox;
   }
 }
