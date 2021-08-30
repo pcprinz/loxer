@@ -366,12 +366,14 @@
 						<pre><code class="language-typescript"><span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">log</span><span style="color: #000000">(...)</span>
 <span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">open</span><span style="color: #000000">(...)</span>
 <span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">of</span><span style="color: #000000">(...)</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">error</span><span style="color: #000000">(...)</span>
 </code></pre>
 						<ul>
 							<li>by default the <code>foregroundColor</code> and <code>backgroundColor</code> of the log will be inverted.</li>
 							<li>a different highlight color can be set at <a href="Loxer.LoxerConfig.html#highlightColor">LoxerConfig.highlightColor</a> in the <a href="Loxer.LoxerOptions.html#config">LoxerOptions.config</a> declared in <code>Loxer.init(options)</code></li>
 							<li>the parameter <code>doit?: boolean</code> can conditionally highlight the log with <code>true</code></li>
 							<li>this function can be chained with any other chaining function like <code>.level(...)</code> or <code>.module(...)</code></li>
+							<li>highlighting error logs does not color the message differently but append the stack to the default console output</li>
 						</ul>
 						<hr>
 					</div>
@@ -637,8 +639,10 @@
 								<li>a history of logs will be appended if enabled</li>
 								<li>can be chained with <code>.module().error(...)</code> or <code>.m().error(...)</code> to assign a module to the error - otherwise
 								it&#39;s <code>NONE</code></li>
-								<li>chaining with <code>.highlight().error(...)</code> or <code>.h().error(...)</code> or <code>.level().error(...)</code> or <code>.l().error(...)</code> will
-								not take any effect on the error log (except that <code>level</code> and <code>highlighted</code> will be attributes of the output)</li>
+								<li>chaining with <code>.highlight().error(...)</code> or <code>.h().error(...)</code> does not color the message differently but append
+								the stack to the default console output</li>
+								<li>chaining with <code>.level().error(...)</code> or <code>.l().error(...)</code> will
+								not take any effect on the error log (except that <code>level</code> will be a property of the output)</li>
 							</ul>
 							<hr>
 						</div>
@@ -751,7 +755,7 @@
 							<li><code>add: (message: string, item?: any)</code> - assigns a single log to the box</li>
 							<li><code>error: (error?: Error | string)</code> - assigns an error log to the box</li>
 							<li><code>close: (message: string, item?: any)</code> - assigns a log to the box, that also closes the box (and its box layout)</li>
-							<li><strong>ATTENTION</strong>: calling <code>add()</code>, <code>error()</code> or <code>close()</code> after closing the box will not be appended to the box but
+							<li><strong>ATTENTION</strong>: calling <code>add()</code>, <code>error()</code> or <code>close()</code> after closing the box, the log will not be appended to the box but
 							logged anyways with a Warning</li>
 						</ul>
 						<hr>

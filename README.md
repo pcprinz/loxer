@@ -3,7 +3,7 @@ Logger, Tracer, Error detector, dataflow visualizer
 
 ![Loxer_Logo](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png)
 
-### [Documentation](https://pcprinz.github.io/loxer/guide/index.md)
+### [Documentation](https://github.com/pcprinz/loxer/blob/master/guide/index.md)
 ### [API Reference](https://pcprinz.github.io/loxer/index.html)
 
 ## Installation 
@@ -24,7 +24,7 @@ This package is still under construction, so consider it as *alpha*. The API wil
 - generate rich errors with a log history, open boxes and more
 - use decorators for tracing
   
-These features are already covered in the [Documentation](https://pcprinz.github.io/loxer/guide/index.md) and [API Reference](https://pcprinz.github.io/loxer/index.html).
+These features are already covered in the [Documentation](https://github.com/pcprinz/loxer/blob/master/guide/index.md) and [API Reference](https://pcprinz.github.io/loxer/index.html).
 
 ## Soon
 - The documentation will get improved 

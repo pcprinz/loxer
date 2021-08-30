@@ -85,35 +85,43 @@
 				</a>
 				<p>Logger, Tracer, Error detector, dataflow visualizer</p>
 				<p><img src="https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png" alt="Loxer_Logo"></p>
-				<p>Take a look at the <a href="https://pcprinz.github.io/loxer/index.html">API Reference</a></p>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h3><a href="https://github.com/pcprinz/loxer/blob/master/guide/index.md">Documentation</a></h3>
+				</a>
+				<a href="#api-reference" id="api-reference" style="color: inherit; text-decoration: none;">
+					<h3><a href="https://pcprinz.github.io/loxer/index.html">API Reference</a></h3>
+				</a>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<p><code>npm i --save loxer</code> or <code>yarn add loxer</code> thats it.</p>
 				<a href="#work-in-progress" id="work-in-progress" style="color: inherit; text-decoration: none;">
 					<h2>Work in progress</h2>
 				</a>
-				<p>Loxer will be an advanced Logger, where you (currently) can:</p>
+				<p>This package is still under construction, so consider it as <em>alpha</em>. The API will probaby change until the Playground is ready and a missing feature (Catch-Guardian) is done. This hopefully won&#39;t take too long (weeks). After that the package will stay in <em>beta</em> until everything is covered in tests. Therefore the API won&#39;T change anymore (hopefully). Nevertheless, everything seems to work at this moment, though the package is already in production usage.</p>
+				<a href="#what-you-get" id="what-you-get" style="color: inherit; text-decoration: none;">
+					<h2>What you get</h2>
+				</a>
 				<ul>
 					<li>use levels to switch logs on / off dependent on their importance</li>
 					<li>categorize logs in modules</li>
-					<li>switch the output stream(s) to whatever you want dependent on the environment, as well as tha type of logs</li>
+					<li>switch the output stream(s) to whatever you want dependent on the environment, as well as the type of logs</li>
 					<li>relate logs together and build boxes, that can be opened and closed</li>
 					<li>append logs to boxes</li>
-					<li>draw boxes with the ansi box layout</li>
+					<li>draw boxes with the unicode box layout</li>
 					<li>trace the time consumption for boxed logs</li>
 					<li>generate rich errors with a log history, open boxes and more</li>
 					<li>use decorators for tracing</li>
 				</ul>
-				<p>This all should already work (as alpha) and is documented as tsdoc so you can either grab through the <code>src/types.ts</code>, just add the project and see what it is exporting, or wait until the page is ready to go.</p>
+				<p>These features are already covered in the <a href="https://github.com/pcprinz/loxer/blob/master/guide/index.md">Documentation</a> and <a href="https://pcprinz.github.io/loxer/index.html">API Reference</a>.</p>
 				<a href="#soon" id="soon" style="color: inherit; text-decoration: none;">
 					<h2>Soon</h2>
 				</a>
 				<ul>
-					<li>There will be a documentation / guide.</li>
+					<li>The documentation will get improved </li>
 					<li>There will be tests to verify the functionality of the existing code</li>
 					<li>There will be a playground to demonstrate everything</li>
-					<li>There will also be a try catch guardian (Decorator?), that will handle error recovery mechanisms like &#39;retry&#39;, &#39;replace&#39; and &#39;resume&#39;
-						<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
-							<h2>Installation</h2>
-						</a>
-					<code>npm i --save loxer</code> or <code>yarn add loxer</code> thats it.</li>
+					<li>There will also be a try catch guardian (Decorator?), that will handle error recovery mechanisms like &#39;retry&#39;, &#39;replace&#39; and &#39;resume&#39;</li>
 				</ul>
 				<a href="#deps" id="deps" style="color: inherit; text-decoration: none;">
 					<h2>Deps</h2>

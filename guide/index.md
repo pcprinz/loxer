@@ -1,5 +1,5 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
+# Documentation
+- [Documentation](#documentation)
 - [Overview](#overview)
 - [1. Initialization - `Loxer.init()`](#1-initialization---loxerinit)
 - [2. Simple logs - `Loxer.log()`](#2-simple-logs---loxerlog)
