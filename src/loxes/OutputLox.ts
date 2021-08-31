@@ -55,11 +55,7 @@ export class OutputLox extends Lox {
   }
 
   /** @internal */
-  setTime(times: {
-    timeText: string;
-    coloredTimeText: string;
-    timeConsumption?: number;
-  }) {
+  setTime(times: { timeText: string; coloredTimeText: string; timeConsumption?: number }) {
     this.timeText = times.timeText;
     this.colored.timeText = times.coloredTimeText;
     this.timeConsumption = times.timeConsumption;

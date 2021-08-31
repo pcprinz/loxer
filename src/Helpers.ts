@@ -28,33 +28,25 @@ export function filterDef<T extends any>(list: (T | undefined)[]): T[] {
 export function isError(arg: any): arg is Error {
   return (
     is(arg) &&
-    (typeof arg === 'function' ||
-      arg instanceof Error ||
-      arg instanceof Function) &&
+    (typeof arg === 'function' || arg instanceof Error || arg instanceof Function) &&
     isString(arg.name) &&
     isString(arg.message)
   );
 }
 
 /** @internal */
-export function ensureError(
-  error: Error | string | number | boolean | object
-): Error {
+export function ensureError(error: Error | string | number | boolean | object): Error {
   let result;
   if (isError(error)) {
     result = error;
-    result.stack = result.stack
-      ? eraseBeginningLines(result.stack, 1)
-      : undefined;
+    result.stack = result.stack ? eraseBeginningLines(result.stack, 1) : undefined;
   } else {
     if (typeof error === 'object') {
       result = new Error(JSON.stringify(error));
     } else {
       result = new Error(error.toString());
     }
-    result.stack = result.stack
-      ? eraseBeginningLines(result.stack, 4)
-      : undefined;
+    result.stack = result.stack ? eraseBeginningLines(result.stack, 4) : undefined;
   }
 
   return result;

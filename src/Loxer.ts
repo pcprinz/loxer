@@ -63,22 +63,18 @@ class LoxerInstance implements LoxerType {
     if (is(props?.dev)) {
       this._dev = props!.dev;
     } else {
-      this._dev = isNES(process.env.NODE_ENV)
-        ? 'development' === process.env.NODE_ENV
-        : false;
+      this._dev = isNES(process.env.NODE_ENV) ? 'development' === process.env.NODE_ENV : false;
     }
     if (props?.config?.disabled) {
       this._disabled = true;
     } else {
-      this._disabled = props?.config?.disabledInProductionMode
-        ? !this._dev
-        : false;
+      this._disabled = props?.config?.disabledInProductionMode ? !this._dev : false;
     }
     if (props?.defaultLevels) {
-      DEFAULT_MODULES[0].develLevel = props?.defaultLevels.develLevel;
-      DEFAULT_MODULES[1].develLevel = props?.defaultLevels.develLevel;
-      DEFAULT_MODULES[0].prodLevel = props?.defaultLevels.prodLevel;
-      DEFAULT_MODULES[1].prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES['NONE'].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES['DEFAULT'].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES['NONE'].prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES['DEFAULT'].prodLevel = props?.defaultLevels.prodLevel;
     }
     this._modules = {
       ...DEFAULT_MODULES,
@@ -90,10 +86,9 @@ class LoxerInstance implements LoxerType {
     this._config.endTitleOpacity = c?.endTitleOpacity ?? 0;
     this._config.boxLayoutStyle = c?.boxLayoutStyle ?? 'round';
     this._config.highlightColor = c?.highlightColor;
-    this._config.disableColors = is(c?.disableColors)
-      ? c?.disableColors
-      : false;
+    this._config.disableColors = is(c?.disableColors) ? c?.disableColors : false;
     this._config.historyCacheSize = c?.historyCacheSize ?? 0;
+    this._hasHistory = (c?.historyCacheSize ?? 0) > 0;
 
     this.highlight().log('Loxer initialized');
     this.dequeueLoxes();
@@ -285,13 +280,7 @@ class LoxerInstance implements LoxerType {
           this._loxes[openLox.id] = undefined;
         },
         error: (error: ErrorType, item?: any) => {
-          this.internalError(
-            error,
-            openLox.id,
-            this._loxes[openLox.id]?.moduleId,
-            undefined,
-            item
-          );
+          this.internalError(error, openLox.id, this._loxes[openLox.id]?.moduleId, undefined, item);
         },
       };
     }
@@ -301,9 +290,7 @@ class LoxerInstance implements LoxerType {
     const { id, moduleId, level } = openLox;
     // close level must be open level + added logs must not have a lower level, though the open box could possibly not exist
     const fixedLevel =
-      type === 'single'
-        ? (Math.max(level, this._level ?? level) as LogLevelType)
-        : level;
+      type === 'single' ? (Math.max(level, this._level ?? level) as LogLevelType) : level;
     this.switchOutput(
       new Lox({
         id,
@@ -363,10 +350,9 @@ class LoxerInstance implements LoxerType {
   // history ################################################################
   // LIFO (reversed stack)
   private _history: (OutputLox | ErrorLox)[] = [];
+  private _hasHistory: boolean = false;
   private addToHistory(lox: OutputLox | ErrorLox) {
-    if ((this._config?.historyCacheSize ?? 0) > 0) {
-      this._history = [lox, ...this._history.slice(0, -1)];
-    }
+    this._history = [lox, ...this._history.slice(0, -1)];
   }
   get history(): (OutputLox | ErrorLox)[] {
     return this._history;
@@ -382,13 +368,13 @@ class LoxerInstance implements LoxerType {
       this.enqueueLox(lox);
     } else if (lox.type === 'error') {
       const errorLox = this.generateErrorLox(lox, error!);
-      this.addToHistory(errorLox);
+      this._hasHistory && this.addToHistory(errorLox);
       this._dev ? this.devErrorOut(errorLox) : this.prodErrorOut(errorLox);
     } else {
       const outputLox = this.generateOutputLox(lox);
       if (!outputLox.hidden) {
         this.addToBuffer(lox);
-        this.addToHistory(outputLox);
+        this._hasHistory && this.addToHistory(outputLox);
         this._dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
         this.removeFromBuffer(lox);
       }
@@ -397,15 +383,12 @@ class LoxerInstance implements LoxerType {
 
   private generateErrorLox(lox: Lox, error: Error): ErrorLox {
     const errorName = isError(error) ? error.name : 'Error';
-    const coloredMessage =
-      warnBackgroundColor(errorName) + ': ' + warnColor(lox.message);
+    const coloredMessage = warnBackgroundColor(errorName) + ': ' + warnColor(lox.message);
     const errorLox = new ErrorLox(lox, error, coloredMessage);
 
     errorLox.setModuleText(this.getModuleText(errorLox));
     errorLox.box = this.getOfLogBox(errorLox);
-    const openLoxes = filterDef(this._openLoxIdBuffer).map(
-      openLogId => this._loxes[openLogId]
-    );
+    const openLoxes = filterDef(this._openLoxIdBuffer).map(openLogId => this._loxes[openLogId]);
     errorLox.openLoxes = filterDef(openLoxes).map(errorLoxLog =>
       this.generateOutputLox(errorLoxLog)
     );
@@ -423,15 +406,10 @@ class LoxerInstance implements LoxerType {
         : errorLox.colored;
       const box = this.getBoxString(errorLox.box, !this._config?.disableColors);
       const msg = moduleText + box + message + timeText;
-      const stack =
-        errorLox.highlighted && errorLox.error.stack
-          ? errorLox.error.stack
-          : '';
+      const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
       const openLogs =
         errorLox.highlighted && errorLox.openLoxes.length > 0
-          ? `\nOPEN_LOGS: [${errorLox.openLoxes
-              .map(outputLox => outputLox.message)
-              .join(' <> ')}]`
+          ? `\nOPEN_LOGS: [${errorLox.openLoxes.map(outputLox => outputLox.message).join(' <> ')}]`
           : '';
 
       errorLox.item
@@ -454,10 +432,7 @@ class LoxerInstance implements LoxerType {
       const { message, moduleText, timeText } = this._config?.disableColors
         ? outputLox
         : outputLox.colored;
-      const box = this.getBoxString(
-        outputLox.box,
-        !this._config?.disableColors
-      );
+      const box = this.getBoxString(outputLox.box, !this._config?.disableColors);
       const str = moduleText + box + message + timeText;
       outputLox.item ? console.log(str, outputLox.item) : console.log(str);
     }
@@ -503,8 +478,7 @@ class LoxerInstance implements LoxerType {
     if (log.type === 'open' || !is(openLox)) {
       return { coloredTimeText: '', timeText: '' };
     }
-    const timeConsumption =
-      log.timestamp.getTime() - openLox.timestamp.getTime();
+    const timeConsumption = log.timestamp.getTime() - openLox.timestamp.getTime();
     const timeText = '   [' + timeConsumption.toString() + 'ms]';
     const coloredTimeText = timeColor(timeText);
 
@@ -517,14 +491,12 @@ class LoxerInstance implements LoxerType {
       lox.moduleId = 'INVALID';
       module = this._modules.INVALID;
     }
-    const opacity =
-      lox.type !== 'close' ? 1 : this._config.endTitleOpacity ?? 0;
+    const opacity = lox.type !== 'close' ? 1 : this._config.endTitleOpacity ?? 0;
     let moduleText =
       module.fullname.length > 0 && opacity > 0
         ? module.fullname.slice(0, this._config.moduleTextSlice) + ': '
         : '';
-    const moduleTextLength =
-      lox.moduleId === 'NONE' ? 0 : this._config.moduleTextSlice! + 2;
+    const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._config.moduleTextSlice! + 2;
     for (let i = moduleText.length; i < moduleTextLength; i++) {
       moduleText += ' ';
     }
@@ -549,11 +521,8 @@ class LoxerInstance implements LoxerType {
 
   private getModuleColor(moduleId: string): string {
     const module = this._modules[moduleId];
-    if (!is(module) || !is(module.color)) {
-      return '';
-    }
 
-    return module.color;
+    return is(module) && is(module.color) ? module.color : '';
   }
 
   // boxes ##################################################################
@@ -569,11 +538,7 @@ class LoxerInstance implements LoxerType {
       if (openLoxId === lox.id) {
         break;
       }
-      box.push(
-        openLoxId
-          ? { box: 'vertical', color: this.getLoxColor(openLoxId) }
-          : 'empty'
-      );
+      box.push(openLoxId ? { box: 'vertical', color: this.getLoxColor(openLoxId) } : 'empty');
     }
     // print the start of the box
     box.push({ box: 'openEdge', color });
@@ -594,62 +559,41 @@ class LoxerInstance implements LoxerType {
       if (!found) {
         if (id !== lox.id) {
           // print depth before occurrence
-          box.push(
-            id
-              ? {
-                  box: 'vertical',
-                  color: itemColor,
-                }
-              : 'empty'
-          );
+          box.push(id ? { box: 'vertical', color: itemColor } : 'empty');
         } else {
           // print occurrence
-          box.push({
-            box: lox.type === 'close' ? 'closeEdge' : 'single',
-            color,
-          });
+          box.push({ box: lox.type === 'close' ? 'closeEdge' : 'single', color });
           found = true;
         }
       } else {
         // print depth after occurrence
-        box.push(
-          id
-            ? {
-                box: 'cross',
-                color: itemColor,
-              }
-            : {
-                box: 'horizontal',
-                color,
-              }
-        );
+        box.push(id ? { box: 'cross', color: itemColor } : { box: 'horizontal', color });
       }
     }
     // print line end
-    box.push({
-      box: lox.type === 'close' ? 'closeEnd' : 'horizontal',
-      color,
-    });
+    box.push({ box: lox.type === 'close' ? 'closeEnd' : 'horizontal', color });
 
     return box;
   }
 
   private getBoxString(box: Box, colored: boolean | undefined) {
-    return box
-      .map(segment => {
-        if (segment === 'empty') {
-          return ' ';
-        } else if (colored) {
-          return (
-            getServiceColor(segment.color) +
-            BoxLayouts[this._config.boxLayoutStyle!][segment.box] +
-            ANSI_CODE.Reset
-          );
-        } else {
-          return BoxLayouts[this._config.boxLayoutStyle!][segment.box];
-        }
-      })
-      .join('');
+    return (
+      box
+        .map(segment => {
+          if (segment === 'empty') {
+            return ' ';
+          } else if (colored) {
+            return (
+              getServiceColor(segment.color) +
+              BoxLayouts[this._config.boxLayoutStyle!][segment.box] +
+              ANSI_CODE.Reset
+            );
+          } else {
+            return BoxLayouts[this._config.boxLayoutStyle!][segment.box];
+          }
+        })
+        .join('') + ' '
+    );
   }
 }
 
