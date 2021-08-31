@@ -136,7 +136,7 @@ class LoxerInstance implements LoxerType {
     const dl = this._modules[lox.moduleId]?.develLevel ?? 1;
     const pl = this._modules[lox.moduleId]?.prodLevel ?? 1;
 
-    return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level <= pl;
+    return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
   }
 
   // moduleId ###############################################################
