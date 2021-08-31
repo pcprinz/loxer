@@ -3,8 +3,9 @@ Logger, Tracer, Error detector, dataflow visualizer
 
 ![Loxer_Logo](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png)
 
-### [Documentation](https://github.com/pcprinz/loxer/blob/master/guide/index.md)
+### [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md)
 ### [API Reference](https://pcprinz.github.io/loxer/index.html)
+### [Performance Tests](https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md)
 
 ## Installation 
 `npm i --save loxer` or `yarn add loxer` thats it.
@@ -24,7 +25,7 @@ This package is still under construction, so consider it as *alpha*. The API wil
 - generate rich errors with a log history, open boxes and more
 - use decorators for tracing
   
-These features are already covered in the [Documentation](https://github.com/pcprinz/loxer/blob/master/guide/index.md) and [API Reference](https://pcprinz.github.io/loxer/index.html).
+These features are already covered in the [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md) and [API Reference](https://pcprinz.github.io/loxer/index.html).
 
 ## Soon
 - The documentation will get improved 

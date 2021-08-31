@@ -352,7 +352,11 @@ class LoxerInstance implements LoxerType {
   private _history: (OutputLox | ErrorLox)[] = [];
   private _hasHistory: boolean = false;
   private addToHistory(lox: OutputLox | ErrorLox) {
-    this._history = [lox, ...this._history.slice(0, -1)];
+    if (lox instanceof ErrorLox) {
+      lox.history = []; // avoid circular structures
+    }
+    this._history.unshift(lox);
+    this._history = this._history.slice(0, this._config.historyCacheSize);
   }
   get history(): (OutputLox | ErrorLox)[] {
     return this._history;
