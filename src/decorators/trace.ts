@@ -69,11 +69,7 @@ export interface TraceOptions {
  * @returns a Decorator for class level methods
  */
 export function trace(options?: TraceOptions | string) {
-  return function(
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const original = descriptor.value;
     const className: string = target.constructor.name;
     const fixedName = className.endsWith('Class')
@@ -133,8 +129,7 @@ function getOpenMessage(
     } else if (om === 'args') {
       openMessage = propertyKey + '(' + args.join(', ') + ')';
     } else if (om === 'types') {
-      openMessage =
-        propertyKey + '(' + args.map(a => typeof a).join(', ') + ')';
+      openMessage = propertyKey + '(' + args.map(a => typeof a).join(', ') + ')';
     } else if (om === 'className.functionName') {
       openMessage = fixedName + '.' + propertyKey + '()';
     }
@@ -156,8 +151,7 @@ function getCloseMessage(
     } else if (cm === 'result') {
       closeMessage = propertyKey + ' done. returns: ' + JSON.stringify(result);
     } else if (cm === 'prettyResult') {
-      closeMessage =
-        propertyKey + ' done. returns: \n' + JSON.stringify(result, null, ' ');
+      closeMessage = propertyKey + ' done. returns: \n' + JSON.stringify(result, null, ' ');
     } else if (cm === 'className.functionName') {
       closeMessage = fixedName + '.' + propertyKey + ' done';
     }

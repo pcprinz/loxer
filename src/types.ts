@@ -204,9 +204,8 @@ export interface Loxer {
   /** ## Get the History of all log types
    * This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.
    * - is a reversed stack, so that the most recent element is at `history[0]`
-   * - the size of the history **must be provided** at the {@link LoxerConfig.historyCacheSize} in the
-   *   {@link LoxerOptions.config} declared in `Loxer.init(options)` though it **defaults to `0`** for
-   *   Performance-reasons
+   * - the size of the history can be set at the {@link LoxerConfig.historyCacheSize} in the
+   *   {@link LoxerOptions.config} declared in `Loxer.init(options)`. It defaults to `50`.
    * - if the history is enabled it will also be appended to the error logs in the `errorOut` callback
    */
   history: (OutputLox | ErrorLox)[];
@@ -412,7 +411,7 @@ export interface LoxerConfig {
   /** determines how many output- / error logs shall be cached in the history.
    * - is accessable with `Loxer.history`
    * - will be additionally appended to error outputs
-   * - **defaults to `0`**
+   * - **defaults to `50`**
    */
   historyCacheSize?: number;
 }

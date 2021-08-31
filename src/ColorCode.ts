@@ -100,11 +100,7 @@ export function highlightColor(text: string, color?: string): string {
     const rgb = Color(color);
 
     return (
-      bCol(
-        Math.round(rgb.red()),
-        Math.round(rgb.green()),
-        Math.round(rgb.blue())
-      ) +
+      bCol(Math.round(rgb.red()), Math.round(rgb.green()), Math.round(rgb.blue())) +
       text +
       ANSI_CODE.Reset
     );

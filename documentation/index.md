@@ -333,8 +333,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
 
 ### History
 The history, which is attached to the `ErrorLox`, can also be accessed directly with [`Loxer.history`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#history). It is an inverted stack, which means that the most recent log is at `history [0]`. Only those logs / errors are recorded in the history, which (depending on the levels) are also directed into the output stream.
-
-**IMPORTANT**: In the default case, the history is always empty for performance reasons. To "activate" it, its size must be specified as [`options.config.historyCacheSize`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#historyCacheSize) in the`Loxer.init (options)`.
+The size of the history can be set with [`options.config.historyCacheSize`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#historyCacheSize) in the`Loxer.init (options)`. By default it is `50`.
 
 > The history can be used if a user wants to send feedback on the behavior of the application. For this, however, the production levels must also be set accordingly.
 
