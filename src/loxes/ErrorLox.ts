@@ -15,8 +15,8 @@ export class ErrorLox extends OutputLox {
   history: (OutputLox | ErrorLox)[] = [];
 
   /** @internal */
-  constructor(prelog: Lox, error: Error, coloredMessage: string) {
-    super(prelog, coloredMessage);
+  constructor(preLox: Lox, error: Error) {
+    super(preLox);
     this.error = error;
   }
 }

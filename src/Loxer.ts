@@ -1,38 +1,17 @@
-import {
-  closeLogColor,
-  highlightColor,
-  timeColor,
-  warnBackgroundColor,
-  warnColor
-} from './ColorCode';
-import {BoxFactory} from './core/BoxFactory';
-import {LoxHistory} from './core/LoxHistory';
-import {Modules} from './core/Modules';
-import {OpenLoxBuffer} from './core/OpenLoxBuffer';
-import {OutputStreams} from './core/OutputStreams';
-import {
-  ensureError,
-  filterDef,
-  is,
-  isError,
-  isNES,
-  isNumber,
-  LoxerError
-} from './Helpers';
-import {ErrorLox} from './loxes/ErrorLox';
-import {Lox, LoxType} from './loxes/Lox';
-import {OutputLox} from './loxes/OutputLox';
-import {
-  ErrorType,
-  LogLevelType,
-  Loxer as LoxerType, LoxerOptions,
-  OfLoxes
-} from './types';
+import { closeLogColor, timeColor, warnBackgroundColor, warnColor } from './ColorCode';
+import { BoxFactory } from './core/BoxFactory';
+import { Loxes } from './core/Loxes';
+import { LoxHistory } from './core/LoxHistory';
+import { Modules } from './core/Modules';
+import { OutputStreams } from './core/OutputStreams';
+import { ensureError, is, isError, isNES, LoxerError } from './Helpers';
+import { ErrorLox } from './loxes/ErrorLox';
+import { Lox, LoxType } from './loxes/Lox';
+import { OutputLox } from './loxes/OutputLox';
+import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
 
-/** @internal */
-export type LoxesType = { [id: number]: Lox | undefined };
 class LoxerInstance implements LoxerType {
-  private _openLoxBuffer = new OpenLoxBuffer();
+  private _loxes = new Loxes();
   private _history = new LoxHistory();
   private _modules: Modules = new Modules();
   private _boxFactory: BoxFactory = new BoxFactory();
@@ -41,7 +20,6 @@ class LoxerInstance implements LoxerType {
   private _initialized: boolean = false;
   private _dev: boolean = false;
   private _disabled: boolean = false;
-  private _loxes: LoxesType = {};
   private _highlightColor: string | undefined;
 
   init(props?: LoxerOptions) {
@@ -66,15 +44,15 @@ class LoxerInstance implements LoxerType {
       moduleTextSlice: config?.moduleTextSlice,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
-    this._boxFactory = new BoxFactory(this._modules, config?.boxLayoutStyle);
+    this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
     this._output = new OutputStreams({
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
-      boxFactory: new BoxFactory(this._modules, config?.boxLayoutStyle),
+      boxFactory: this._boxFactory,
     });
 
     this.highlight().log('Loxer initialized');
-    this.dequeueLoxes();
+    this._loxes.dequeue().forEach(queued => this.switchOutput(queued));
   }
 
   get history() {
@@ -127,15 +105,6 @@ class LoxerInstance implements LoxerType {
     return this;
   }
 
-  // id #####################################################################
-
-  private _runningId: number = -1;
-  private getId(): number {
-    this._runningId = (this._runningId + 1) % Number.MAX_VALUE;
-
-    return this._runningId;
-  }
-
   // log functions ##########################################################
 
   log(message: string = '', item?: any) {
@@ -144,7 +113,7 @@ class LoxerInstance implements LoxerType {
     }
     this.switchOutput(
       new Lox({
-        id: this.getId(),
+        id: undefined,
         highlighted: this._highlighted,
         item,
         level: this._level ?? 1,
@@ -161,7 +130,7 @@ class LoxerInstance implements LoxerType {
 
   private internalError(
     error: ErrorType,
-    logId: number = this.getId(),
+    logId: number | undefined,
     moduleId: string = this._moduleId,
     messagePrefix: string = '',
     item?: any
@@ -185,9 +154,8 @@ class LoxerInstance implements LoxerType {
     if (this._disabled) {
       return 0;
     }
-    const id = this.getId();
     const lox = new Lox({
-      id,
+      id: undefined,
       highlighted: this._highlighted,
       item,
       level: this._level ?? 1,
@@ -195,10 +163,9 @@ class LoxerInstance implements LoxerType {
       moduleId: this._moduleId !== 'NONE' ? this._moduleId : 'DEFAULT',
       type: 'open',
     });
-    this._loxes[id] = lox;
     this.switchOutput(lox);
 
-    return id;
+    return lox.id;
   }
 
   of(id: number): OfLoxes {
@@ -215,7 +182,7 @@ class LoxerInstance implements LoxerType {
         },
       };
     }
-    const openLox = isNumber(id) ? this._loxes[id] : undefined;
+    const openLox = this._loxes.findOpenLox(id);
     if (!is(openLox)) {
       return {
         add: (message: string, item?: any) => {
@@ -253,7 +220,6 @@ class LoxerInstance implements LoxerType {
         },
         close: (message: string, item?: any) => {
           this.appendLox('close', openLox, message, item);
-          this._loxes[openLox.id] = undefined;
         },
         error: (error: ErrorType, item?: any) => {
           this.internalError(error, openLox.id, openLox.moduleId, undefined, item);
@@ -280,19 +246,6 @@ class LoxerInstance implements LoxerType {
     );
   }
 
-  // logs queue #############################################################
-
-  private _pendingLoxQueue: Lox[] = [];
-  private enqueueLox(log: Lox) {
-    this._pendingLoxQueue.push(log);
-  }
-  private dequeueLoxes() {
-    if (!this._disabled) {
-      this._pendingLoxQueue.forEach(log => this.switchOutput(log));
-    }
-    this._pendingLoxQueue = []
-  }
-
   // output #################################################################
 
   private switchOutput(lox: Lox, error?: Error) {
@@ -300,71 +253,67 @@ class LoxerInstance implements LoxerType {
 
     // TODO should errors really be hold back until init?
     if (!this._initialized) {
-      this.enqueueLox(lox);
+      this._loxes.enqueue(lox);
     } else if (lox.type === 'error') {
-      const errorLox = this.generateErrorLox(lox, error!);
+      const errorLox = this.toErrorLox(lox, error!);
       this._history.add(errorLox);
       this._output.errorOut(this._dev, errorLox);
     } else {
-      const outputLox = this.generateOutputLox(lox);
+      const outputLox = this.toOutputLox(lox);
       if (!outputLox.hidden) {
-        this._openLoxBuffer.add(lox);
+        this._loxes.add(outputLox);
         this._history.add(outputLox);
         this._output.logOut(this._dev, outputLox);
-        this._openLoxBuffer.remove(lox);
+        this._loxes.remove(outputLox);
       }
     }
   }
 
-  // styling ################################################################
-
-  private generateErrorLox(lox: Lox, error: Error): ErrorLox {
+  private toErrorLox(lox: Lox, error: Error): ErrorLox {
+    const errorLox = new ErrorLox(lox, error);
+    errorLox.setColor(this._modules.getColor(errorLox.moduleId), this._highlightColor);
     const errorName = isError(error) ? error.name : 'Error';
-    const coloredMessage = warnBackgroundColor(errorName) + ': ' + warnColor(lox.message);
-    const errorLox = new ErrorLox(lox, error, coloredMessage);
+    errorLox.colored.message = warnBackgroundColor(errorName) + ': ' + warnColor(errorLox.message);
 
     errorLox.setModuleText(this._modules.getText(errorLox));
-    errorLox.box = this._boxFactory.getOfLogBox(errorLox, this._loxes, this._openLoxBuffer);
-    const openLoxes = this._openLoxBuffer.definedIds.map(openLogId => this._loxes[openLogId]);
-    errorLox.openLoxes = filterDef(openLoxes).map(errorLoxLog =>
-      this.generateOutputLox(errorLoxLog)
-    );
+    errorLox.box = this._boxFactory.getOfLogBox(errorLox, this._loxes);
+    errorLox.openLoxes = this._loxes.getOpenLoxes();
     errorLox.history = this._history.stack;
 
     return errorLox;
   }
 
-  private generateOutputLox(lox: Lox): OutputLox {
-    let coloredMessage = lox.highlighted
-      ? highlightColor(lox.message, this._highlightColor)
-      : lox.message;
-    const outputLox = new OutputLox(lox, coloredMessage);
-    outputLox.setTime(this.getTimeConsumption(lox));
-    outputLox.setModuleText(this._modules.getText(lox));
-    outputLox.hidden = this._modules.isLogHidden(lox);
+  private toOutputLox(lox: Lox): OutputLox {
+    const outputLox = new OutputLox(lox);
+    outputLox.setColor(this._modules.getColor(outputLox.moduleId), this._highlightColor);
+    outputLox.setTime(this.getTimeConsumption(outputLox));
+    outputLox.setModuleText(this._modules.getText(outputLox));
+    outputLox.hidden = this._modules.isLogHidden(outputLox);
     if (!outputLox.hidden) {
-      switch (lox.type) {
+      switch (outputLox.type) {
         case 'open':
-          outputLox.box = this._boxFactory.getOpenLogBox(lox, this._loxes, this._openLoxBuffer);
+          outputLox.box = this._boxFactory.getOpenLogBox(outputLox, this._loxes);
           break;
         case 'close':
-          outputLox.box = this._boxFactory.getOfLogBox(lox, this._loxes, this._openLoxBuffer);
-          outputLox.colored.message = lox.highlighted ? coloredMessage : closeLogColor(lox.message);
+          outputLox.box = this._boxFactory.getOfLogBox(outputLox, this._loxes);
+          outputLox.colored.message = outputLox.highlighted
+            ? outputLox.colored.message
+            : closeLogColor(outputLox.message);
           break;
         case 'single':
-          outputLox.box = this._boxFactory.getOfLogBox(lox, this._loxes, this._openLoxBuffer);
+          outputLox.box = this._boxFactory.getOfLogBox(outputLox, this._loxes);
       }
     }
 
     return outputLox;
   }
 
-  private getTimeConsumption(log: Lox) {
-    const openLox = this._loxes[log.id];
-    if (log.type === 'open' || !is(openLox)) {
+  private getTimeConsumption(lox: Lox) {
+    const openLox = this._loxes.findOpenLox(lox.id);
+    if (lox.type === 'open' || !is(openLox)) {
       return { coloredTimeText: '', timeText: '' };
     }
-    const timeConsumption = log.timestamp.getTime() - openLox.timestamp.getTime();
+    const timeConsumption = lox.timestamp.getTime() - openLox.timestamp.getTime();
     const timeText = '   [' + timeConsumption.toString() + 'ms]';
     const coloredTimeText = timeColor(timeText);
 

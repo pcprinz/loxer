@@ -8,6 +8,7 @@ interface OutputStreamsProps {
   boxFactory?: BoxFactory;
 }
 
+/** @internal */
 export class OutputStreams {
   private _callbacks: LoxerCallbacks | undefined;
   private _colorsDisabled: boolean;
@@ -19,10 +20,12 @@ export class OutputStreams {
     this._boxFactory = props?.boxFactory ?? new BoxFactory();
   }
 
+  /** @internal **/
   errorOut(dev: boolean, errorLox: ErrorLox) {
     dev ? this.devErrorOut(errorLox) : this.prodErrorOut(errorLox);
   }
 
+  /** @internal **/
   logOut(dev: boolean, outputLox: OutputLox) {
     dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
   }

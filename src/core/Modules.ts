@@ -8,7 +8,7 @@ interface ModulesProps {
   modules?: LoxerModules;
   endTitleOpacity?: number;
   moduleTextSlice?: number;
-  defaultLevels?: LoxerOptions['defaultLevels']
+  defaultLevels?: LoxerOptions['defaultLevels'];
 }
 
 export class Modules {
@@ -18,7 +18,7 @@ export class Modules {
   private _endTitleOpacity: number = 0;
 
   constructor(props?: ModulesProps) {
-    this._dev = props?.dev ?? true;    
+    this._dev = props?.dev ?? true;
     if (props?.defaultLevels) {
       DEFAULT_MODULES['NONE'].develLevel = props?.defaultLevels.develLevel;
       DEFAULT_MODULES['DEFAULT'].develLevel = props?.defaultLevels.develLevel;
@@ -31,9 +31,11 @@ export class Modules {
     };
     this._moduleTextSlice = props?.moduleTextSlice ?? 8;
     this._endTitleOpacity = props?.endTitleOpacity ?? 0;
-
   }
 
+  /**
+   * @internal the level of a specific module || -1
+   */
   getLevel(moduleId: string) {
     const level = this._dev
       ? this._modules[moduleId]?.develLevel
@@ -42,6 +44,9 @@ export class Modules {
     return level ?? -1;
   }
 
+  /**
+   * @internal the texts of a specific module ||INVALID module
+   */
   getText(lox: Lox) {
     let module = this._modules[lox.moduleId];
     if (!is(module)) {
@@ -64,11 +69,18 @@ export class Modules {
     return { moduleText, coloredModuleText };
   }
 
+  /**
+   * @internal the color of a specific module || ''
+   */
   getColor(moduleId: string): string {
     const module = this._modules[moduleId];
 
     return is(module) && is(module.color) ? module.color : '';
   }
+
+  /**
+   * @internal determines if a log does not fulfill it's level constraints
+   */
   isLogHidden(lox: Lox): boolean {
     const dl = this._modules[lox.moduleId]?.develLevel ?? 1;
     const pl = this._modules[lox.moduleId]?.prodLevel ?? 1;

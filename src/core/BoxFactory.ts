@@ -1,74 +1,57 @@
 import { ANSI_CODE, Box, BoxLayouts, BoxLayoutStyle, getServiceColor } from '../ColorCode';
-import { is } from '../Helpers';
-import { LoxesType } from '../Loxer';
-import { Lox } from '../loxes/Lox';
-import { Modules } from './Modules';
-import { OpenLoxBuffer } from './OpenLoxBuffer';
+import { OutputLox } from '../loxes';
+import { Loxes } from './Loxes';
 
+/** @internal */
 export class BoxFactory {
-  private _modules: Modules;
   private _boxLayoutStyle: BoxLayoutStyle;
 
-  constructor(modules?: Modules, boxLayoutStyle?: BoxLayoutStyle) {
-    this._modules = modules ?? new Modules();
+  constructor(boxLayoutStyle?: BoxLayoutStyle) {
     this._boxLayoutStyle = boxLayoutStyle ?? 'round';
   }
 
-  private getLoxColor(loxId: number | undefined, loxes: LoxesType): string {
-    if (!is(loxId)) {
-      return '';
-    }
-    const loxLog = loxes[loxId];
-    if (!is(loxLog) || !is(loxLog?.moduleId)) {
-      return '';
-    }
-
-    return this._modules.getColor(loxLog.moduleId);
-  }
-
-  getOpenLogBox(lox: Lox, loxes: LoxesType, openLoxBuffer: OpenLoxBuffer): Box {
+  /** @internal */
+  getOpenLogBox(lox: OutputLox, openLoxBuffer: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
     const box: Box = [];
-    const color = this._modules.getColor(lox.moduleId);
     // print the depth before the start
-    for (const openLoxId of openLoxBuffer.ids) {
-      if (openLoxId === lox.id) {
+    for (const bufferLox of openLoxBuffer.getBuffer()) {
+      if (lox.equals(bufferLox)) {
         break;
       }
-      box.push(
-        openLoxId ? { box: 'vertical', color: this.getLoxColor(openLoxId, loxes) } : 'empty'
-      );
+      box.push(bufferLox ? { box: 'vertical', color: bufferLox.color } : 'empty');
     }
     // print the start of the box
-    box.push({ box: 'openEdge', color });
-    box.push({ box: 'openEnd', color });
+    box.push({ box: 'openEdge', color: lox.color });
+    box.push({ box: 'openEnd', color: lox.color });
 
     return box;
   }
 
-  getOfLogBox(lox: Lox, loxes: LoxesType, openLoxBuffer: OpenLoxBuffer): Box {
+  /** @internal */
+  getOfLogBox(lox: OutputLox, openLoxBuffer: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
     const box: Box = [];
-    const color = this._modules.getColor(lox.moduleId);
+    const color = lox.color;
     let found = false;
-    for (const id of openLoxBuffer.ids) {
-      const itemColor = this.getLoxColor(id, loxes);
+    for (const bufferLox of openLoxBuffer.getBuffer()) {
+      const itemColor = bufferLox?.color ?? '';
       if (!found) {
-        if (id !== lox.id) {
-          // print depth before occurrence
-          box.push(id ? { box: 'vertical', color: itemColor } : 'empty');
-        } else {
+        if (lox.equals(bufferLox)) {
           // print occurrence
           box.push({ box: lox.type === 'close' ? 'closeEdge' : 'single', color });
           found = true;
+        } else {
+          // print depth before occurrence
+          box.push(bufferLox ? { box: 'vertical', color: itemColor } : 'empty');
         }
       } else {
         // print depth after occurrence
-        box.push(id ? { box: 'cross', color: itemColor } : { box: 'horizontal', color });
+        box.push(bufferLox ? { box: 'cross', color: itemColor } : { box: 'horizontal', color });
       }
     }
     // print line end
@@ -77,6 +60,7 @@ export class BoxFactory {
     return box;
   }
 
+  /** @internal */
   getBoxString(box: Box, colored: boolean | undefined) {
     return (
       box

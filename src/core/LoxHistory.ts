@@ -1,5 +1,6 @@
 import { ErrorLox, OutputLox } from '../loxes';
 
+/** @internal */
 export class LoxHistory {
   private _history: (OutputLox | ErrorLox)[] = [];
   private _size: number;
@@ -8,6 +9,7 @@ export class LoxHistory {
     this._size = size ?? 50;
   }
 
+  /** @internal */
   add(lox: OutputLox | ErrorLox) {
     if (this._size === 1) {
       return;
