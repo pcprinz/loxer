@@ -1,0 +1,25 @@
+import { ErrorLox, OutputLox } from '../loxes';
+
+export class LoxHistory {
+  private _history: (OutputLox | ErrorLox)[] = [];
+  private _size: number;
+
+  constructor(size?: number) {
+    this._size = size ?? 50;
+  }
+
+  add(lox: OutputLox | ErrorLox) {
+    if (this._size === 1) {
+      return;
+    }
+    if (lox instanceof ErrorLox) {
+      lox.history = []; // avoid circular structures
+    }
+    this._history.unshift(lox);
+    this._history = this._history.slice(0, this._size);
+  }
+
+  get stack(): (OutputLox | ErrorLox)[] {
+    return this._history;
+  }
+}
