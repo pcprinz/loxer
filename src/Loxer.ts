@@ -148,6 +148,11 @@ class LoxerInstance implements LoxerType {
   m(moduleId?: string) {
     this._moduleId = isNES(moduleId) ? moduleId : 'DEFAULT';
 
+    // catch wrong module ids
+    if (this._modules[this._moduleId] === undefined) {
+      this._moduleId = 'INVALID';
+    }
+
     return this;
   }
 
