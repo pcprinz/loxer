@@ -357,9 +357,6 @@ class LoxerInstance implements LoxerType {
   private _history: (OutputLox | ErrorLox)[] = [];
   private _hasHistory: boolean = false;
   private addToHistory(lox: OutputLox | ErrorLox) {
-    if (lox instanceof ErrorLox) {
-      lox.history = []; // avoid circular structures
-    }
     this._history.unshift(lox);
     this._history = this._history.slice(0, this._config.historyCacheSize);
   }
@@ -378,7 +375,7 @@ class LoxerInstance implements LoxerType {
     } else if (lox.type === 'error') {
       const errorLox = this.generateErrorLox(lox, error!);
       this._hasHistory && this.addToHistory(errorLox);
-      this._dev ? this.devErrorOut(errorLox) : this.prodErrorOut(errorLox);
+      this._dev ? this.devErrorOut(errorLox, this._history) : this.prodErrorOut(errorLox, this._history);
     } else {
       const outputLox = this.generateOutputLox(lox);
       if (!outputLox.hidden) {
@@ -401,14 +398,13 @@ class LoxerInstance implements LoxerType {
     errorLox.openLoxes = filterDef(openLoxes).map(errorLoxLog =>
       this.generateOutputLox(errorLoxLog)
     );
-    errorLox.history = this.history;
 
     return errorLox;
   }
 
-  private devErrorOut(errorLox: ErrorLox) {
+  private devErrorOut(errorLox: ErrorLox, history: (OutputLox | ErrorLox)[]) {
     if (this._callbacks?.devError) {
-      this._callbacks.devError(errorLox);
+      this._callbacks.devError(errorLox, history);
     } else {
       const { message, moduleText, timeText } = this._config?.disableColors
         ? errorLox
@@ -427,9 +423,9 @@ class LoxerInstance implements LoxerType {
     }
   }
 
-  private prodErrorOut(errorLox: ErrorLox) {
+  private prodErrorOut(errorLox: ErrorLox, history: (OutputLox | ErrorLox)[]) {
     if (this._callbacks?.prodError) {
-      this._callbacks.prodError(errorLox);
+      this._callbacks.prodError(errorLox, history);
     }
   }
 
@@ -606,4 +602,8 @@ class LoxerInstance implements LoxerType {
   }
 }
 
-export const Loxer: LoxerType = new LoxerInstance();
+export let Loxer: LoxerType = new LoxerInstance();
+
+export function resetLoxer() {
+  Loxer = new LoxerInstance();
+}
