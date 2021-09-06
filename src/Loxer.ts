@@ -375,7 +375,9 @@ class LoxerInstance implements LoxerType {
     } else if (lox.type === 'error') {
       const errorLox = this.generateErrorLox(lox, error!);
       this._hasHistory && this.addToHistory(errorLox);
-      this._dev ? this.devErrorOut(errorLox, this._history) : this.prodErrorOut(errorLox, this._history);
+      this._dev
+        ? this.devErrorOut(errorLox, this._history)
+        : this.prodErrorOut(errorLox, this._history);
     } else {
       const outputLox = this.generateOutputLox(lox);
       if (!outputLox.hidden) {

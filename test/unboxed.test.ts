@@ -170,12 +170,30 @@ test('errors', () => {
 });
 
 test('mixed', () => {
-  Loxer.h().m().l(2).log('1');
-  Loxer.h().l(2).m().log('2');
-  Loxer.m().h().l(2).log('3');
-  Loxer.m().l(2).h().log('4');
-  Loxer.l(2).h().m().log('5');
-  Loxer.l(2).m().h().log('6');
+  Loxer.h()
+    .m()
+    .l(2)
+    .log('1');
+  Loxer.h()
+    .l(2)
+    .m()
+    .log('2');
+  Loxer.m()
+    .h()
+    .l(2)
+    .log('3');
+  Loxer.m()
+    .l(2)
+    .h()
+    .log('4');
+  Loxer.l(2)
+    .h()
+    .m()
+    .log('5');
+  Loxer.l(2)
+    .m()
+    .h()
+    .log('6');
 
   expect(devLogs.length).toBe(7);
   for (let i = 1; i < devLogs.length; i++) {
@@ -183,9 +201,9 @@ test('mixed', () => {
     expect(log.message).toBe(i.toString());
     expect(log.highlighted).toBeTruthy();
     expect(log.moduleId).toBe('DEFAULT');
-    expect(log.level).toBe(2); 
+    expect(log.level).toBe(2);
   }
-})
+});
 
 test('history', () => {
   Loxer.log('single log');
