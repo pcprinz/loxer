@@ -17,7 +17,7 @@ export interface Loxer {
    * ---
    * @param options Options for the configuration of Loxer
    */
-  init: (options: LoxerOptions) => void;
+  init: (options?: LoxerOptions) => void;
   /** ## Get LogLevel
    * Returns the configured LogLevel (`number`) of the given `moduleIs`s corresponding Module.
    *
@@ -351,14 +351,14 @@ export interface LoxerCallbacks {
   prodLog?: (outputLog: OutputLox) => void;
   /** Function called when errors are recorded in production mode.
    * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
-   * specific ones.
+   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
    */
-  prodError?: (errorLog: ErrorLox) => void;
+  prodError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
   /** Function called when errors are recorded in development mode.
    * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
-   * specific ones.
+   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
    */
-  devError?: (errorLog: ErrorLox) => void;
+  devError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
 }
 
 /** This is the configuration for the {@link LoxerOptions} */

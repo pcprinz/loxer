@@ -14,9 +14,6 @@ export class LoxHistory {
     if (this._size === 1) {
       return;
     }
-    if (lox instanceof ErrorLox) {
-      lox.history = []; // avoid circular structures
-    }
     this._history.unshift(lox);
     this._history = this._history.slice(0, this._size);
   }

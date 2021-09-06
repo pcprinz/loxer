@@ -1,6 +1,7 @@
 import { ErrorLox, OutputLox } from '../loxes';
 import { LoxerCallbacks } from '../types';
 import { BoxFactory } from './BoxFactory';
+import { LoxHistory } from './LoxHistory';
 
 interface OutputStreamsProps {
   callbacks?: LoxerCallbacks;
@@ -21,8 +22,8 @@ export class OutputStreams {
   }
 
   /** @internal **/
-  errorOut(dev: boolean, errorLox: ErrorLox) {
-    dev ? this.devErrorOut(errorLox) : this.prodErrorOut(errorLox);
+  errorOut(dev: boolean, errorLox: ErrorLox, history: LoxHistory) {
+    dev ? this.devErrorOut(errorLox, history) : this.prodErrorOut(errorLox, history);
   }
 
   /** @internal **/
@@ -30,9 +31,9 @@ export class OutputStreams {
     dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
   }
 
-  private devErrorOut(errorLox: ErrorLox) {
+  private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
     if (this._callbacks?.devError) {
-      this._callbacks.devError(errorLox);
+      this._callbacks.devError(errorLox, history.stack);
     } else {
       const { message, moduleText, timeText } = this._colorsDisabled ? errorLox : errorLox.colored;
       const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
@@ -49,9 +50,9 @@ export class OutputStreams {
     }
   }
 
-  private prodErrorOut(errorLox: ErrorLox) {
+  private prodErrorOut(errorLox: ErrorLox, history: LoxHistory) {
     if (this._callbacks?.prodError) {
-      this._callbacks.prodError(errorLox);
+      this._callbacks.prodError(errorLox, history.stack);
     }
   }
 

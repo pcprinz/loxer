@@ -68,4 +68,7 @@ export class Lox {
 
     return this._runningId;
   }
+  static resetStaticRunningId() {
+    Lox._runningId = -1;
+  }
 }

@@ -5,9 +5,8 @@ import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
 import { ensureError, is, isError, isNES, LoxerError } from './Helpers';
-import { ErrorLox } from './loxes/ErrorLox';
+import { ErrorLox, OutputLox } from './loxes';
 import { Lox, LoxType } from './loxes/Lox';
-import { OutputLox } from './loxes/OutputLox';
 import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
 
 class LoxerInstance implements LoxerType {
@@ -42,6 +41,7 @@ class LoxerInstance implements LoxerType {
       modules: props?.modules,
       endTitleOpacity: config?.endTitleOpacity,
       moduleTextSlice: config?.moduleTextSlice,
+      defaultLevels: props?.defaultLevels,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
     this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
@@ -101,6 +101,8 @@ class LoxerInstance implements LoxerType {
   }
   m(moduleId?: string) {
     this._moduleId = isNES(moduleId) ? moduleId : 'DEFAULT';
+    // catch wrong module ids
+    this._moduleId = this._modules.ensureModule(this._moduleId);
 
     return this;
   }
@@ -257,15 +259,14 @@ class LoxerInstance implements LoxerType {
     } else if (lox.type === 'error') {
       const errorLox = this.toErrorLox(lox, error!);
       this._history.add(errorLox);
-      this._output.errorOut(this._dev, errorLox);
+      this._output.errorOut(this._dev, errorLox, this._history);
     } else {
       const outputLox = this.toOutputLox(lox);
       if (!outputLox.hidden) {
-        this._loxes.add(outputLox);
         this._history.add(outputLox);
         this._output.logOut(this._dev, outputLox);
-        this._loxes.remove(outputLox);
       }
+      this._loxes.proceed(outputLox);
     }
   }
 
@@ -278,7 +279,6 @@ class LoxerInstance implements LoxerType {
     errorLox.setModuleText(this._modules.getText(errorLox));
     errorLox.box = this._boxFactory.getOfLogBox(errorLox, this._loxes);
     errorLox.openLoxes = this._loxes.getOpenLoxes();
-    errorLox.history = this._history.stack;
 
     return errorLox;
   }
@@ -321,4 +321,9 @@ class LoxerInstance implements LoxerType {
   }
 }
 
-export const Loxer: LoxerType = new LoxerInstance();
+export let Loxer: LoxerType = new LoxerInstance();
+
+export function resetLoxer() {
+  Loxer = new LoxerInstance();
+  Lox.resetStaticRunningId();
+}

@@ -6,55 +6,56 @@ import { Lox } from '../loxes/Lox';
  * A storage for pending and open loxes
  */
 export class Loxes {
-  private _buffer: (OutputLox | undefined)[] = [];
   private _pendingLoxQueue: Lox[] = [];
   private _shouldUseQueue = true;
 
-  /** @internal adds an open lox to the list of opened logs */
-  add(lox: OutputLox) {
-    if (lox.type === 'open') {
-      this._buffer.push(lox);
-    }
-  }
+  private _loxes: { [id: string]: OutputLox | undefined } = {};
+  private _openBuffer: (number | undefined)[] = [];
 
-  /** @internal removes an open lox from the list of opened logs */
-  remove(lox: OutputLox) {
-    if (lox.type === 'close') {
-      const index = this._buffer.findIndex(openLox => openLox?.equals(lox));
+  /** @internal add / removes an open lox from the list of opened logs, depending on it's type */
+  proceed(lox: OutputLox) {
+    if (lox.type === 'open') {
+      this._loxes[lox.id] = lox;
+      if (!lox.hidden) {
+        this._openBuffer.push(lox.id);
+      }
+    } else if (lox.type === 'close') {
+      this._loxes[lox.id] = undefined;
+      const index = this._openBuffer.indexOf(lox.id);
       if (index > -1) {
-        this._buffer[index] = undefined;
+        this._openBuffer[index] = undefined;
       }
       // remove undefined buffer end
       let done = false;
       while (!done) {
-        if (this._buffer.length > 0 && !this._buffer[this._buffer.length - 1]) {
-          this._buffer.pop();
+        if (this._openBuffer.length > 0 && !this._openBuffer[this._openBuffer.length - 1]) {
+          this._openBuffer.pop();
         } else {
           done = true;
         }
       }
     }
   }
-
   /** @internal finds an opening log || undefined */
-  findOpenLox(id: number) {
+  findOpenLox(id: number): Lox | undefined {
     if (isNumber(id)) {
       return this._shouldUseQueue
         ? this._pendingLoxQueue.find(item => item.type === 'open' && item?.id === id)
-        : this._buffer.find(item => item?.id === id);
+        : this._loxes[id];
     } else {
       return undefined;
     }
   }
 
   /** @internal returns all defined open loxes */
-  getOpenLoxes() {
-    return filterDef(this._buffer);
+  getOpenLoxes(): OutputLox[] {
+    const openLoxes = filterDef(this._openBuffer).map(openLogId => this._loxes[openLogId]);
+    return filterDef(openLoxes);
   }
 
   /** @internal returns the open lox buffer with all open loxes or undefined */
-  getBuffer() {
-    return this._buffer;
+  getBuffer(): (OutputLox | undefined)[] {
+    return this._openBuffer.map(id => (id ? this._loxes[id] : undefined));
   }
 
   /** @internal enqueues any lox to the pending queue */
@@ -63,7 +64,7 @@ export class Loxes {
   }
 
   /** @internal empties the pending queue and returns all pending loxes */
-  dequeue() {
+  dequeue(): Lox[] {
     const queue = this._pendingLoxQueue;
     this._pendingLoxQueue = [];
     this._shouldUseQueue = false;

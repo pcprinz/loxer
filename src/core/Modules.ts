@@ -33,6 +33,10 @@ export class Modules {
     this._endTitleOpacity = props?.endTitleOpacity ?? 0;
   }
 
+  ensureModule(moduleId: string) {
+    return this._modules[moduleId] === undefined ? 'INVALID' : moduleId;
+  }
+
   /**
    * @internal the level of a specific module || -1
    */
