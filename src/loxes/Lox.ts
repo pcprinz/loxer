@@ -26,7 +26,7 @@ export class Lox {
   /** determines if the log was highlighted with `Loxer.highlight()` or `Loxer.h()` */
   highlighted: boolean;
   /** an optional item like the `console.log(message,`**_`item`_**`)` */
-  item: any | Error | undefined;
+  item: any | undefined;
   /** the {@link LoxType type} of the log */
   type: LoxType;
   /** the corresponding key of a module from {@link LoxerOptions.modules}

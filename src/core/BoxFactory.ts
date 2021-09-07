@@ -11,14 +11,14 @@ export class BoxFactory {
   }
 
   /** @internal */
-  getOpenLogBox(lox: OutputLox, openLoxBuffer: Loxes): Box {
+  getOpenLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
     const box: Box = [];
     // print the depth before the start
-    for (const bufferLox of openLoxBuffer.getBuffer()) {
-      if (lox.equals(bufferLox)) {
+    for (const bufferLox of loxes.getBuffer()) {
+      if (lox.id === bufferLox?.id) {
         break;
       }
       box.push(bufferLox ? { box: 'vertical', color: bufferLox.color } : 'empty');
@@ -31,17 +31,17 @@ export class BoxFactory {
   }
 
   /** @internal */
-  getOfLogBox(lox: OutputLox, openLoxBuffer: Loxes): Box {
+  getOfLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
     const box: Box = [];
     const color = lox.color;
     let found = false;
-    for (const bufferLox of openLoxBuffer.getBuffer()) {
+    for (const bufferLox of loxes.getBuffer()) {
       const itemColor = bufferLox?.color ?? '';
       if (!found) {
-        if (lox.equals(bufferLox)) {
+        if (lox.id === bufferLox?.id) {
           // print occurrence
           box.push({ box: lox.type === 'close' ? 'closeEdge' : 'single', color });
           found = true;
