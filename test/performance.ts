@@ -93,7 +93,6 @@ function boxes(count: number, depth = count, testName = '') {
   )} logs per second\n`;
 }
 
-// 12345678
 function format(n: number) {
   let a = n.toString();
   let result = '';
@@ -103,7 +102,3 @@ function format(n: number) {
   }
   return a + result;
 }
-
-// true
-// r = '.678' + ''
-// a =
