@@ -2,7 +2,7 @@ import { filterDef, isNumber } from '../Helpers';
 import { OutputLox } from '../loxes';
 import { Lox } from '../loxes/Lox';
 
-type OpenBoxType = {id: number, color: string}
+type OpenBoxType = { id: number; color: string };
 
 /** @internal
  * A storage for pending and open loxes
@@ -19,7 +19,7 @@ export class Loxes {
     if (lox.type === 'open') {
       this._loxes[lox.id] = lox;
       if (!lox.hidden) {
-        this._openBuffer.push({id: lox.id, color: lox.color});
+        this._openBuffer.push({ id: lox.id, color: lox.color });
       }
     } else if (lox.type === 'close') {
       this._loxes[lox.id] = undefined;
