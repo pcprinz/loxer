@@ -1,4 +1,4 @@
-import { Box } from '../ColorCode';
+import { Box, highlightColor as highlight } from '../ColorCode';
 import { Lox } from './Lox';
 /** @module OutputLox */
 
@@ -41,14 +41,16 @@ export class OutputLox extends Lox {
     moduleText: string | '';
     timeText: string | '';
   };
+  /** The string color of the lox' module */
+  color: string = '';
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
 
   /** @internal */
-  constructor(preLog: Lox, coloredMessage: string) {
-    super(preLog);
+  constructor(preLox: Lox) {
+    super(preLox);
     this.colored = {
-      message: coloredMessage,
+      message: '',
       moduleText: '',
       timeText: '',
     };
@@ -65,5 +67,13 @@ export class OutputLox extends Lox {
   setModuleText(texts: { moduleText: string; coloredModuleText: string }) {
     this.moduleText = texts.moduleText;
     this.colored.moduleText = texts.coloredModuleText;
+  }
+
+  /** @internal */
+  setColor(color: string, highlightColor: string | undefined) {
+    this.color = color;
+    this.colored.message = this.highlighted
+      ? highlight(this.message, highlightColor)
+      : this.message;
   }
 }

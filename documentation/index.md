@@ -289,7 +289,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
   /** determines if the log was highlighted with `Loxer.highlight()` or `Loxer.h()` */
   highlighted: boolean;
   /** an optional item */
-  item: any | Error | undefined;
+  item: any | undefined;
   /** the type of the log */
   type: LoxType;
   /** the corresponding key of a module from `LoxerOptions.modules` */
@@ -310,7 +310,6 @@ To symbolize that the logs are more than just simple messages, they are named `*
   colored: {
     message: string;
     moduleText: string | '';
-    box: string | '';
     timeText: string | '';
   };
   /** determines if the log has not fulfilled the level that the corresponding module has set */
@@ -325,17 +324,15 @@ To symbolize that the logs are more than just simple messages, they are named `*
   error: Error;
   /** a list of opened `OutputLox` which have not been closed until the occurrence of this error log */
   openLoxes: OutputLox[] = [];
-  /** a full history of "all" `OutputLox` and `ErrorLox` which have occurred before this error log */
-  history: (OutputLox | ErrorLox)[] = [];
 ```
 
 > For more detailed information about the Lox's properties (as well as all other components of Loxer), a look at the [API reference](https://pcprinz.github.io/loxer/modules/Logs.html) is recommended.
 
-### History
+<!-- TODO: this is now found in the Error* callbacks + LoxHistory.ts ### History
 The history, which is attached to the `ErrorLox`, can also be accessed directly with [`Loxer.history`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#history). It is an inverted stack, which means that the most recent log is at `history [0]`. Only those logs / errors are recorded in the history, which (depending on the levels) are also directed into the output stream.
 The size of the history can be set with [`options.config.historyCacheSize`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#historyCacheSize) in the`Loxer.init (options)`. By default it is `50`.
 
-> The history can be used if a user wants to send feedback on the behavior of the application. For this, however, the production levels must also be set accordingly.
+> The history can be used if a user wants to send feedback on the behavior of the application. For this, however, the production levels must also be set accordingly. -->
 
 ### Callbacks
 Now that we know how the output streams work and what the transferred `*Lox` look like, it is a good idea to take a look at how the `dev*` streams are used internally.
@@ -347,11 +344,10 @@ private devLogOut(outputLox: OutputLox) {
     this._callbacks.devLog(outputLox);
   } else {
     // colored option
-    const { message, moduleText, timeText } = this._config?.disableColors
+    const { message, moduleText, timeText } = this._colorsDisabled
       ? outputLox
       : outputLox.colored;
-    // here the box is stringified with unicode boy layouts
-    const box = this.getBoxString(outputLox.box, !this._config?.disableColors);
+    const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
     const str = moduleText + box + message + timeText;
     outputLox.item ? console.log(str, outputLox.item) : console.log(str);
   }
@@ -362,25 +358,17 @@ As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stre
 
 ###### devError internally
 ```typescript
-private devErrorOut(errorLox: ErrorLox) {
+private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
   if (this._callbacks?.devError) {
-    this._callbacks.devError(errorLox);
+    this._callbacks.devError(errorLox, history.stack);
   } else {
-    const { message, moduleText, timeText } = this._config?.disableColors
-      ? errorLox
-      : errorLox.colored;
-    // here the box is stringified with unicode boy layouts
-    const box = this.getBoxString(errorLox.box, !this._config?.disableColors);
+    const { message, moduleText, timeText } = this._colorsDisabled ? errorLox : errorLox.colored;
+    const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
     const msg = moduleText + box + message + timeText;
-    const stack =
-      errorLox.highlighted && errorLox.error.stack
-        ? errorLox.error.stack
-        : '';
+    const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
     const openLogs =
       errorLox.highlighted && errorLox.openLoxes.length > 0
-        ? `\nOPEN_LOGS: [${errorLox.openLoxes
-            .map(outputLox => outputLox.message)
-            .join(' <> ')}]`
+        ? `\nOPEN_LOGS: [${errorLox.openLoxes.map(outputLox => outputLox.message).join(' <> ')}]`
         : '';
 
     errorLox.item
@@ -395,6 +383,7 @@ The `prod*` streams are both just forwarded to the user callbacks. These can be 
 
 # 8. Boxes
 <!-- TODO colored images -->
+<!-- TODO exported boxlayout -->
 Another main feature of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
 
 In addition, a box layout is created that shows the course of the box, but with the degree of nesting in relation to other boxes or individual logs. This enables connections between synchronous and asynchronous processes to be recognized and potential sources of error to be tracked down. Furthermore, it can easily be determined whether processes are not terminating, are taking too long, are too short, or are not being carried out at all.
