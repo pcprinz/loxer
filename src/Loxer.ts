@@ -1,10 +1,9 @@
-import { closeLogColor, timeColor, warnBackgroundColor, warnColor } from './ColorCode';
 import { BoxFactory } from './core/BoxFactory';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
-import { ensureError, is, isError, isNES, LoxerError } from './Helpers';
+import { ensureError, is, isNES, LoxerError } from './Helpers';
 import { ErrorLox, OutputLox } from './loxes';
 import { Lox, LoxType } from './loxes/Lox';
 import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
@@ -19,7 +18,6 @@ class LoxerInstance implements LoxerType {
   private _initialized: boolean = false;
   private _dev: boolean = false;
   private _disabled: boolean = false;
-  private _highlightColor: string | undefined;
 
   init(props?: LoxerOptions) {
     this._initialized = true;
@@ -35,11 +33,9 @@ class LoxerInstance implements LoxerType {
     } else {
       this._disabled = config?.disabledInProductionMode ? !this._dev : false;
     }
-    this._highlightColor = config?.highlightColor;
     this._modules = new Modules({
       dev: this._dev,
       modules: props?.modules,
-      endTitleOpacity: config?.endTitleOpacity,
       moduleTextSlice: config?.moduleTextSlice,
       defaultLevels: props?.defaultLevels,
     });
@@ -49,6 +45,8 @@ class LoxerInstance implements LoxerType {
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
       boxFactory: this._boxFactory,
+      endTitleOpacity: config?.endTitleOpacity,
+      highlightColor: config?.highlightColor,
     });
 
     this.highlight().log('Loxer initialized');
@@ -231,16 +229,16 @@ class LoxerInstance implements LoxerType {
   }
 
   private appendLox(type: LoxType, openLox: Lox, message: string, item?: any) {
-    const { id, moduleId, level } = openLox;
+    const { id, moduleId, level: oLevel } = openLox;
     // close level must be open level + added logs must not have a lower level, though the open box could possibly not exist
-    const fixedLevel =
-      type === 'single' ? (Math.max(level, this._level ?? level) as LogLevelType) : level;
+    const level =
+      type === 'single' ? (Math.max(oLevel, this._level ?? oLevel) as LogLevelType) : oLevel;
     this.switchOutput(
       new Lox({
         id,
         highlighted: this._highlighted,
         item,
-        level: fixedLevel,
+        level,
         message,
         moduleId,
         type,
@@ -272,12 +270,11 @@ class LoxerInstance implements LoxerType {
 
   private toErrorLox(lox: Lox, error: Error): ErrorLox {
     const errorLox = new ErrorLox(lox, error);
-    errorLox.setColor(this._modules.getColor(errorLox.moduleId), this._highlightColor);
-    const errorName = isError(error) ? error.name : 'Error';
-    errorLox.colored.message = warnBackgroundColor(errorName) + ': ' + warnColor(errorLox.message);
+    errorLox.setTime(this.getTimeConsumption(errorLox));
+    errorLox.color = this._modules.getColor(errorLox.moduleId);
+    errorLox.moduleText = this._modules.getText(errorLox);
+    errorLox.box = this._boxFactory.getLogBox(errorLox, this._loxes);
 
-    errorLox.setModuleText(this._modules.getText(errorLox));
-    errorLox.box = this._boxFactory.getOfLogBox(errorLox, this._loxes);
     errorLox.openLoxes = this._loxes.getOpenLoxes();
 
     return errorLox;
@@ -285,25 +282,12 @@ class LoxerInstance implements LoxerType {
 
   private toOutputLox(lox: Lox): OutputLox {
     const outputLox = new OutputLox(lox);
-    outputLox.setColor(this._modules.getColor(outputLox.moduleId), this._highlightColor);
     outputLox.setTime(this.getTimeConsumption(outputLox));
-    outputLox.setModuleText(this._modules.getText(outputLox));
+    outputLox.color = this._modules.getColor(outputLox.moduleId);
+    outputLox.moduleText = this._modules.getText(outputLox);
+    outputLox.box = this._boxFactory.getLogBox(outputLox, this._loxes);
+
     outputLox.hidden = this._modules.isLogHidden(outputLox);
-    if (!outputLox.hidden) {
-      switch (outputLox.type) {
-        case 'open':
-          outputLox.box = this._boxFactory.getOpenLogBox(outputLox, this._loxes);
-          break;
-        case 'close':
-          outputLox.box = this._boxFactory.getOfLogBox(outputLox, this._loxes);
-          outputLox.colored.message = outputLox.highlighted
-            ? outputLox.colored.message
-            : closeLogColor(outputLox.message);
-          break;
-        case 'single':
-          outputLox.box = this._boxFactory.getOfLogBox(outputLox, this._loxes);
-      }
-    }
 
     return outputLox;
   }
@@ -314,10 +298,9 @@ class LoxerInstance implements LoxerType {
       return { coloredTimeText: '', timeText: '' };
     }
     const timeConsumption = lox.timestamp.getTime() - openLox.timestamp.getTime();
-    const timeText = '   [' + timeConsumption.toString() + 'ms]';
-    const coloredTimeText = timeColor(timeText);
+    const timeText = '[' + timeConsumption.toString() + 'ms]';
 
-    return { timeConsumption, timeText, coloredTimeText };
+    return { timeConsumption, timeText };
   }
 }
 

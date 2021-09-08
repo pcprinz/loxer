@@ -2,7 +2,8 @@
     "entryPoints": [
         "src/types.ts", 
         "src/decorators/index.ts", 
-        "src/loxes/index.ts"
+        "src/loxes/index.ts",
+        "src/core/index.ts"
     ],
     "name": "Loxer",
     "includeVersion": true,

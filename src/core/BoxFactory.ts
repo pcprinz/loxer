@@ -1,13 +1,22 @@
-import { ANSI_CODE, Box, BoxLayouts, BoxLayoutStyle, getServiceColor } from '../ColorCode';
+import { BoxLayouts, BoxLayoutStyle, BoxSymbols } from './BoxFormat';
 import { OutputLox } from '../loxes';
+import { ANSIFormat } from './ANSIFormat';
 import { Loxes } from './Loxes';
-
+export type Box = (BoxSegment | 'empty')[];
+export type BoxSegment = { box: keyof BoxSymbols; color: string };
 /** @internal */
 export class BoxFactory {
   private _boxLayoutStyle: BoxLayoutStyle;
 
   constructor(boxLayoutStyle?: BoxLayoutStyle) {
     this._boxLayoutStyle = boxLayoutStyle ?? 'round';
+  }
+
+  getLogBox(lox: OutputLox, loxes: Loxes) {
+    if (lox.hidden) {
+      return [];
+    }
+    return lox.type === 'open' ? this.getOpenLogBox(lox, loxes) : this.getOfLogBox(lox, loxes);
   }
 
   /** @internal */
@@ -68,10 +77,9 @@ export class BoxFactory {
           if (segment === 'empty') {
             return ' ';
           } else if (colored) {
-            return (
-              getServiceColor(segment.color) +
-              BoxLayouts[this._boxLayoutStyle][segment.box] +
-              ANSI_CODE.Reset
+            return ANSIFormat.colorize(
+              BoxLayouts[this._boxLayoutStyle][segment.box],
+              segment.color
             );
           } else {
             return BoxLayouts[this._boxLayoutStyle][segment.box];

@@ -55,20 +55,20 @@ This scenario is true when Loxer gets the `options.config.disabled` or `options.
 
 | run     | time       | Logs per second  |
 | ------- | ---------- | ---------------- |
-| 1       | 720 ms     | ~138.888.889     |
-| 2       | 753 ms     | ~132.802.125     |
-| 3       | 653 ms     | ~153.139.357     |
-| 4       | 648 ms     | ~154.320.988     |
-| 5       | 645 ms     | ~155.038.760     |
-| 6       | 648 ms     | ~154.320.988     |
-| 7       | 648 ms     | ~154.320.988     |
-| 8       | 654 ms     | ~152.905.199     |
-| 9       | 636 ms     | ~157.232.704     |
-| 10      | 639 ms     | ~156.494.523     |
-| **avg** | **664 ms** | **~150.946.452** |
+| 1       | 730 ms     | ~136.986.301     |
+| 2       | 686 ms     | ~145.772.595     |
+| 3       | 639 ms     | ~156.494.523     |
+| 4       | 645 ms     | ~155.038.760     |
+| 5       | 638 ms     | ~156.739.812     |
+| 6       | 647 ms     | ~154.559.505     |
+| 7       | 643 ms     | ~155.520.995     |
+| 8       | 672 ms     | ~148.809.524     |
+| 9       | 662 ms     | ~151.057.402     |
+| 10      | 641 ms     | ~156.006.240     |
+| **avg** | **660 ms** | **~151.698.566** |
 
 - 1 log (function call) consumes 0.0000066 ms
-- ~150.946.452 logs consume 1 second
+- ~151.698.566 logs consume 1 second
 
 As you can see, when Loxer is disabled, it has almost no influence on the performance. Only around 150 million log calls have a performance loss of 1 second.
 
@@ -81,22 +81,22 @@ This scenario applies to logs that are not logged because their level does not c
 
 | run     | time       | Logs per second |
 | ------- | ---------- | --------------- |
-| 1       | 1.049 ms   | ~95.329         |
-| 2       | 983 ms     | ~101.729        |
-| 3       | 964 ms     | ~103.734        |
-| 4       | 1.017 ms   | ~98.328         |
-| 5       | 1.010 ms   | ~99.010         |
-| 6       | 979 ms     | ~102.145        |
-| 7       | 991 ms     | ~100.908        |
-| 8       | 969 ms     | ~103.199        |
-| 9       | 1.004 ms   | ~99.602         |
-| 10      | 962 ms     | ~103.950        |
-| **avg** | **993 ms** | **~100.794**    |
+| 1       | 829 ms     | ~120.627        |
+| 2       | 828 ms     | ~120.773        |
+| 3       | 816 ms     | ~122.549        |
+| 4       | 816 ms     | ~122.549        |
+| 5       | 868 ms     | ~115.207        |
+| 6       | 832 ms     | ~120.192        |
+| 7       | 832 ms     | ~120.192        |
+| 8       | 829 ms     | ~120.627        |
+| 9       | 828 ms     | ~120.773        |
+| 10      | 893 ms     | ~111.982        |
+| **avg** | **837 ms** | **~119.547**    |
 
-- 1 log consumes 0.0099 ms
-- ~100.794 logs consume 1 second
+- 1 log consumes 0.0084 ms
+- ~119.547 logs consume 1 second
 
-As you can see, even the out-leveled logs have almost no influence on the performance. Only around 100 thousand log calls have a performance loss of 1 second.
+As you can see, even the out-leveled logs have almost no influence on the performance. Only around 120 thousand log calls have a performance loss of 1 second.
 
 ### Test 3 - Custom output stream
 This scenario applies to those logs that are actually forwarded to the output stream. It should be noted that the performance measurement ONLY applies to the generation of the output. But not on further processing, which of course can be extremely different and is added to this measurement.
@@ -106,22 +106,22 @@ This scenario applies to those logs that are actually forwarded to the output st
 
 | run     | time         | Logs per second |
 | ------- | ------------ | --------------- |
-| 1       | 1.234 ms     | ~81.037         |
-| 2       | 1.208 ms     | ~82.781         |
-| 3       | 1.264 ms     | ~79.114         |
-| 4       | 1.233 ms     | ~81.103         |
-| 5       | 1.224 ms     | ~81.699         |
-| 6       | 1.209 ms     | ~82.713         |
-| 7       | 1.243 ms     | ~80.451         |
-| 8       | 1.241 ms     | ~80.580         |
-| 9       | 1.218 ms     | ~82.102         |
-| 10      | 1.212 ms     | ~82.508         |
-| **avg** | **1.229 ms** | **~81.409**     |
+| 1       | 1.080 ms     | ~92.593         |
+| 2       | 1.087 ms     | ~91.996         |
+| 3       | 1.068 ms     | ~93.633         |
+| 4       | 1.064 ms     | ~93.985         |
+| 5       | 1.100 ms     | ~90.909         |
+| 6       | 1.078 ms     | ~92.764         |
+| 7       | 1.077 ms     | ~92.851         |
+| 8       | 1.055 ms     | ~94.787         |
+| 9       | 1.102 ms     | ~90.744         |
+| 10      | 1.066 ms     | ~93.809         |
+| **avg** | **1.078 ms** | **~92.807**     |
 
-- 1 log consumes 0.012 ms
-- ~81.409 logs consume 1 second
+- 1 log consumes 0.011 ms
+- ~92.807 logs consume 1 second
 
-The processing of the logs takes some effort. It is a little more demanding than not preparing logs for the output. But around every 80 thousand logs 1 second loss of performance should be more than acceptable in most cases.
+The processing of the logs takes some effort. It is a little more demanding than not preparing logs for the output. But around every 90 thousand logs 1 second loss of performance should be more than acceptable in most cases.
 
 ### Test 4 - Console output (default dev output)
 This scenario applies above all to the default output stream in the development environment. The output is printed in the console after processing (see last test).
@@ -131,23 +131,23 @@ This scenario applies above all to the default output stream in the development 
 
 | run     | time         | Logs per second |
 | ------- | ------------ | --------------- |
-| 1       | 1.294 ms     | ~3.091          |
-| 2       | 1.102 ms     | ~3.630          |
-| 3       | 1.045 ms     | ~3.828          |
-| 4       | 1.080 ms     | ~3.704          |
-| 5       | 1.034 ms     | ~3.868          |
-| 6       | 1.069 ms     | ~3.742          |
-| 7       | 1.038 ms     | ~3.854          |
-| 8       | 1.043 ms     | ~3.835          |
-| 9       | 1.090 ms     | ~3.670          |
-| 10      | 1.096 ms     | ~3.650          |
-| **avg** | **1.089 ms** | **~3.687**      |
+| 1       | 1.228 ms     | ~3.257          |
+| 2       | 1.159 ms     | ~3.451          |
+| 3       | 1.095 ms     | ~3.653          |
+| 4       | 1.086 ms     | ~3.683          |
+| 5       | 1.032 ms     | ~3.876          |
+| 6       | 1.048 ms     | ~3.817          |
+| 7       | 1.045 ms     | ~3.828          |
+| 8       | 1.060 ms     | ~3.774          |
+| 9       | 1.064 ms     | ~3.759          |
+| 10      | 1.050 ms     | ~3.810          |
+| **avg** | **1.087 ms** | **~3.691**      |
 
 - 1 log consumes 0.27 ms
-- ~3.687 logs consume 1 second
+- ~3.691 logs consume 1 second
 
-Given these numbers, it becomes clear how resource hungry the preparation of the message and printing to the console is. Even if you just lose 1 second of performance at around 3.687 logs, only around 5% of the performance can be attributed to Loxer's calculations and the remaining 95% to the console and message preparation! In this case it is only understandable not to want to use any console outputs in the production environment.
+Given these numbers, it becomes clear how resource hungry the preparation of the message and printing to the console is. Even if you just lose 1 second of performance at around 3.691 logs, only around 5% of the performance can be attributed to Loxer's calculations and the remaining 95% to the console and message preparation! In this case it is only understandable not to want to use any console outputs in the production environment.
 
-But luckily you don't need to print and prepare all the logs in prod environment. The error callbacks receive a history of all logs with a predefined size, which can be utilized like the standard output, only when an error occurs. So you basically live with the 80-100K logs per second in production environment. 
+But luckily you don't need to print and prepare all the logs in prod environment. The error callbacks receive a history of all logs with a predefined size, which can be utilized like the standard output, only when an error occurs. So you basically live with the 90-120K logs per second in production environment. 
 
 > **Reminder**: All the test results relate to my used desktop system and may vary heavily depending on the device and its processing power. The purpose of this test is to show that Loxer can cause virtually no loss of performance if it is used correctly. Especially when compared to using the console output, it becomes clear how small its influence is.

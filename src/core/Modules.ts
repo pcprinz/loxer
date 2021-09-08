@@ -1,4 +1,3 @@
-import { ANSI_CODE, getServiceColor } from '../ColorCode';
 import { is } from '../Helpers';
 import { Lox } from '../loxes/Lox';
 import { LoxerModules, LoxerOptions } from '../types';
@@ -6,7 +5,6 @@ import { LoxerModules, LoxerOptions } from '../types';
 interface ModulesProps {
   dev: boolean;
   modules?: LoxerModules;
-  endTitleOpacity?: number;
   moduleTextSlice?: number;
   defaultLevels?: LoxerOptions['defaultLevels'];
 }
@@ -15,7 +13,6 @@ export class Modules {
   private _dev: boolean = false;
   private _modules: LoxerModules = DEFAULT_MODULES;
   private _moduleTextSlice: number = 8;
-  private _endTitleOpacity: number = 0;
 
   constructor(props?: ModulesProps) {
     this._dev = props?.dev ?? true;
@@ -30,7 +27,6 @@ export class Modules {
       ...props?.modules,
     };
     this._moduleTextSlice = props?.moduleTextSlice ?? 8;
-    this._endTitleOpacity = props?.endTitleOpacity ?? 0;
   }
 
   ensureModule(moduleId: string) {
@@ -57,20 +53,13 @@ export class Modules {
       lox.moduleId = 'INVALID';
       module = this._modules.INVALID;
     }
-    const opacity = lox.type !== 'close' ? 1 : this._endTitleOpacity ?? 0;
     let moduleText =
-      module.fullname.length > 0 && opacity > 0
-        ? module.fullname.slice(0, this._moduleTextSlice) + ': '
-        : '';
+      module.fullname.length > 0 ? module.fullname.slice(0, this._moduleTextSlice) + ': ' : '';
     const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
     for (let i = moduleText.length; i < moduleTextLength; i++) {
       moduleText += ' ';
     }
-    const coloredModuleText = module
-      ? getServiceColor(module.color, opacity) + moduleText + ANSI_CODE.Reset
-      : moduleText;
-
-    return { moduleText, coloredModuleText };
+    return moduleText;
   }
 
   /**

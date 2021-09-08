@@ -1,5 +1,5 @@
 /** @module Loxer */
-import { BoxLayoutStyle } from './ColorCode';
+import { BoxLayoutStyle } from './core/BoxFormat';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 

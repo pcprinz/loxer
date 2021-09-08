@@ -264,9 +264,9 @@ The `type LoxerCallbacks` has the following structure:
   /** Function called when logging in production mode. */
   prodLog?: (outputLog: OutputLox) => void;
   /** Function called when errors are recorded in production mode. */
-  prodError?: (errorLog: ErrorLox) => void;
+  prodError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
   /** Function called when errors are recorded in development mode. */
-  devError?: (errorLog: ErrorLox) => void;
+  devError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
 }
 ```
 
@@ -277,7 +277,7 @@ The `devLog` and `devError` callbacks default to printing the colored logs to th
 In order to occupy a stream itself, the corresponding output log is passed to the callback.
 
 ### Output logs
-To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the [`OutputLox`](https://pcprinz.github.io/loxer/classes/Logs.OutputLox.html) contains the additional declared properties level, highlight and module. In addition, a time stamp and properties that arise from the box layout. [`ErrorLox`](https://pcprinz.github.io/loxer/classes/Logs.ErrorLox.html) have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
+To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the [`OutputLox`](https://pcprinz.github.io/loxer/classes/Logs.OutputLox.html) contains the declared properties level, highlight and module, a time stamp and properties that arise from the box layout. [`ErrorLox`](https://pcprinz.github.io/loxer/classes/Logs.ErrorLox.html) have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
 
 ###### OutputLox
 ```typescript
@@ -298,6 +298,8 @@ To symbolize that the logs are more than just simple messages, they are named `*
   level: LevelType;
   /** the time the log appeared */
   timestamp: Date;
+  /** The string color of the lox' module */
+  color: string = '';
   /** the possibly sliced text of the logs corresponding module fullname */
   moduleText: string | '' = '';
   /** the box layout of the log */
@@ -306,12 +308,6 @@ To symbolize that the logs are more than just simple messages, they are named `*
   timeText: string | '' = '';
   /** the time consumption (in `ms`) from the opening log's `timestamp` until this log appeared */
   timeConsumption: number | undefined;
-  /** The colored versions of the log's `message`, `moduleText`, `box` and `timeText` */
-  colored: {
-    message: string;
-    moduleText: string | '';
-    timeText: string | '';
-  };
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
 }
@@ -344,17 +340,20 @@ private devLogOut(outputLox: OutputLox) {
     this._callbacks.devLog(outputLox);
   } else {
     // colored option
+    const opacity = outputLox.type === 'close' ? this._endTitleOpacity : 1;
     const { message, moduleText, timeText } = this._colorsDisabled
       ? outputLox
-      : outputLox.colored;
+      : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
     const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
-    const str = moduleText + box + message + timeText;
+    const str = moduleText + box + message + '\t' + timeText;
     outputLox.item ? console.log(str, outputLox.item) : console.log(str);
   }
 }
 ```
 
-As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. The `ErrorLox` can be used in the same way:
+As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. The helper class `ANSIFormat` offers some static methods for the coloring of the output unsing the `[x1b` ANSI code. The internal method `_boxFactory.getBoxString(...)` simply used the predefined Boxlayout (Unicode) and ANSIFormat to color them.
+
+The `ErrorLox` can be used in the same way:
 
 ###### devError internally
 ```typescript
@@ -362,7 +361,9 @@ private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
   if (this._callbacks?.devError) {
     this._callbacks.devError(errorLox, history.stack);
   } else {
-    const { message, moduleText, timeText } = this._colorsDisabled ? errorLox : errorLox.colored;
+    const { message, moduleText, timeText } = this._colorsDisabled
+      ? errorLox
+      : ANSIFormat.colorLox(errorLox);
     const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
     const msg = moduleText + box + message + timeText;
     const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
@@ -423,24 +424,68 @@ The following is an example of how the box layout is processed internally for th
 
 ###### Getting the box as a colored string: 
 ```typescript
-private getBoxString(box: Box, colored: boolean | undefined) {
-  return box
-    .map(segment => {
-      // this happens when there is empty space behind a box line
-      if (segment === 'empty') { return ' '; } 
-      else if (colored) {
-        return (
-          // this function converts the HEX or RGB string to ANSI-Code 
-          getServiceColor(segment.color) +
-          BoxLayouts[this._config.boxLayoutStyle!][segment.box] +
-          ANSI_CODE.Reset
-        );
-      } else {
-        return BoxLayouts[this._config.boxLayoutStyle!][segment.box];
-      }
-    })
-    .join('');
+getBoxString(box: Box, colored: boolean | undefined) {
+  return (
+    box
+      .map(segment => {
+        if (segment === 'empty') {
+          return ' ';
+        } else if (colored) {
+          return ANSIFormat.colorize(
+            BoxLayouts[this._boxLayoutStyle][segment.box],
+            segment.color
+          );
+        } else {
+          return BoxLayouts[this._boxLayoutStyle][segment.box];
+        }
+      })
+      .join('') + ' '
+  );
 }
 ```
 
-The BoxLayouts are a collection of unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/). This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). You are free to set own symbols for the personal output streams.
+The BoxLayouts are a collection of unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/) table. This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). 
+
+You are free to set own symbols for the personal output streams. In this case, a box layout must implement the following interface:
+
+###### BoxSymbols
+```typescript
+export interface BoxSymbols {
+  /** the litte (left) arrow at the end of the opening box */
+  openEnd: string;
+  /** the edge that goes from right to bottom */
+  openEdge: string;
+  /** a vertical dash `|` used for deeper branches in other box rows */
+  vertical: string;
+  /** a horizontal dash used for closing lines over empty background AND as the end of single logs / errors */
+  horizontal: string;
+  /** a rotated T, used to branch single logs / errors from the main stream */
+  single: string;
+  /** the symbol for overlapping branches */
+  cross: string;
+  /** the edge that goes from top to right */
+  closeEdge: string;
+  /** the litte (right) arrow at the end of a closing log */
+  closeEnd: string;
+}
+```
+
+Then you can use it to reference the symbols from your own BoxLayout:
+
+###### Example
+```typescript
+const myLayout: BoxSymbols = {
+  openEnd: '<',
+  openEdge: '/',
+  vertical: '|',
+  horizontal: '-',
+  single: '}',
+  cross: '+',
+  closeEdge: '\\',
+  closeEnd: '>',
+};
+
+const myBoxString = outputLox.box
+  .map(segment => (segment === 'empty' ? ' ' : myLayout[segment.box]))
+  .join('');
+```

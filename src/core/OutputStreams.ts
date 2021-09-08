@@ -1,5 +1,6 @@
 import { ErrorLox, OutputLox } from '../loxes';
 import { LoxerCallbacks } from '../types';
+import { ANSIFormat } from './ANSIFormat';
 import { BoxFactory } from './BoxFactory';
 import { LoxHistory } from './LoxHistory';
 
@@ -7,6 +8,8 @@ interface OutputStreamsProps {
   callbacks?: LoxerCallbacks;
   disableColors?: boolean;
   boxFactory?: BoxFactory;
+  endTitleOpacity?: number;
+  highlightColor?: string;
 }
 
 /** @internal */
@@ -14,11 +17,15 @@ export class OutputStreams {
   private _callbacks: LoxerCallbacks | undefined;
   private _colorsDisabled: boolean;
   private _boxFactory: BoxFactory;
+  private _endTitleOpacity: number = 0;
+  private _highlightColor: string | undefined;
 
   constructor(props?: OutputStreamsProps) {
     this._callbacks = props?.callbacks;
     this._colorsDisabled = props?.disableColors ?? false;
     this._boxFactory = props?.boxFactory ?? new BoxFactory();
+    this._endTitleOpacity = props?.endTitleOpacity ?? 0;
+    this._highlightColor = props?.highlightColor;
   }
 
   /** @internal **/
@@ -35,7 +42,9 @@ export class OutputStreams {
     if (this._callbacks?.devError) {
       this._callbacks.devError(errorLox, history.stack);
     } else {
-      const { message, moduleText, timeText } = this._colorsDisabled ? errorLox : errorLox.colored;
+      const { message, moduleText, timeText } = this._colorsDisabled
+        ? errorLox
+        : ANSIFormat.colorLox(errorLox);
       const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
       const msg = moduleText + box + message + timeText;
       const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
@@ -61,11 +70,12 @@ export class OutputStreams {
       this._callbacks.devLog(outputLox);
     } else {
       // colored option
+      const opacity = outputLox.type === 'close' ? this._endTitleOpacity : 1;
       const { message, moduleText, timeText } = this._colorsDisabled
         ? outputLox
-        : outputLox.colored;
+        : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
-      const str = moduleText + box + message + timeText;
+      const str = moduleText + box + message + '\t' + timeText;
       outputLox.item ? console.log(str, outputLox.item) : console.log(str);
     }
   }

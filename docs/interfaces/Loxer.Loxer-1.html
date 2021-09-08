@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Loxer | Loxer - v0.1.4</title>
+	<title>Loxer | Loxer - v0.2.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">Loxer - v0.1.4</a>
+					<a href="../index.html" class="title">Loxer - v0.2.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -157,6 +157,8 @@
 						</li>                        <li class=" tsd-kind-module">
 						<a href="../modules/Decorators.html">Decorators</a>
 						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/Formatting.html">Formatting</a>
+						</li>                        <li class=" tsd-kind-module">
 						<a href="../modules/Logs.html">Logs</a>
 						</li>                        <li class="current tsd-kind-module">
 						<a href="../modules/Loxer.html">Loxer</a>
@@ -288,7 +290,7 @@
 					<a name="init" class="tsd-anchor"></a>
 					<h3>init</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<div class="tsd-comment">
 						<div class="lead">
@@ -309,7 +311,7 @@
 					<h4 class="tsd-parameters-title">Parameters</h4>
 					<ul class="tsd-parameters">
 						<li>
-							<span class="name">options</span>: <a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a>
+							<span class="name">options</span>: <a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a> <span class="tsd-flag ts-flagOptional">Optional</span>
 							<div class="tsd-comment">
 								<p>Options for the configuration of Loxer</p>
 							</div>
@@ -789,9 +791,8 @@
 							<p>This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.</p>
 							<ul>
 								<li>is a reversed stack, so that the most recent element is at <code>history[0]</code></li>
-								<li>the size of the history <strong>must be provided</strong> at the <a href="Loxer.LoxerConfig.html#historyCacheSize">LoxerConfig.historyCacheSize</a> in the
-									<a href="Loxer.LoxerOptions.html#config">LoxerOptions.config</a> declared in <code>Loxer.init(options)</code> though it <strong>defaults to <code>0</code></strong> for
-								Performance-reasons</li>
+								<li>the size of the history can be set at the <a href="Loxer.LoxerConfig.html#historyCacheSize">LoxerConfig.historyCacheSize</a> in the
+								<a href="Loxer.LoxerOptions.html#config">LoxerOptions.config</a> declared in <code>Loxer.init(options)</code>. It defaults to <code>50</code>.</li>
 								<li>if the history is enabled it will also be appended to the error logs in the <code>errorOut</code> callback</li>
 							</ul>
 						</div>
