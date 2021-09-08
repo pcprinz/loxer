@@ -1,5 +1,3 @@
-import { LoxerModules } from './types';
-
 /** @internal is not undefined or null */
 export function is<T extends any>(arg: T | undefined | null): arg is T {
   return arg !== undefined && arg !== null;
@@ -71,15 +69,3 @@ export class LoxerError extends Error {
     this.name = 'LoxerError';
   }
 }
-
-/** @internal */
-export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
-  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
-  INVALID: {
-    fullname: 'INVALIDMODULE',
-    color: '#f00',
-    develLevel: 1,
-    prodLevel: 0,
-  },
-};

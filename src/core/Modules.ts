@@ -1,5 +1,5 @@
 import { ANSI_CODE, getServiceColor } from '../ColorCode';
-import { DEFAULT_MODULES, is } from '../Helpers';
+import { is } from '../Helpers';
 import { Lox } from '../loxes/Lox';
 import { LoxerModules, LoxerOptions } from '../types';
 
@@ -92,3 +92,15 @@ export class Modules {
     return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
   }
 }
+
+/** @internal */
+export const DEFAULT_MODULES: LoxerModules = {
+  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
+  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
+  INVALID: {
+    fullname: 'INVALIDMODULE',
+    color: '#f00',
+    develLevel: 1,
+    prodLevel: 0,
+  },
+};
