@@ -3,18 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Formatting | Loxer - v0.2.0</title>
+	<title>Formatting | Loxer - v0.4.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -23,7 +23,9 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">Loxer - v0.2.0</a>
+					<ul class="results-priority" style="display:none">
+					</ul>
+					<a href="../index.html" class="title">Loxer - v0.4.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -54,169 +56,77 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../modules.html">Globals</a>
-				</li>
-				<li>
 					<a href="Formatting.html">Formatting</a>
 				</li>
 			</ul>
 		</div>
 	</div>
 </header>
-<div class="container">
-	<div class="row container container-main">
+<div class="container container-main">
+	<div class="row">
 		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation secondary menu-sticky">
+			<nav class="tsd-navigation primary">
 				<ul>
-					<ul class="before-current">
-						<li class=" tsd-kind-class tsd-parent-kind-module">
-							<a href="../classes/Formatting.ANSIFormat.html" class="tsd-kind-icon">ANSIFormat</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-module">
-							<a href="../interfaces/Formatting.BoxSymbols.html" class="tsd-kind-icon">Box<wbr>Symbols</a>
-						</li>
-					</ul>
-				</ul>
-				<ul>
-					<li>📑 Index</li>
-					<li><br></li>
 					<li class=" ">
 						<a href="../modules.html">Modules</a>
-						</li>                        <li class=" tsd-kind-module">
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="Decorators.html">Decorators</a>
-						</li>                        <li class="current tsd-kind-module">
+					</li>
+					<li class="current tsd-kind-module">
 						<a href="Formatting.html">Formatting</a>
-						</li>                        <li class=" tsd-kind-module">
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="Logs.html">Logs</a>
-						</li>                        <li class=" tsd-kind-module">
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="Loxer.html">Loxer</a>
-				</li>                </ul>
+					</li>
+				</ul>
 			</nav>
 		</div>
-		<div class="col-9 col-content">
+		<div class="col-7 offset-3 col-content">
+			<h1>Module Formatting</h1>
 			<section class="tsd-panel-group tsd-index-group">
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
-							<div class="tsd-navigation secondary">
-								<ul>
-									<li class="tsd-kind-class tsd-parent-kind-module">
-										<a href="../classes/Formatting.ANSIFormat.html" class="tsd-kind-icon">ANSIFormat</a>
-										<ul>
-											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#CODE" class="tsd-kind-icon">CODE</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#colorForeground" class="tsd-kind-icon">color<wbr>Foreground</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#colorBackground" class="tsd-kind-icon">color<wbr>Background</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#colorHighlight" class="tsd-kind-icon">color<wbr>Highlight</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#bgWarn" class="tsd-kind-icon">bg<wbr>Warn</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#fgWarn" class="tsd-kind-icon">fg<wbr>Warn</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#fgSuccess" class="tsd-kind-icon">fg<wbr>Success</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#fgTime" class="tsd-kind-icon">fg<wbr>Time</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#fgCloseLog" class="tsd-kind-icon">fg<wbr>Close<wbr>Log</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#colorize" class="tsd-kind-icon">colorize</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static">
-												<a href="../classes/Formatting.ANSIFormat.html#colorLox" class="tsd-kind-icon">color<wbr>Lox</a>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</div>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/Formatting.ANSIFormat.html" class="tsd-kind-icon">ANSIFormat</a></li>
+							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
-							<div class="tsd-navigation secondary">
-								<ul>
-									<li class="tsd-kind-interface tsd-parent-kind-module">
-										<a href="../interfaces/Formatting.BoxSymbols.html" class="tsd-kind-icon">Box<wbr>Symbols</a>
-										<ul>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#openEnd" class="tsd-kind-icon">open<wbr>End</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#openEdge" class="tsd-kind-icon">open<wbr>Edge</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#vertical" class="tsd-kind-icon">vertical</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#horizontal" class="tsd-kind-icon">horizontal</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#single" class="tsd-kind-icon">single</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#cross" class="tsd-kind-icon">cross</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#closeEdge" class="tsd-kind-icon">close<wbr>Edge</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-interface">
-												<a href="../interfaces/Formatting.BoxSymbols.html#closeEnd" class="tsd-kind-icon">close<wbr>End</a>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</div>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/Formatting.BoxSymbols.html" class="tsd-kind-icon">Box<wbr>Symbols</a></li>
+							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<footer class="with-border-bottom">
-				<div class="tsd-legend-group">
-					<ul class="tsd-legend">
-						<li class="tsd-is-inherited"><span class="tsd-kind-icon">Inherited</span></li>
-						<li class="tsd-is-protected"><span class="tsd-kind-icon">Protected</span></li>
-						<li class="tsd-is-private"><span class="tsd-kind-icon">Private</span></li>
-						<li class="tsd-is-static"><span class="tsd-kind-icon">Static</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-						<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object</span></li>
-						<li class="tsd-kind-property"><span class="tsd-kind-icon">Property</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-						<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-						<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type</span></li>
-						<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-						<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enum</span></li>
-						<li class="tsd-kind-constructor"><span class="tsd-kind-icon">Constructor</span></li>
-						<li class="tsd-kind-accessor"><span class="tsd-kind-icon">Getter/Setter</span></li>
-					</ul>
-				</div>
-			</footer>
-			<div>Made with ❤️ by <a href="https://github.com/pirix-gh/eledoc" target="_blank">pirix-gh</a>. Documentation generated by <a href="http://typedoc.org/" target="_blank">TypeDoc.</a></div>
+			<!--{&quot;options&quot;:&quot;C:\\dev\\loxer\\typedoc.json&quot;,&quot;tsconfig&quot;:&quot;C:\\dev\\loxer&quot;,&quot;packages&quot;:[],&quot;entryPoints&quot;:[&quot;C:\\dev\\loxer\\src\\types.ts&quot;,&quot;C:\\dev\\loxer\\src\\decorators\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\loxes\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\index.ts&quot;],&quot;exclude&quot;:[],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:false,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:false,&quot;excludeProtected&quot;:false,&quot;disableSources&quot;:true,&quot;includes&quot;:&quot;C:\\dev\\loxer\\assets&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:false,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;C:\\dev\\loxer\\docs&quot;,&quot;json&quot;:&quot;&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;Loxer&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[],&quot;categorizeByGroup&quot;:true,&quot;sort&quot;:[&quot;instance-first&quot;,&quot;source-order&quot;],&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:false,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;treatWarningsAsErrors&quot;:false,&quot;listInvalidSymbolLinks&quot;:false}-->
+		</div>
+		<div class="col-2 col-menu secondary-menu">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module root">
+						<a href="../classes/Formatting.ANSIFormat.html" class="tsd-kind-icon">ANSIFormat</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module root">
+						<a href="../interfaces/Formatting.BoxSymbols.html" class="tsd-kind-icon">Box<wbr>Symbols</a>
+					</li>
+				</ul>
+			</nav>
 		</div>
 	</div>
 </div>
+<footer class="with-border-bottom">
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
