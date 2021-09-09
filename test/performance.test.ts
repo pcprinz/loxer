@@ -14,27 +14,27 @@ test('disabled', () => {
 });
 
 // logging when logs don't fulfill level
-test('unleveled', () => {
+test('unlevelled', () => {
   Loxer.init({
     dev: false,
     defaultLevels: {
       prodLevel: 1,
-      develLevel: 1,
+      devLevel: 1,
     },
     config: {
       historyCacheSize: 0,
     },
   });
-  boxes(10000, 60, `unleveled logs`);
+  boxes(10000, 60, `unlevelled logs`);
 });
 
-// logging when logs go to outputstream
+// logging when logs go to output stream
 test('blank output stream', () => {
   Loxer.init({
     dev: false,
     defaultLevels: {
       prodLevel: 3,
-      develLevel: 3,
+      devLevel: 3,
     },
     config: {
       historyCacheSize: 0,
@@ -49,7 +49,7 @@ test.skip('console', () => {
     dev: true,
     defaultLevels: {
       prodLevel: 3,
-      develLevel: 3,
+      devLevel: 3,
     },
     config: {
       historyCacheSize: 0,

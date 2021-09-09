@@ -230,7 +230,7 @@ export interface LoxerOptions {
    * an exemplary module "Persons" would look like this:
    *
    * ```typescript
-   *   PERS: { fullname: 'Persons', color: '#0ff', develLevel: 3, prodLevel: 1 }
+   *   PERS: { fullName: 'Persons', color: '#0ff', devLevel: 3, prodLevel: 1 }
    * ```
    *
    * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
@@ -248,7 +248,7 @@ export interface LoxerOptions {
    * when the opening log had no module too. The default is defined as:
    *
    * ```typescript
-   *   NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
+   *   NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
    * ```
    *
    * This module will not have a module name or a box layout at the output.
@@ -258,7 +258,7 @@ export interface LoxerOptions {
    * The default is defined as:
    *
    * ```typescript
-   *   DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 1 }
+   *   DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
    * ```
    *
    * This module will have an empty module name, but a box layout at the output.
@@ -270,7 +270,7 @@ export interface LoxerOptions {
    * The default is defined as:
    *
    * ```typescript
-   *   INVALID: { fullname: 'INVALIDMODULE', color: '#f00', develLevel: 1, prodLevel: 0 }
+   *   INVALID: { fullName: 'INVALIDMODULE', color: '#f00', devLevel: 1, prodLevel: 0 }
    * ```
    *
    * This module will have a moduleName (`INVALIDMODULE`), but no box layout at the output.
@@ -296,11 +296,11 @@ export interface LoxerOptions {
   /** The default levels to show logs in production or development. These will automatically be adapted to the default
    * module `NONE` and `DEFAULT`. If you want to set them differently, then you have to override them in the `modules`
    * option.
-   * - both default to `develLevel: 1` and `prodLevel: 0`
+   * - both default to `devLevel: 1` and `prodLevel: 0`
    */
   defaultLevels?: {
     /** the actual level to show logs in development mode */
-    develLevel: LevelType;
+    devLevel: LevelType;
     /** the actual level to show logs in production mode */
     prodLevel: LevelType;
   };
@@ -312,11 +312,11 @@ export type LoxerModules = { [moduleId: string]: Module };
 /** the structure of a loggable module for the {@link LoxerModules} */
 export interface Module {
   /** the actual level to show logs in development mode */
-  develLevel: LevelType;
+  devLevel: LevelType;
   /** the actual level to show logs in production mode */
   prodLevel: LevelType;
   /** the full name for the logged module */
-  fullname: string;
+  fullName: string;
   /** the color used to identify this Log. Supported formats:
    * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
    * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
@@ -367,7 +367,7 @@ export interface LoxerConfig {
    * - defaults to `8`
    */
   moduleTextSlice?: number;
-  /** the opacity of the moduleText (`options.modules[...].fullname`) that appears on the `Loxer.of(...).close()` log
+  /** the opacity of the moduleText (`options.modules[...].fullName`) that appears on the `Loxer.of(...).close()` log
    * - number between `[0,1]`
    * - defaults to `0` which means "hidden"
    */

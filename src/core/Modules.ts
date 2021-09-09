@@ -17,8 +17,8 @@ export class Modules {
   constructor(props?: ModulesProps) {
     this._dev = props?.dev ?? true;
     if (props?.defaultLevels) {
-      DEFAULT_MODULES['NONE'].develLevel = props?.defaultLevels.develLevel;
-      DEFAULT_MODULES['DEFAULT'].develLevel = props?.defaultLevels.develLevel;
+      DEFAULT_MODULES['NONE'].devLevel = props?.defaultLevels.devLevel;
+      DEFAULT_MODULES['DEFAULT'].devLevel = props?.defaultLevels.devLevel;
       DEFAULT_MODULES['NONE'].prodLevel = props?.defaultLevels.prodLevel;
       DEFAULT_MODULES['DEFAULT'].prodLevel = props?.defaultLevels.prodLevel;
     }
@@ -38,7 +38,7 @@ export class Modules {
    */
   getLevel(moduleId: string): LevelType {
     const level = this._dev
-      ? this._modules[moduleId]?.develLevel
+      ? this._modules[moduleId]?.devLevel
       : this._modules[moduleId]?.prodLevel;
 
     return level ?? -1;
@@ -54,7 +54,7 @@ export class Modules {
       module = this._modules.INVALID;
     }
     let moduleText =
-      module.fullname.length > 0 ? module.fullname.slice(0, this._moduleTextSlice) + ': ' : '';
+      module.fullName.length > 0 ? module.fullName.slice(0, this._moduleTextSlice) + ': ' : '';
     const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
     for (let i = moduleText.length; i < moduleTextLength; i++) {
       moduleText += ' ';
@@ -76,7 +76,7 @@ export class Modules {
    * @internal determines if a log does not fulfill it's level constraints
    */
   isLogHidden(lox: Lox): boolean {
-    const dl = this._modules[lox.moduleId]?.develLevel ?? 1;
+    const dl = this._modules[lox.moduleId]?.devLevel ?? 1;
     const pl = this._modules[lox.moduleId]?.prodLevel ?? 1;
 
     return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
@@ -85,12 +85,12 @@ export class Modules {
 
 /** @internal */
 export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
-  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
+  NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
+  DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
   INVALID: {
-    fullname: 'INVALIDMODULE',
+    fullName: 'INVALIDMODULE',
     color: '#f00',
-    develLevel: 1,
+    devLevel: 1,
     prodLevel: 0,
   },
 };

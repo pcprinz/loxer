@@ -30,11 +30,11 @@ function run(fn, logs, depth, count = 1) {
     resetLoxer();
     time += t[0];
     lps += t[1];
-    logResult += `|${i+1}\t|${format(t[0])} ms\t|~${format(t[1])}\t|\n`;
+    logResult += `|${i + 1}\t|${format(t[0])} ms\t|~${format(t[1])}\t|\n`;
   }
   logResult += `|**avg**\t|**${format(time / count)} ms**\t|**~${format(lps / count)}**\t|\n\n`;
   logResult += `- 1 log consumes ${(time / count / (logs * 4)).toPrecision(2)} ms\n`;
-  logResult += `- ~${format(lps / count)} logs consume 1 second\n\n`
+  logResult += `- ~${format(lps / count)} logs consume 1 second\n\n`;
 }
 
 // logging when loxer disabled:
@@ -49,7 +49,7 @@ function test2(logs, depth) {
     dev: false,
     defaultLevels: {
       prodLevel: 1,
-      develLevel: 1,
+      devLevel: 1,
     },
     config: {
       historyCacheSize: 0,
@@ -58,13 +58,13 @@ function test2(logs, depth) {
   return boxes(logs, depth);
 }
 
-// logging when logs go to outputstream
+// logging when logs go to output stream
 function test3(logs, depth) {
   Loxer.init({
     dev: false,
     defaultLevels: {
       prodLevel: 3,
-      develLevel: 3,
+      devLevel: 3,
     },
     config: {
       historyCacheSize: 0,
@@ -79,7 +79,7 @@ function test4(logs, depth) {
     dev: true,
     defaultLevels: {
       prodLevel: 3,
-      develLevel: 3,
+      devLevel: 3,
     },
     config: {
       historyCacheSize: 0,

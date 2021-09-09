@@ -31,11 +31,11 @@ beforeEach(() => {
       prodLog,
     },
     defaultLevels: {
-      develLevel: 2,
+      devLevel: 2,
       prodLevel: 0,
     },
     modules: {
-      TEST: { color: '#ff0', develLevel: 1, prodLevel: 0, fullname: 'TestModule' },
+      TEST: { color: '#ff0', devLevel: 1, prodLevel: 0, fullName: 'TestModule' },
     },
     config: {
       moduleTextSlice: 10,

@@ -45,7 +45,7 @@ Anyways, the options are an object with the following structure:
   // The default levels to show logs in production or development
   defaultLevels?: {
     // the actual level to show logs in development mode
-    develLevel: LevelType;
+    devLevel: LevelType;
     // the actual level to show logs in production mode
     prodLevel: LevelType;
   };
@@ -171,7 +171,7 @@ Providing logs with levels would make no sense if you couldn't set which level t
 ```typescript
 Loxer.init({
     defaultLevels: {
-      develLevel: 3,  // the level in development environment
+      devLevel: 3,  // the level in development environment
       prodLevel: 1,   // the level in production environment
   }
 });
@@ -212,7 +212,7 @@ Loxer.log('this one is automatically assigned to the module NONE')
 ### Declaring modules
 Modules must be declared as part of the [`LoxerOptions`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerOptions.html) when you initialize `Loxer`. Therefore the `options.modules` must receive an object of `type LoxerModules = { [moduleId: string]: Module }`, where the `moduleId` is the key that will be referenced in the `.m()` and `.module()` methods.
 
-A [`Module`](https://pcprinz.github.io/loxer/interfaces/Loxer.Module.html) must be structured as `{ develLevel: LevelType; prodLevel: LevelType; fullname: string; color: string; }`. The two levels are of the same type as the `defaultLevels` and the `fullName` and `color` will be used for the output.
+A [`Module`](https://pcprinz.github.io/loxer/interfaces/Loxer.Module.html) must be structured as `{ devLevel: LevelType; prodLevel: LevelType; fullName: string; color: string; }`. The two levels are of the same type as the `defaultLevels` and the `fullName` and `color` will be used for the output.
 
 The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color](https://www.npmjs.com/package/color) package.
 
@@ -220,9 +220,9 @@ The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(
 ```typescript
 Loxer.init({
   modules: {
-    PERS: { color: '#f00', fullname: 'Persons', develLevel: 1, prodLevel: 1 },
-    CART: { color: '#00ff00', fullname: 'Shopping cart', develLevel: 1, prodLevel: 1 },
-    BILL: { color: 'rgb(0, 0, 255)', fullname: 'Billing', develLevel: 1, prodLevel: 1 }
+    PERS: { color: '#f00', fullName: 'Persons', devLevel: 1, prodLevel: 1 },
+    CART: { color: '#00ff00', fullName: 'Shopping cart', devLevel: 1, prodLevel: 1 },
+    BILL: { color: 'rgb(0, 0, 255)', fullName: 'Billing', devLevel: 1, prodLevel: 1 }
   }
 });
 ```
@@ -234,9 +234,9 @@ Loxer.init({
 ###### There are 3 default modules, that are predefined:
 ```typescript
 export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
-  DEFAULT: { fullname: '', color: '#fff', develLevel: 1, prodLevel: 0 },
-  INVALID: { fullname: 'INVALIDMODULE', color: '#f00', develLevel: 1, prodLevel: 0 }
+  NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
+  DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
+  INVALID: { fullName: 'INVALIDMODULE', color: '#f00', devLevel: 1, prodLevel: 0 }
 };
 ```
 
@@ -244,7 +244,7 @@ The `NONE` module is automatically assigned when there is no module method chain
 
 The `DEFAULT` module is automatically assigned, when logs are chained with an empty module method like `.m()`. The output will have a box layout and an empty module name.
 
-The `INVALID` module is automatically assigned, when logs are tried to be assigned with non existing modules (giving false moduleIds). The output will have no boxlayout, but the prominent fullname as module name.
+The `INVALID` module is automatically assigned, when logs are tried to be assigned with non existing modules (giving false moduleIds). The output will have no boxlayout, but the prominent fullName as module name.
 
 > All default modules can be redefined in the `options.modules` by overwriting their keys.
 > - **ATTENTION**: beware of forcefully setting any of these modules to a falsy value like `null` or `undefined` because this will definitely cause Loxer to crash.
@@ -300,7 +300,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
   timestamp: Date;
   /** The string color of the lox' module */
   color: string = '';
-  /** the possibly sliced text of the logs corresponding module fullname */
+  /** the possibly sliced text of the logs corresponding module fullName */
   moduleText: string | '' = '';
   /** the box layout of the log */
   box: Box = [];

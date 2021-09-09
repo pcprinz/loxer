@@ -34,12 +34,12 @@ beforeEach(() => {
       prodLog,
     },
     defaultLevels: {
-      develLevel: 2,
+      devLevel: 2,
       prodLevel: 0,
     },
     modules: {
-      ONE: { color: '#ff0', develLevel: 1, prodLevel: 0, fullname: 'Module 1' },
-      TWO: { color: '#00f', develLevel: 2, prodLevel: 0, fullname: 'Module 2' },
+      ONE: { color: '#ff0', devLevel: 1, prodLevel: 0, fullName: 'Module 1' },
+      TWO: { color: '#00f', devLevel: 2, prodLevel: 0, fullName: 'Module 2' },
     },
     config: {
       moduleTextSlice: 10,
@@ -249,10 +249,10 @@ test('leveling', () => {
 
   /* 
   ╭← open
-//│╭← open2        [UNLEVELED]
-//│├─ add2         [UNLEVELED automatically]
-//│╰→ close2       [UNLEVELED automatically]
-//├─ add           [UNLEVELED]
+//│╭← open2        [UNLEVELLED]
+//│├─ add2         [UNLEVELLED automatically]
+//│╰→ close2       [UNLEVELLED automatically]
+//├─ add           [UNLEVELLED]
   ├─ Error: error  [LEVELED but shown! ]
   ╰→ close
   */
@@ -278,9 +278,9 @@ test('module boxing', () => {
   │├─ add2          
   ╰┆→ close         
    ╰→ close2       
-//╭← open3          [unleveled]
+//╭← open3          [unlevelled]
   - error            [leveled automatically]
-//╰→ close3         [unleveled automatically]
+//╰→ close3         [unlevelled automatically]
   */
   checkBoxes([
     'open.ONE.<-open',
