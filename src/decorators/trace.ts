@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { is } from '../Helpers';
 import { Loxer } from '../Loxer';
 import { LogLevelType } from '../types';
@@ -69,13 +71,13 @@ export interface TraceOptions {
  * @returns a Decorator for class level methods
  */
 export function trace(options?: TraceOptions | string) {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): any {
     const original = descriptor.value;
     const className: string = target.constructor.name;
     const fixedName = className.endsWith('Class')
       ? className.substr(0, className.length - 5)
       : className;
-    descriptor.value = async function(...args: any[]) {
+    descriptor.value = async function (...args: any[]) {
       let moduleId;
       let o;
       if (is(options) && typeof options === 'string') {
@@ -89,7 +91,7 @@ export function trace(options?: TraceOptions | string) {
       const h = o?.highlight;
 
       // open message
-      let openMessage = getOpenMessage(o, propertyKey, args, fixedName);
+      const openMessage = getOpenMessage(o, propertyKey, args, fixedName);
 
       // open the lox
       const item = o?.argsAsItem ? args : undefined;
@@ -102,7 +104,7 @@ export function trace(options?: TraceOptions | string) {
       const result = await original.call(this, ...args);
 
       // close message
-      let closeMessage = getCloseMessage(o, propertyKey, result, fixedName);
+      const closeMessage = getCloseMessage(o, propertyKey, result, fixedName);
 
       // close the lox
       const resultItem = o?.resultAsItem ? result : undefined;
@@ -129,11 +131,12 @@ function getOpenMessage(
     } else if (om === 'args') {
       openMessage = propertyKey + '(' + args.join(', ') + ')';
     } else if (om === 'types') {
-      openMessage = propertyKey + '(' + args.map(a => typeof a).join(', ') + ')';
+      openMessage = propertyKey + '(' + args.map((a) => typeof a).join(', ') + ')';
     } else if (om === 'className.functionName') {
       openMessage = fixedName + '.' + propertyKey + '()';
     }
   }
+
   return openMessage;
 }
 
@@ -156,5 +159,6 @@ function getCloseMessage(
       closeMessage = fixedName + '.' + propertyKey + ' done';
     }
   }
+
   return closeMessage;
 }

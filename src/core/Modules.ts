@@ -1,6 +1,6 @@
 import { is } from '../Helpers';
 import { Lox } from '../loxes/Lox';
-import { LoxerModules, LoxerOptions } from '../types';
+import { LevelType, LoxerModules, LoxerOptions } from '../types';
 
 interface ModulesProps {
   dev: boolean;
@@ -29,14 +29,14 @@ export class Modules {
     this._moduleTextSlice = props?.moduleTextSlice ?? 8;
   }
 
-  ensureModule(moduleId: string) {
+  ensureModule(moduleId: string): string {
     return this._modules[moduleId] === undefined ? 'INVALID' : moduleId;
   }
 
   /**
    * @internal the level of a specific module || -1
    */
-  getLevel(moduleId: string) {
+  getLevel(moduleId: string): LevelType {
     const level = this._dev
       ? this._modules[moduleId]?.develLevel
       : this._modules[moduleId]?.prodLevel;
@@ -47,7 +47,7 @@ export class Modules {
   /**
    * @internal the texts of a specific module ||INVALID module
    */
-  getText(lox: Lox) {
+  getText(lox: Lox): string {
     let module = this._modules[lox.moduleId];
     if (!is(module)) {
       lox.moduleId = 'INVALID';
@@ -59,6 +59,7 @@ export class Modules {
     for (let i = moduleText.length; i < moduleTextLength; i++) {
       moduleText += ' ';
     }
+
     return moduleText;
   }
 

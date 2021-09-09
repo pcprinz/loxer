@@ -212,7 +212,7 @@ export interface Loxer {
 }
 
 /** this is any possible type that a `catch` could return */
-export type ErrorType = Error | string | number | boolean | object;
+export type ErrorType = Error | string | number | boolean | Record<string, unknown>;
 
 /** these are the functions returned from the {@link Loxer.of} method */
 export interface OfLoxes {
@@ -234,8 +234,8 @@ export interface LoxerOptions {
    * ```
    *
    * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
-   * - the fullname will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
-   *   string at the box layouted output
+   * - the fullName will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
+   *   string at the output
    * - the color will be applied to the module name and its box layout
    * - the levels are activation boundaries for the specified logs. All logs that have a level higher than the current
    *   module level will therefore not be logged.
@@ -285,10 +285,10 @@ export interface LoxerOptions {
   dev?: boolean;
   /** Functions called as an output stream for Loxer..
    * The output stream is divided into 4 different streams, depending on the environment and the type of log:
-   * - `devLog`: logs occuring in development environment
-   * - `prodLog`: logs occuring in production environment
-   * - `devError`: errors occuring in development environment
-   * - `prodError`: errors occuring in production environment
+   * - `devLog`: logs occurring in development environment
+   * - `prodLog`: logs occurring in production environment
+   * - `devError`: errors occurring in development environment
+   * - `prodError`: errors occurring in production environment
    */
   callbacks?: LoxerCallbacks;
   /** The {@link LoxerConfig Configuration} of Loxer. */
@@ -404,12 +404,12 @@ export interface LoxerConfig {
   /** disables all colors for the output.
    * - use this if the console can't handle `\x1b[38;2;R;G;Bm` colors.
    * - this only takes effect, if the Callbacks are unset and the console.log is used internally.
-   * - the Callbacks receive colored and uncolored messages seperately
+   * - the Callbacks receive colored and uncolored messages separately
    * - defaults to `false`
    */
   disableColors?: boolean;
   /** determines how many output- / error logs shall be cached in the history.
-   * - is accessable with `Loxer.history`
+   * - is accessible with `Loxer.history`
    * - will be additionally appended to error outputs
    * - **defaults to `50`**
    */

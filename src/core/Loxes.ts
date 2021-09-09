@@ -15,7 +15,7 @@ export class Loxes {
   private _openBuffer: (OpenBoxType | undefined)[] = [];
 
   /** @internal add / removes an open lox from the list of opened logs, depending on it's type */
-  proceed(lox: OutputLox) {
+  proceed(lox: OutputLox): void {
     if (lox.type === 'open') {
       this._loxes[lox.id] = lox;
       if (!lox.hidden) {
@@ -23,7 +23,7 @@ export class Loxes {
       }
     } else if (lox.type === 'close') {
       this._loxes[lox.id] = undefined;
-      const index = this._openBuffer.findIndex(buff => buff?.id === lox.id);
+      const index = this._openBuffer.findIndex((buff) => buff?.id === lox.id);
       if (index > -1) {
         this._openBuffer[index] = undefined;
       }
@@ -42,7 +42,7 @@ export class Loxes {
   findOpenLox(id: number): Lox | undefined {
     if (isNumber(id)) {
       return this._shouldUseQueue
-        ? this._pendingLoxQueue.find(item => item.type === 'open' && item?.id === id)
+        ? this._pendingLoxQueue.find((item) => item.type === 'open' && item?.id === id)
         : this._loxes[id];
     } else {
       return undefined;
@@ -51,7 +51,8 @@ export class Loxes {
 
   /** @internal returns all defined open loxes. used for appending to ErrorLoxes */
   getOpenLoxes(): OutputLox[] {
-    const openLoxes = filterDef(this._openBuffer).map(buff => this._loxes[buff.id]);
+    const openLoxes = filterDef(this._openBuffer).map((buff) => this._loxes[buff.id]);
+
     return filterDef(openLoxes);
   }
 
@@ -61,7 +62,7 @@ export class Loxes {
   }
 
   /** @internal enqueues any lox to the pending queue. used in switchOutput when Loxer is not initialized */
-  enqueue(log: Lox) {
+  enqueue(log: Lox): void {
     this._pendingLoxQueue.push(log);
   }
 
@@ -70,6 +71,7 @@ export class Loxes {
     const queue = this._pendingLoxQueue;
     this._pendingLoxQueue = [];
     this._shouldUseQueue = false;
+
     return queue;
   }
 }

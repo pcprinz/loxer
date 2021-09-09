@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "tsc: watch - tsconfig.json",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "label": "lint",
+      "detail": "yarn lint",
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

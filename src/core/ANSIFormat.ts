@@ -76,7 +76,7 @@ export class ANSIFormat {
   }
 
   /** receives text color and alpha and returns the colored string */
-  static colorize(text: string, color: string, alpha: number = 1) {
+  static colorize(text: string, color: string, alpha: number = 1): string {
     const rgb = Color(color && color.length > 0 ? color : '#fff');
 
     return (
@@ -96,7 +96,15 @@ export class ANSIFormat {
    * @param highlightColor for the message (if the lox is highlighted) - defaults to `inverted`
    * @returns the colored props of the given lox
    */
-  static colorLox(lox: OutputLox, opacity: number = 1, highlightColor?: string) {
+  static colorLox(
+    lox: OutputLox,
+    opacity: number = 1,
+    highlightColor?: string
+  ): {
+    message: string;
+    moduleText: string;
+    timeText: string;
+  } {
     let message = lox.highlighted ? this.colorHighlight(lox.message, highlightColor) : lox.message;
     if (!lox.highlighted && lox.type === 'close') {
       message = this.fgCloseLog(lox.message);
@@ -104,6 +112,7 @@ export class ANSIFormat {
     if (lox instanceof ErrorLox) {
       message = this.bgWarn(lox.error.name) + ': ' + this.fgWarn(lox.message);
     }
+
     return {
       message,
       moduleText: this.colorize(lox.moduleText, lox.color, opacity),

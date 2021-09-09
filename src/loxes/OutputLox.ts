@@ -27,7 +27,7 @@ export class OutputLox extends Lox {
   hidden: boolean = false;
 
   /** @internal */
-  setTime(times: { timeText: string; timeConsumption?: number }) {
+  setTime(times: { timeText: string; timeConsumption?: number }): void {
     this.timeText = times.timeText;
     this.timeConsumption = times.timeConsumption;
   }

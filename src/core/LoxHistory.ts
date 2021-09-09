@@ -10,7 +10,7 @@ export class LoxHistory {
   }
 
   /** @internal */
-  add(lox: OutputLox | ErrorLox) {
+  add(lox: OutputLox | ErrorLox): void {
     if (this._size === 1) {
       return;
     }

@@ -1,5 +1,5 @@
-import { Loxer, resetLoxer } from '../src';
-import { ErrorLox, OutputLox } from '../src/loxes';
+import { Loxer, resetLoxer } from '../dist';
+import { ErrorLox, OutputLox } from '../dist/loxes';
 
 let devLogs: OutputLox[] = [];
 function devLog(log: OutputLox) {
@@ -76,7 +76,7 @@ function checkBoxes(expected: string[]) {
     const type = log.type;
     const mod = log.moduleId;
     const box = log.box
-      .map(seg => {
+      .map((seg) => {
         if (seg === 'empty') {
           return ' ';
         } else {
@@ -219,9 +219,7 @@ test('async boxing', () => {
 
 test('highlighting', () => {
   const id = Loxer.h().open('open');
-  Loxer.h()
-    .of(id)
-    .close('close');
+  Loxer.h().of(id).close('close');
 
   expect(devLogs.length).toBe(3);
   expect(devLogs[1].highlighted).toBeTruthy();
@@ -238,21 +236,13 @@ test('leveling', () => {
   const id1 = Loxer.open('open');
   const id2 = Loxer.l(3).open('open2');
   // append to not existing box
-  Loxer.l(1)
-    .of(id2)
-    .add('add2');
+  Loxer.l(1).of(id2).add('add2');
   // auto level 3
   Loxer.of(id2).close('close2');
-  Loxer.l(3)
-    .of(id1)
-    .add('add');
+  Loxer.l(3).of(id1).add('add');
   // no leveling on errors
-  Loxer.l(3)
-    .of(id1)
-    .error('error');
-  Loxer.l(2)
-    .of(id1)
-    .close('close');
+  Loxer.l(3).of(id1).error('error');
+  Loxer.l(2).of(id1).close('close');
 
   expect(devLogs.length).toBe(3);
   expect(devErrors.length).toBe(1);
@@ -271,31 +261,15 @@ test('leveling', () => {
 
 test('module boxing', () => {
   const id1 = Loxer.m('ONE').open('open');
-  Loxer.m('ONE')
-    .of(id1)
-    .add('add');
+  Loxer.m('ONE').of(id1).add('add');
   const id2 = Loxer.m('TWO').open('open2');
-  Loxer.m('ONE')
-    .of(id1)
-    .error('error');
-  Loxer.m('TWO')
-    .of(id2)
-    .add('add2');
-  Loxer.m('ONE')
-    .of(id1)
-    .close('close');
-  Loxer.m('TWO')
-    .of(id2)
-    .close('close2');
-  const id3 = Loxer.m('ONE')
-    .l(2)
-    .open('open3');
-  Loxer.m('ONE')
-    .of(id3)
-    .error('error3');
-  Loxer.m('ONE')
-    .of(id3)
-    .close('close3');
+  Loxer.m('ONE').of(id1).error('error');
+  Loxer.m('TWO').of(id2).add('add2');
+  Loxer.m('ONE').of(id1).close('close');
+  Loxer.m('TWO').of(id2).close('close2');
+  const id3 = Loxer.m('ONE').l(2).open('open3');
+  Loxer.m('ONE').of(id3).error('error3');
+  Loxer.m('ONE').of(id3).close('close3');
   /*
   ╭← open
   ├─ add

@@ -29,12 +29,12 @@ export class OutputStreams {
   }
 
   /** @internal **/
-  errorOut(dev: boolean, errorLox: ErrorLox, history: LoxHistory) {
+  errorOut(dev: boolean, errorLox: ErrorLox, history: LoxHistory): void {
     dev ? this.devErrorOut(errorLox, history) : this.prodErrorOut(errorLox, history);
   }
 
   /** @internal **/
-  logOut(dev: boolean, outputLox: OutputLox) {
+  logOut(dev: boolean, outputLox: OutputLox): void {
     dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
   }
 
@@ -50,7 +50,9 @@ export class OutputStreams {
       const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
       const openLogs =
         errorLox.highlighted && errorLox.openLoxes.length > 0
-          ? `\nOPEN_LOGS: [${errorLox.openLoxes.map(outputLox => outputLox.message).join(' <> ')}]`
+          ? `\nOPEN_LOGS: [${errorLox.openLoxes
+              .map((outputLox) => outputLox.message)
+              .join(' <> ')}]`
           : '';
 
       errorLox.item

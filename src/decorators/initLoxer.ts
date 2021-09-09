@@ -10,6 +10,6 @@ import { LoxerOptions } from '../types';
  * @returns a class decorator
  */
 
-export function initLoxer(options: LoxerOptions) {
+export function initLoxer(options: LoxerOptions): void {
   Loxer.init(options);
 }

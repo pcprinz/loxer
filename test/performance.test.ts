@@ -1,4 +1,4 @@
-import { Loxer, resetLoxer } from '../src';
+import { Loxer, resetLoxer } from '../dist';
 
 let testResults = '';
 afterAll(() => console.log(testResults));

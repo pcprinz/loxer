@@ -12,10 +12,11 @@ export class BoxFactory {
     this._boxLayoutStyle = boxLayoutStyle ?? 'round';
   }
 
-  getLogBox(lox: OutputLox, loxes: Loxes) {
+  getLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.hidden) {
       return [];
     }
+
     return lox.type === 'open' ? this.getOpenLogBox(lox, loxes) : this.getOfLogBox(lox, loxes);
   }
 
@@ -70,10 +71,10 @@ export class BoxFactory {
   }
 
   /** @internal */
-  getBoxString(box: Box, colored: boolean | undefined) {
+  getBoxString(box: Box, colored: boolean | undefined): string {
     return (
       box
-        .map(segment => {
+        .map((segment) => {
           if (segment === 'empty') {
             return ' ';
           } else if (colored) {

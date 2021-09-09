@@ -57,7 +57,7 @@ export class Lox {
    * @param obj to compare on equality
    * @returns true if both have the same id
    */
-  equals(obj: unknown) {
+  equals(obj: unknown): boolean {
     return is(obj) && obj instanceof Lox ? obj.id === this.id : false;
   }
 
@@ -68,7 +68,7 @@ export class Lox {
 
     return this._runningId;
   }
-  static resetStaticRunningId() {
+  static resetStaticRunningId(): void {
     Lox._runningId = -1;
   }
 }

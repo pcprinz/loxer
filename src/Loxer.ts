@@ -21,8 +21,8 @@ class LoxerInstance implements LoxerType {
 
   init(props?: LoxerOptions) {
     this._initialized = true;
-    if (is(props?.dev)) {
-      this._dev = props!.dev;
+    if (is(props) && is(props?.dev)) {
+      this._dev = props.dev;
     } else {
       this._dev = isNES(process.env.NODE_ENV) ? 'development' === process.env.NODE_ENV : false;
     }
@@ -50,7 +50,7 @@ class LoxerInstance implements LoxerType {
     });
 
     this.highlight().log('Loxer initialized');
-    this._loxes.dequeue().forEach(queued => this.switchOutput(queued));
+    this._loxes.dequeue().forEach((queued) => this.switchOutput(queued));
   }
 
   get history() {
@@ -306,7 +306,7 @@ class LoxerInstance implements LoxerType {
 
 export let Loxer: LoxerType = new LoxerInstance();
 
-export function resetLoxer() {
+export function resetLoxer(): void {
   Loxer = new LoxerInstance();
   Lox.resetStaticRunningId();
 }

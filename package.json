@@ -1,8 +1,9 @@
 {
-  "version": "0.3.0",
-  "license": "MIT",
   "name": "loxer",
+  "version": "0.3.0",
+  "description": "Logger, Tracer, Error detector, dataflow visualizer",
   "author": "Christian Prinz",
+  "license": "MIT",
   "keywords": [
     "logger",
     "log",
@@ -12,60 +13,46 @@
     "log level",
     "box"
   ],
-  "module": "dist/loxer.esm.js",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why",
+    "build": "node node_modules/typescript/bin/tsc",
+    "watch": "node node_modules/typescript/bin/tsc --watch",
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "prepare": "yarn build",
     "docs": "typedoc --options typedoc.json"
   },
-  "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "yarn lint"
     }
-  },
-  "prettier": {
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "size-limit": [
-    {
-      "path": "dist/loxer.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/loxer.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "devDependencies": {
-    "@size-limit/preset-small-lib": "^5.0.3",
-    "@types/color": "^3.0.2",
-    "eledoc": "^0.2.1",
-    "husky": "^7.0.2",
-    "size-limit": "^5.0.3",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.3.1",
-    "typedoc": "^0.21.7",
-    "typescript": "^4.4.2"
   },
   "dependencies": {
-    "color": "^4.0.1"
+    "color": "4.0.1"
+  },
+  "devDependencies": {
+    "@types/color": "3.0.2",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.9.0",
+    "@typescript-eslint/eslint-plugin": "4.31.0",
+    "@typescript-eslint/parser": "4.31.0",
+    "eledoc": "0.2.1",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "7.0.2",
+    "jest": "^27.1.1",
+    "prettier": "2.4.0",
+    "ts-jest": "^27.0.5",
+    "tslib": "2.3.1",
+    "typedoc": "0.21.9",
+    "typescript": "4.4.2"
   }
 }
