@@ -4,8 +4,9 @@ import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
 import { ensureError, is, isNES, LoxerError } from './Helpers';
-import { ErrorLox, OutputLox } from './loxes';
+import { ErrorLox } from './loxes/ErrorLox';
 import { Lox, LoxType } from './loxes/Lox';
+import { OutputLox } from './loxes/OutputLox';
 import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
 
 class LoxerInstance implements LoxerType {

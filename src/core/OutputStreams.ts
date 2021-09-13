@@ -1,4 +1,5 @@
-import { ErrorLox, OutputLox } from '../loxes';
+import { ErrorLox } from '../loxes/ErrorLox';
+import { OutputLox } from '../loxes/OutputLox';
 import { LoxerCallbacks } from '../types';
 import { ANSIFormat } from './ANSIFormat';
 import { BoxFactory } from './BoxFactory';

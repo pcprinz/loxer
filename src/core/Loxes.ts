@@ -1,5 +1,5 @@
 import { filterDef, isNumber } from '../Helpers';
-import { OutputLox } from '../loxes';
+import { OutputLox } from '../loxes/OutputLox';
 import { Lox } from '../loxes/Lox';
 
 type OpenBoxType = { id: number; color: string };

@@ -1,4 +1,5 @@
-import { ErrorLox, OutputLox } from '../loxes';
+import { ErrorLox } from '../loxes/ErrorLox';
+import { OutputLox } from '../loxes/OutputLox';
 
 /** @internal */
 export class LoxHistory {

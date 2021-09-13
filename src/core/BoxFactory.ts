@@ -1,7 +1,7 @@
 import { BoxLayouts, BoxLayoutStyle, BoxSymbols } from './BoxFormat';
-import { OutputLox } from '../loxes';
 import { ANSIFormat } from './ANSIFormat';
 import { Loxes } from './Loxes';
+import { OutputLox } from '../loxes/OutputLox';
 export type Box = (BoxSegment | 'empty')[];
 export type BoxSegment = { box: keyof BoxSymbols; color: string };
 /** @internal */

@@ -1,5 +1,6 @@
 import Color from 'color';
-import { ErrorLox, OutputLox } from '../loxes';
+import { ErrorLox } from '../loxes/ErrorLox';
+import { OutputLox } from '../loxes/OutputLox';
 
 export class ANSIFormat {
   /** @internal */
