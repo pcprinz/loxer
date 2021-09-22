@@ -77,7 +77,7 @@ export function trace(options?: TraceOptions | string) {
     const fixedName = className.endsWith('Class')
       ? className.substr(0, className.length - 5)
       : className;
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       let moduleId;
       let o;
       if (is(options) && typeof options === 'string') {
@@ -101,13 +101,24 @@ export function trace(options?: TraceOptions | string) {
         .open(openMessage, item);
 
       // call the function
-      const result = await original.call(this, ...args);
+      const result = original.call(this, ...args);
 
       // close message
       const closeMessage = getCloseMessage(o, propertyKey, result, fixedName);
+      const resultItem = o?.resultAsItem ? result : undefined;
+
+      if (result && typeof result.then === 'function') {
+        return result.then((payload: any) => {
+          // close the lox
+          Loxer.h(h === 'all' || h === 'close')
+            .of(loxId)
+            .close(closeMessage, resultItem);
+
+          return payload;
+        });
+      }
 
       // close the lox
-      const resultItem = o?.resultAsItem ? result : undefined;
       Loxer.h(h === 'all' || h === 'close')
         .of(loxId)
         .close(closeMessage, resultItem);
