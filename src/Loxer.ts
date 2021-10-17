@@ -1,9 +1,10 @@
 import { BoxFactory } from './core/BoxFactory';
+import { ensureError } from './core/Error';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
-import { ensureError, is, isNES, LoxerError } from './Helpers';
+import { is, isNES, LoxerError } from './Helpers';
 import { ErrorLox } from './loxes/ErrorLox';
 import { Lox, LoxType } from './loxes/Lox';
 import { OutputLox } from './loxes/OutputLox';
@@ -214,19 +215,19 @@ class LoxerInstance implements LoxerType {
           );
         },
       };
-    } else {
-      return {
-        add: (message: string, item?: any) => {
-          this.appendLox('single', openLox, message, item);
-        },
-        close: (message: string, item?: any) => {
-          this.appendLox('close', openLox, message, item);
-        },
-        error: (error: ErrorType, item?: any) => {
-          this.internalError(error, openLox.id, openLox.moduleId, undefined, item);
-        },
-      };
     }
+
+    return {
+      add: (message: string, item?: any) => {
+        this.appendLox('single', openLox, message, item);
+      },
+      close: (message: string, item?: any) => {
+        this.appendLox('close', openLox, message, item);
+      },
+      error: (error: ErrorType, item?: any) => {
+        this.internalError(error, openLox.id, openLox.moduleId, undefined, item);
+      },
+    };
   }
 
   private appendLox(type: LoxType, openLox: Lox, message: string, item?: any) {
@@ -299,7 +300,7 @@ class LoxerInstance implements LoxerType {
       return { coloredTimeText: '', timeText: '' };
     }
     const timeConsumption = lox.timestamp.getTime() - openLox.timestamp.getTime();
-    const timeText = '[' + timeConsumption.toString() + 'ms]';
+    const timeText = `[${timeConsumption.toString()}ms]`;
 
     return { timeConsumption, timeText };
   }

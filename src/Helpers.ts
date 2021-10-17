@@ -1,6 +1,6 @@
 /** @internal is not undefined or null */
 export function is<T extends any>(arg: T | undefined | null): arg is T {
-  return arg !== undefined && arg !== null;
+  return arg != null;
 }
 
 /** @internal */
@@ -25,26 +25,6 @@ export function filterDef<T extends any>(list: (T | undefined)[]): T[] {
 /** @internal */
 export function isError(arg: unknown): arg is Error {
   return is(arg) && arg instanceof Error && isString(arg.name) && isString(arg.message);
-}
-
-/** @internal */
-export function ensureError(
-  error: Error | string | number | boolean | Record<string, unknown>
-): Error {
-  let result;
-  if (isError(error)) {
-    result = error;
-    result.stack = result.stack ? eraseBeginningLines(result.stack, 1) : undefined;
-  } else {
-    if (typeof error === 'object') {
-      result = new Error(JSON.stringify(error));
-    } else {
-      result = new Error(error.toString());
-    }
-    result.stack = result.stack ? eraseBeginningLines(result.stack, 4) : undefined;
-  }
-
-  return result;
 }
 
 /** @internal */
