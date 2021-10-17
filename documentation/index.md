@@ -215,7 +215,7 @@ Loxer.m('PERS').log('this too');
 Loxer.m('CART').log('this one is assigned to a module with the fullName "Shopping Cart"');
 Loxer.m('BILLING').log('this one to "Billing"');
 Loxer.m().log('this one is automatically assigned to the module DEFAULT');
-Loxer.log('this one is automatically assigned to the module NONE')
+Loxer.log('this one is automatically assigned to the module NONE');
 ```
 
 ###### Console output
@@ -430,10 +430,11 @@ If an open box is to be closed, or further logs / errors are to be added, the `L
 
 ###### Assigning / closing a box - [`Loxer.of()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#of):
 ```typescript
-const id = Loxer.m().open('This is the opening log');
-Loxer.of(id).add('this is a single added log');
-Loxer.of(id).error('this is an added error');
-Loxer.of(id).close('this is the closing log');
+const lox = Loxer.m('BILLING').open('This is the opening log');
+Loxer.of(lox).add('this is a single added log');
+Loxer.of(lox).error('this is an added error');
+Loxer.of(lox).close('this is the closing log');
+Loxer.of(lox).add('this log is shown but as error');
 ```
 
 ###### Console output

@@ -1,11 +1,24 @@
-# Loxer
-Logger, Tracer, Error detector, dataflow visualizer
-
 ![Loxer_Logo](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png)
+# Loxer ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pcprinz/loxer) ![GitHub Release Date](https://img.shields.io/github/release-date/pcprinz/loxer) ![GitHub branch checks state](https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build) ![npm bundle size](https://img.shields.io/bundlephobia/min/loxer) ![GitHub](https://img.shields.io/github/license/pcprinz/loxer)
 
-### [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md)
-### [API Reference](https://pcprinz.github.io/loxer/index.html)
-### [Performance Tests](https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md)
+**Loxer** is a middleware logger that allows you to:
+- distribute logs to different output streams (dev / prod / log / error)
+- add levels to logs
+- categorize logs in modules (with their own levels)
+- connect logs to each other to "boxes"
+- improve error logs (with more information)
+- get significantly better visualization of the logs
+- visualize the data flow (including time measurement)
+
+With Loxer, logs never have to be deleted again, as they hardly use any resources when switched off. Logs and error records can easily be forwarded to crash reporting systems such as Firebase. This makes it possible to get error reports that are just as good in the production environment as in the development environment. Furthermore, errors in concurrent functional processes can be detected more easily.
+
+
+# Documentation
+The **[API Reference](https://pcprinz.github.io/loxer/index.html)** provides a complete overview of all the features of the package. Furthermore, the complete source code is documented with js-doc and typed with typscript, which guarantees full IDE support.
+
+The **[Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md)** contains detailed instructions on how to use the package.
+
+The **[Performance Tests](https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md)** documents how small the influence of the package is on the performance of an application.
 
 ## Installation 
 `npm i --save loxer` or `yarn add loxer` thats it.

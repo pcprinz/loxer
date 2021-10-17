@@ -63,7 +63,7 @@ step('6 Modules');
 
 Loxer.module('PERS').log('this log is assigned to the module with the key PERS');
 Loxer.m('PERS').log('this too');
-Loxer.m('CART').log('this one is assigned to a module called "Shopping Cart"');
+Loxer.m('CART').log('this one is assigned to a module with the fullName "Shopping Cart"');
 Loxer.m('BILLING').log('this one to "Billing"');
 Loxer.m().log('this one is automatically assigned to the module DEFAULT');
 Loxer.log('this one is automatically assigned to the module NONE');
