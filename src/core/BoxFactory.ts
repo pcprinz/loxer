@@ -93,22 +93,19 @@ export class BoxFactory {
    * @returns a stringified version of the given box
    */
   getBoxString(box: Box, colored: boolean | undefined): string {
-    return (
-      box
-        .map((segment) => {
-          if (segment === 'empty') {
-            return ' ';
-          }
-          if (colored) {
-            return ANSIFormat.colorize(
-              BoxLayouts[this._boxLayoutStyle][segment.box],
-              segment.color
-            );
-          }
+    const result = box
+      .map((segment) => {
+        if (segment === 'empty') {
+          return ' ';
+        }
+        if (colored) {
+          return ANSIFormat.colorize(BoxLayouts[this._boxLayoutStyle][segment.box], segment.color);
+        }
 
-          return BoxLayouts[this._boxLayoutStyle][segment.box];
-        })
-        .join('') + ' '
-    );
+        return BoxLayouts[this._boxLayoutStyle][segment.box];
+      })
+      .join('');
+
+    return result.length > 0 ? `${result} ` : result;
   }
 }
