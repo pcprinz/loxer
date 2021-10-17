@@ -2,8 +2,11 @@ import { BoxLayouts, BoxLayoutStyle, BoxSymbols } from './BoxFormat';
 import { ANSIFormat } from './ANSIFormat';
 import { Loxes } from './Loxes';
 import { OutputLox } from '../loxes/OutputLox';
+
 export type Box = (BoxSegment | 'empty')[];
+
 export type BoxSegment = { box: keyof BoxSymbols; color: string };
+
 /** A Factory used to construct the BoxLayout for `*Lox`es */
 export class BoxFactory {
   private _boxLayoutStyle: BoxLayoutStyle;

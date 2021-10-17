@@ -39,7 +39,7 @@ export class OutputStreams {
     dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
   }
 
-  private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
+  private devErrorOut(errorLox: ErrorLox, history: LoxHistory): void {
     if (this._callbacks?.devError) {
       this._callbacks.devError(errorLox, history.stack);
     } else {
@@ -62,13 +62,13 @@ export class OutputStreams {
     }
   }
 
-  private prodErrorOut(errorLox: ErrorLox, history: LoxHistory) {
+  private prodErrorOut(errorLox: ErrorLox, history: LoxHistory): void {
     if (this._callbacks?.prodError) {
       this._callbacks.prodError(errorLox, history.stack);
     }
   }
 
-  private devLogOut(outputLox: OutputLox) {
+  private devLogOut(outputLox: OutputLox): void {
     if (this._callbacks?.devLog) {
       this._callbacks.devLog(outputLox);
     } else {
@@ -83,7 +83,7 @@ export class OutputStreams {
     }
   }
 
-  private prodLogOut(outputLox: OutputLox) {
+  private prodLogOut(outputLox: OutputLox): void {
     if (this._callbacks?.prodLog) {
       this._callbacks.prodLog(outputLox);
     }

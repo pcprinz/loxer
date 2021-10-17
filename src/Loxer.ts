@@ -1,10 +1,10 @@
 import { BoxFactory } from './core/BoxFactory';
-import { ensureError } from './core/Error';
+import { ensureError, LoxerError } from './core/Error';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
-import { is, isNES, LoxerError } from './Helpers';
+import { is, isNES } from './Helpers';
 import { ErrorLox } from './loxes/ErrorLox';
 import { Lox, LoxType } from './loxes/Lox';
 import { OutputLox } from './loxes/OutputLox';

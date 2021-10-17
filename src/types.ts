@@ -27,7 +27,7 @@ export interface Loxer {
    * ---
    * @param moduleId the corresponding key of a module from {@link LoxerOptions.modules} declared in `Loxer.init(options)`
    */
-  getModuleLevel: (moduleID: string) => LevelType;
+  getModuleLevel: (moduleID: string) => LevelType | -1;
   /** ## Highlight a log
    * To highlight any log, just chain this function like that:
    *

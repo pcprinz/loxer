@@ -37,12 +37,3 @@ export function eraseBeginningLines(message: string, count: number): string {
 
   return message.slice(position);
 }
-
-/** @internal */
-export class LoxerError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.message = message;
-    this.name = 'LoxerError';
-  }
-}

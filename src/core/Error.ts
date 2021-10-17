@@ -56,3 +56,12 @@ export function ensureError(error: ErrorType): Error {
 
   return result;
 }
+
+/** @internal */
+export class LoxerError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.message = message;
+    this.name = 'LoxerError';
+  }
+}

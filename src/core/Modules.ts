@@ -36,7 +36,7 @@ export class Modules {
   /**
    * @internal the level of a specific module || -1
    */
-  getLevel(moduleId: string): LevelType {
+  getLevel(moduleId: string): LevelType | -1 {
     const level = this._dev
       ? this._modules[moduleId]?.devLevel
       : this._modules[moduleId]?.prodLevel;
