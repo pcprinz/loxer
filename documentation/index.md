@@ -67,6 +67,9 @@ console.log('This is the person:', person);  // => This is the person: { name: '
 Loxer.log('This is the person:', person);    // => This is the person: { name: 'John Doe', age: 69 }
 ```
 
+###### Console output
+<!-- ![console_output](/assets/docs_images/2.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/2.png)
 
 To see what `item` does take a look at the [MDN Web API](https://developer.mozilla.org/de/docs/Web/API/Console/log)
 
@@ -97,25 +100,29 @@ Loxer.error(new RangeError('this is a range error'));
 Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
 ```
 
-###### Console output
 
-```console
-Error: this is a string error
-Error: 404
-Error: false
-Error: {"type":"ServerError","code":404}
-RangeError: this is a range error
-Error: this is a highlighted error that prints the stack!!!
-    at Object.<anonymous> (C:\dev\loxer\playground\playground.js:18:19)
-    at Module._compile (node:internal/modules/cjs/loader:1101:14)
-    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
-    at Module.load (node:internal/modules/cjs/loader:981:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:79:12)
-    at node:internal/main/run_main_module:17:47
-```
+###### Console output
+<!-- ![console_output](/assets/docs_images/3.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/3.png)
 
 Loxer internally creates an `Error` out of any other message type than `Error` though it enables to get a Stack even if the thrown error has none.
+
+### [NamedError](https://pcprinz.github.io/loxer/classes/Error.NamedError.html)
+There is also helper class called `NamedError`. It can be used to create custom errors which can extend any other error. This may be useful for more explicit results of the error in a catch phrase.
+
+###### Example
+```typescript
+Loxer.error(new NamedError('CustomError', 'failed hard!'));
+Loxer.error(new NamedError('StringError', 'failed hard!', 'string error'));
+Loxer.error(new NamedError('NumberError', 'failed hard!', 404));
+Loxer.error(new NamedError('BooleanError', 'failed hard!', false));
+Loxer.error(new NamedError('ObjectError', 'failed hard!', { type: 'ServerError', code: 404 }));
+Loxer.error(new NamedError('ErrorError', 'failed hard!', new TypeError('catched Error')));
+```
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/3-2.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/3-2.png)
 
 > More on that in the sections about boxes and output.
 
@@ -123,7 +130,6 @@ Loxer internally creates an `Error` out of any other message type than `Error` t
 
 
 # 4. Highlighting - [`Loxer.highlight()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#highlight)
-<!-- TODO colored images -->
 Highlighting logs has the advantage of being able to view a certain log relatively quickly from a large number of logs. To highlight a log, it just needs to be chained with `.highlight()` or `.h()`, with the last one being a shortcut. The output message will then have inverted background and text colors.
 
 ###### Example
@@ -136,6 +142,10 @@ const shouldHighlight = Math.random() > 0.5;
 // the methods accept an optional boolean parameter
 Loxer.h(shouldHighlight).log('This message will be conditionally highlighted');
 ```
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/4.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/4.png)
 
 > - The highlight methods can be chained with **any other logging** method like `Loxer.error()`, `Loxer.open()` and `Loxer.of()`.
 > - highlighting error logs will append the stack to the output stream
@@ -189,7 +199,6 @@ If you declare modules then you can set separate levels for every module, giving
 
 
 # 6. Modules - [`Loxer.module()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#module)
-<!-- TODO colored images -->
 Modules are one way of categorizing logs in order to:
 - To create clarity in the output (with coloring)
 - Set log levels for individual categories
@@ -203,9 +212,15 @@ Assigning modules to logs is again done in the same way as highlighting or level
 ```typescript
 Loxer.module('PERS').log('this log is assigned to the module with the key PERS');
 Loxer.m('PERS').log('this too');
+Loxer.m('CART').log('this one is assigned to a module with the fullName "Shopping Cart"');
+Loxer.m('BILLING').log('this one to "Billing"');
 Loxer.m().log('this one is automatically assigned to the module DEFAULT');
 Loxer.log('this one is automatically assigned to the module NONE')
 ```
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/6.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/6.png)
 
 > The module methods can be chained with the logging methods `Loxer.error()` and `Loxer.open()`. Assigning a module to `Loxer.of()` is no problem, but has no effect. `.of()` logs always receive the module from their opening log.
 
@@ -222,7 +237,7 @@ Loxer.init({
   modules: {
     PERS: { color: '#f00', fullName: 'Persons', devLevel: 1, prodLevel: 1 },
     CART: { color: '#00ff00', fullName: 'Shopping cart', devLevel: 1, prodLevel: 1 },
-    BILL: { color: 'rgb(0, 0, 255)', fullName: 'Billing', devLevel: 1, prodLevel: 1 }
+    BILLING: { color: 'rgb(0, 120, 255)', fullName: 'Billing', devLevel: 1, prodLevel: 1 }
   }
 });
 ```
@@ -230,7 +245,6 @@ Loxer.init({
 > - You are free to set any string key for a `moduleId`, but it will be efficient to choose short ones, because you probably have to write them often.
 
 ### Default modules
-<!-- TODO images -->
 ###### There are 3 default modules, that are predefined:
 ```typescript
 export const DEFAULT_MODULES: LoxerModules = {
@@ -245,6 +259,10 @@ The `NONE` module is automatically assigned when there is no module method chain
 The `DEFAULT` module is automatically assigned, when logs are chained with an empty module method like `.m()`. The output will have a box layout and an empty module name.
 
 The `INVALID` module is automatically assigned, when logs are tried to be assigned with non existing modules (giving false moduleIds). The output will have no boxlayout, but the prominent fullName as module name.
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/6-2.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/6-2.png)
 
 > All default modules can be redefined in the `options.modules` by overwriting their keys.
 > - **ATTENTION**: beware of forcefully setting any of these modules to a falsy value like `null` or `undefined` because this will definitely cause Loxer to crash.
@@ -383,7 +401,6 @@ The `prod*` streams are both just forwarded to the user callbacks. These can be 
 
 
 # 8. Boxes
-<!-- TODO colored images -->
 <!-- TODO exported boxlayout -->
 Another main feature of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
 
@@ -395,8 +412,14 @@ To use a box, it must be opened with `Loxer.open(message: string, item?: any)`. 
 
 ###### Open a box - [`Loxer.open()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#open)
 ```typescript
-const id = Loxer.module().open('this is an opening message')
+const id = Loxer.module().open('this is an opening message');
+const id2 = Loxer.module('PERS').open('this is an opening message assigned to a module');
+const id3 = Loxer.h().m('CART').open('this one is additionally highlighted');
 ```
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/8-1.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/8-1.png)
 
 If an open box is to be closed, or further logs / errors are to be added, the `Loxer.of(id: number)` method must be used. This method returns an object with 3 other methods, which enables the next method to be added as a chain. There are 3 methods available for this:
 - `add(message: string, item?: any)` - adds a log to the box and works in the same way as `Loxer.log()`
@@ -412,6 +435,10 @@ Loxer.of(id).add('this is a single added log');
 Loxer.of(id).error('this is an added error');
 Loxer.of(id).close('this is the closing log');
 ```
+
+###### Console output
+<!-- ![console_output](/assets/docs_images/8-2.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/8-2.png)
 
 > - When using `Loxer.of()`, `.level()` and `.module()` do not necessarily have to be specified again, since `.of()` automatically uses the values of the opening log as default.
 > - Otherwise, `.level()` can be chained **before** the `.of`.
