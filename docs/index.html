@@ -88,20 +88,41 @@
 		<div class="col-7 offset-3 col-content">
 			<h1>Loxer - v0.4.1</h1>
 			<div class="tsd-panel tsd-typography">
-				<a href="#loxer" id="loxer" style="color: inherit; text-decoration: none;">
-					<h1>Loxer</h1>
-				</a>
-				<p>Logger, Tracer, Error detector, dataflow visualizer</p>
 				<p><img src="https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png" alt="Loxer_Logo"></p>
+				<a href="#loxer-----" id="loxer-----" style="color: inherit; text-decoration: none;">
+					<h1>Loxer <img src="https://img.shields.io/github/v/release/pcprinz/loxer" alt="GitHub release (latest by date)"> <img src="https://img.shields.io/github/release-date/pcprinz/loxer" alt="GitHub Release Date"> <img src="https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build" alt="GitHub branch checks state"> <img src="https://img.shields.io/bundlephobia/min/loxer" alt="npm bundle size"> <img src="https://img.shields.io/github/license/pcprinz/loxer" alt="GitHub"></h1>
+				</a>
+				<p><strong>Loxer</strong> is a middleware logger that allows you to:</p>
+				<ul>
+					<li>distribute logs to different output streams (dev / prod / log / error)</li>
+					<li>add levels to logs</li>
+					<li>categorize logs in modules (with their own levels)</li>
+					<li>connect logs to each other to &quot;boxes&quot;</li>
+					<li>improve error logs (with more information)</li>
+					<li>get significantly better visualization of the logs</li>
+					<li>visualize the data flow (including time measurement)</li>
+				</ul>
+				<p>With Loxer, logs never have to be deleted again, as they hardly use any resources when switched off. Logs and error records can easily be forwarded to crash reporting systems such as Firebase. This makes it possible to get error reports that are just as good in the production environment as in the development environment. Furthermore, errors in concurrent functional processes can be detected more easily.</p>
 				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h3><a href="https://github.com/pcprinz/loxer/blob/master/documentation/index.md">Documentation</a></h3>
+					<h2>Documentation</h2>
 				</a>
-				<a href="#api-reference" id="api-reference" style="color: inherit; text-decoration: none;">
-					<h3><a href="https://pcprinz.github.io/loxer/index.html">API Reference</a></h3>
+				<p>The <strong><a href="https://pcprinz.github.io/loxer/index.html">API Reference</a></strong> provides a complete overview of all the features of the package. Furthermore, the complete source code is documented with js-doc and typed with typscript, which guarantees full IDE support.</p>
+				<p>The <strong><a href="https://github.com/pcprinz/loxer/blob/master/documentation/index.md">Documentation</a></strong> contains detailed instructions on how to use the package.</p>
+				<p>The <strong><a href="https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md">Performance Tests</a></strong> documents how small the influence of the package is on the performance of an application.</p>
+				<a href="#preview-example" id="preview-example" style="color: inherit; text-decoration: none;">
+					<h2>Preview Example</h2>
 				</a>
-				<a href="#performance-tests" id="performance-tests" style="color: inherit; text-decoration: none;">
-					<h3><a href="https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md">Performance Tests</a></h3>
-				</a>
+				<p>Consider the following log output (without the log date):</p>
+				<!-- ![plain_console](/assets/docs_images/plainOutput.png) -->
+				<p><img src="https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/plainOutput.png" alt="plain_console"></p>
+				<p>As you can see the logs might tell something considering you know where they come from and what they do, but obviously they seem to be pretty uninformative.</p>
+				<p>Let&#39;s see what Loxer can do about this:</p>
+				<!-- ![plain_console](/assets/docs_images/goodOutput.png) -->
+				<p><img src="https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/goodOutput.png" alt="plain_console"></p>
+				<p>The log messages are exactly the same, but with a litte configuration you can see what is happening in the application. Even if you are not familiar with the code you can follow the implemented data flow by just one sight.</p>
+				<blockquote>
+					<p>Watch this <a href="https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=9e14a828-2f7d-11ec-abb7-b9a7ff2ee17c">comparison with a slider</a></p>
+				</blockquote>
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h2>Installation</h2>
 				</a>
@@ -109,7 +130,7 @@
 				<a href="#work-in-progress" id="work-in-progress" style="color: inherit; text-decoration: none;">
 					<h2>Work in progress</h2>
 				</a>
-				<p>This package is still under construction, so consider it as <em>alpha</em>. The API will probaby change until the Playground is ready and a missing feature (Catch-Guardian) is done. This hopefully won&#39;t take too long (weeks). After that the package will stay in <em>beta</em> until everything is covered in tests. Therefore the API won&#39;T change anymore (hopefully). Nevertheless, everything seems to work at this moment, though the package is already in production usage.</p>
+				<p>This package is still under construction, so consider it as <em>alpha</em>. The API will probably change until the Playground is ready and a missing feature (Catch-Guardian) is done. This hopefully won&#39;t take too long (weeks). After that the package will stay in <em>beta</em> until everything is covered in tests. Therefore the API won&#39;T change anymore (hopefully). Nevertheless, everything seems to work at this moment, though the package is already in production usage.</p>
 				<a href="#what-you-get" id="what-you-get" style="color: inherit; text-decoration: none;">
 					<h2>What you get</h2>
 				</a>
