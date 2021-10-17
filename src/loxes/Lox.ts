@@ -52,8 +52,8 @@ export class Lox {
     this.timestamp = new Date();
   }
 
-  /** TODO: i think this does not work with boxes?!
-   * compares another lox with this one. Loxes are equal if their `id` is the same
+  // TODO: i think this does not work with boxes?!
+  /** compares another lox with this one. Loxes are equal if their `id` is the same
    * @param obj to compare on equality
    * @returns true if both have the same id
    */

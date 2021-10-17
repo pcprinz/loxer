@@ -78,7 +78,7 @@ export class OutputStreams {
         ? outputLox
         : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
-      const str = moduleText + box + message + '\t' + timeText;
+      const str = `${moduleText}${box}${message}\t${timeText}`;
       outputLox.item ? console.log(str, outputLox.item) : console.log(str);
     }
   }

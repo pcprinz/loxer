@@ -79,25 +79,24 @@ function checkBoxes(expected: string[]) {
       .map((seg) => {
         if (seg === 'empty') {
           return ' ';
-        } else {
-          switch (seg.box) {
-            case 'vertical':
-              return '|';
-            case 'closeEnd':
-            case 'openEnd':
-            case 'horizontal':
-              return '-';
-            case 'cross':
-              return 'x';
-            case 'closeEdge':
-              return '>';
-            case 'openEdge':
-              return '<';
-            case 'single':
-              return 'T';
-            default:
-              return '';
-          }
+        }
+        switch (seg.box) {
+          case 'vertical':
+            return '|';
+          case 'closeEnd':
+          case 'openEnd':
+          case 'horizontal':
+            return '-';
+          case 'cross':
+            return 'x';
+          case 'closeEdge':
+            return '>';
+          case 'openEdge':
+            return '<';
+          case 'single':
+            return 'T';
+          default:
+            return '';
         }
       })
       .join('');

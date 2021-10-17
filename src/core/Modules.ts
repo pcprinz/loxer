@@ -17,10 +17,10 @@ export class Modules {
   constructor(props?: ModulesProps) {
     this._dev = props?.dev ?? true;
     if (props?.defaultLevels) {
-      DEFAULT_MODULES['NONE'].devLevel = props?.defaultLevels.devLevel;
-      DEFAULT_MODULES['DEFAULT'].devLevel = props?.defaultLevels.devLevel;
-      DEFAULT_MODULES['NONE'].prodLevel = props?.defaultLevels.prodLevel;
-      DEFAULT_MODULES['DEFAULT'].prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES.NONE.devLevel = props?.defaultLevels.devLevel;
+      DEFAULT_MODULES.DEFAULT.devLevel = props?.defaultLevels.devLevel;
+      DEFAULT_MODULES.NONE.prodLevel = props?.defaultLevels.prodLevel;
+      DEFAULT_MODULES.DEFAULT.prodLevel = props?.defaultLevels.prodLevel;
     }
     this._modules = {
       ...DEFAULT_MODULES,
@@ -54,7 +54,7 @@ export class Modules {
       module = this._modules.INVALID;
     }
     let moduleText =
-      module.fullName.length > 0 ? module.fullName.slice(0, this._moduleTextSlice) + ': ' : '';
+      module.fullName.length > 0 ? `${module.fullName.slice(0, this._moduleTextSlice)}: ` : '';
     const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
     for (let i = moduleText.length; i < moduleTextLength; i++) {
       moduleText += ' ';

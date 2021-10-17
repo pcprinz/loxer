@@ -22,12 +22,12 @@ export class ANSIFormat {
   };
   /** returns a string to color the following text */
   static colorForeground(r: number, g: number, b: number): string {
-    return this.CODE.RGBTextColorPrefix + `${r.toString()};${g.toString()};${b.toString()}m`;
+    return `${this.CODE.RGBTextColorPrefix}${r.toString()};${g.toString()};${b.toString()}m`;
   }
 
   /** returns a string to color the following text's background */
   static colorBackground(r: number, g: number, b: number): string {
-    return this.CODE.RGBBackgroundColorPrefix + `${r.toString()};${g.toString()};${b.toString()}m`;
+    return `${this.CODE.RGBBackgroundColorPrefix}${r.toString()};${g.toString()};${b.toString()}m`;
   }
 
   /** returns a string with the highlighted text */
@@ -44,9 +44,9 @@ export class ANSIFormat {
         text +
         this.CODE.Reset
       );
-    } else {
-      return this.CODE.Reverse + text + this.CODE.Reset;
     }
+
+    return this.CODE.Reverse + text + this.CODE.Reset;
   }
 
   /** returns a string to color the following text's background red */
@@ -111,7 +111,7 @@ export class ANSIFormat {
       message = this.fgCloseLog(lox.message);
     }
     if (lox instanceof ErrorLox) {
-      message = this.bgWarn(lox.error.name) + ': ' + this.fgWarn(lox.message);
+      message = `${this.bgWarn(lox.error.name)}: ${this.fgWarn(lox.message)}`;
     }
 
     return {

@@ -4,14 +4,18 @@ import { Loxes } from './Loxes';
 import { OutputLox } from '../loxes/OutputLox';
 export type Box = (BoxSegment | 'empty')[];
 export type BoxSegment = { box: keyof BoxSymbols; color: string };
-/** @internal */
+/** A Factory used to construct the BoxLayout for `*Lox`es */
 export class BoxFactory {
   private _boxLayoutStyle: BoxLayoutStyle;
 
+  /**
+   * @param boxLayoutStyle The style of the used unicode symbols: `"round" | "light" | "heavy" | "double" | "off"`
+   */
   constructor(boxLayoutStyle?: BoxLayoutStyle) {
     this._boxLayoutStyle = boxLayoutStyle ?? 'round';
   }
 
+  /** @internal */
   getLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.hidden) {
       return [];
@@ -70,21 +74,36 @@ export class BoxFactory {
     return box;
   }
 
-  /** @internal */
+  /**
+   * Creates a string version of the given `*Lox` box.
+   *
+   * ## Single Usage
+   * ```typescript
+   * const lox: OutputLox = ... // the lox in an output callback (also `ErrorLox`)
+   * const stringBox = new BoxFactory().getBoxString(lox.box, true);
+   *
+   * // or with a different layout (than 'round')
+   * const otherBox = new BoxFactory('light').getBoxString(lox.box, true);
+   * ```
+   * @param box the `Box` of an `OutputLox` or `ErrorLox`
+   * @param colored should the symbols be wrapped in ANSI colors
+   * @returns a stringified version of the given box
+   */
   getBoxString(box: Box, colored: boolean | undefined): string {
     return (
       box
         .map((segment) => {
           if (segment === 'empty') {
             return ' ';
-          } else if (colored) {
+          }
+          if (colored) {
             return ANSIFormat.colorize(
               BoxLayouts[this._boxLayoutStyle][segment.box],
               segment.color
             );
-          } else {
-            return BoxLayouts[this._boxLayoutStyle][segment.box];
           }
+
+          return BoxLayouts[this._boxLayoutStyle][segment.box];
         })
         .join('') + ' '
     );

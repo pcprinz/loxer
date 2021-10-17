@@ -97,7 +97,7 @@ function format(n: number) {
   let a = n.toString();
   let result = '';
   while (a.length > 3) {
-    result = '.' + a.slice(-3) + result;
+    result = `.${a.slice(-3)}${result}`;
     a = a.slice(0, -3);
   }
   return a + result;
