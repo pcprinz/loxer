@@ -4,11 +4,13 @@ import { Lox } from '../loxes/Lox';
 
 type OpenBoxType = { id: number; color: string };
 
+type QueueItemType = { lox: Lox; error?: Error };
+
 /** @internal
  * A storage for pending and open loxes
  */
 export class Loxes {
-  private _pendingLoxQueue: Lox[] = [];
+  private _pendingLoxQueue: QueueItemType[] = [];
   private _shouldUseQueue = true;
 
   private _loxes: { [id: string]: OutputLox | undefined } = {};
@@ -42,7 +44,8 @@ export class Loxes {
   findOpenLox(id: number): Lox | undefined {
     if (isNumber(id)) {
       return this._shouldUseQueue
-        ? this._pendingLoxQueue.find((item) => item.type === 'open' && item?.id === id)
+        ? this._pendingLoxQueue.find((item) => item?.lox.type === 'open' && item?.lox.id === id)
+            ?.lox
         : this._loxes[id];
     } else {
       return undefined;
@@ -62,12 +65,12 @@ export class Loxes {
   }
 
   /** @internal enqueues any lox to the pending queue. used in switchOutput when Loxer is not initialized */
-  enqueue(log: Lox): void {
-    this._pendingLoxQueue.push(log);
+  enqueue(lox: Lox, error?: Error): void {
+    this._pendingLoxQueue.push({ lox, error });
   }
 
   /** @internal empties the pending queue and returns all pending loxes. used when initializing Loxer */
-  dequeue(): Lox[] {
+  dequeue(): QueueItemType[] {
     const queue = this._pendingLoxQueue;
     this._pendingLoxQueue = [];
     this._shouldUseQueue = false;

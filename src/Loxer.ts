@@ -52,7 +52,7 @@ class LoxerInstance implements LoxerType {
     });
 
     this.highlight().log('Loxer initialized');
-    this._loxes.dequeue().forEach((queued) => this.switchOutput(queued));
+    this._loxes.dequeue().forEach((queued) => this.switchOutput(queued.lox, queued.error));
   }
 
   get history() {
@@ -255,7 +255,7 @@ class LoxerInstance implements LoxerType {
 
     // TODO should errors really be hold back until init?
     if (!this._initialized) {
-      this._loxes.enqueue(lox);
+      this._loxes.enqueue(lox, error);
     } else if (lox.type === 'error') {
       const errorLox = this.toErrorLox(lox, error!);
       this._history.add(errorLox);
