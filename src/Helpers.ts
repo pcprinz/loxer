@@ -37,3 +37,14 @@ export function eraseBeginningLines(message: string, count: number): string {
 
   return message.slice(position);
 }
+
+export function safeNumber(
+  value: number,
+  range: [number, number],
+  integer: boolean = false
+): number {
+  let ranged = value < range[0] ? range[0] : value;
+  ranged = value > range[1] ? range[1] : ranged;
+
+  return integer ? Math.floor(ranged) : ranged;
+}

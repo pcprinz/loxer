@@ -1,5 +1,5 @@
-import { Loxer, resetLoxer } from '../dist';
-import { ErrorLox, OutputLox } from '../dist/loxes';
+import { Loxer, resetLoxer } from '../src';
+import { ErrorLox, OutputLox } from '../src/loxes';
 
 let devLogs: OutputLox[] = [];
 function devLog(log: OutputLox) {
@@ -57,9 +57,8 @@ afterAll(() => {
   expect(prodLogs.length).toBe(0);
 });
 
-test('initialization', () => {
-  expect(devLogs.length).toBe(1);
-  expect(devLogs[0].message).toBe('Loxer initialized');
+test('getModuleLevel', () => {
+  expect(Loxer.getModuleLevel('TEST')).toBe(1);
 });
 
 test('logging', () => {
@@ -203,4 +202,5 @@ test('history', () => {
   expect(histories.length).toBe(2);
   expect(histories[0].length).toBeGreaterThanOrEqual(4);
   expect(histories[1].length).toBeGreaterThanOrEqual(7);
+  expect(histories[0][0].equals(histories[0][1])).toBeFalsy();
 });

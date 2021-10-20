@@ -1,4 +1,5 @@
 import Color from 'color';
+import { safeNumber } from '../Helpers';
 import { ErrorLox } from '../loxes/ErrorLox';
 import { OutputLox } from '../loxes/OutputLox';
 
@@ -22,12 +23,28 @@ export class ANSIFormat {
   };
   /** returns a string to color the following text */
   static colorForeground(r: number, g: number, b: number): string {
-    return `${this.CODE.RGBTextColorPrefix}${r.toString()};${g.toString()};${b.toString()}m`;
+    return (
+      this.CODE.RGBTextColorPrefix +
+      safeNumber(r, [0, 255], true).toString() +
+      ';' +
+      safeNumber(g, [0, 255], true).toString() +
+      ';' +
+      safeNumber(b, [0, 255], true).toString() +
+      'm'
+    );
   }
 
   /** returns a string to color the following text's background */
   static colorBackground(r: number, g: number, b: number): string {
-    return `${this.CODE.RGBBackgroundColorPrefix}${r.toString()};${g.toString()};${b.toString()}m`;
+    return (
+      this.CODE.RGBBackgroundColorPrefix +
+      safeNumber(r, [0, 255], true).toString() +
+      ';' +
+      safeNumber(g, [0, 255], true).toString() +
+      ';' +
+      safeNumber(b, [0, 255], true).toString() +
+      'm'
+    );
   }
 
   /** returns a string with the highlighted text */
@@ -79,12 +96,13 @@ export class ANSIFormat {
   /** receives text color and alpha and returns the colored string */
   static colorize(text: string, color: string, alpha: number = 1): string {
     const rgb = Color(color && color.length > 0 ? color : '#fff');
+    const safeAlpha = safeNumber(alpha, [0, 1]);
 
     return (
       this.colorForeground(
-        Math.round(rgb.red() * alpha),
-        Math.round(rgb.green() * alpha),
-        Math.round(rgb.blue() * alpha)
+        Math.round(rgb.red() * safeAlpha),
+        Math.round(rgb.green() * safeAlpha),
+        Math.round(rgb.blue() * safeAlpha)
       ) +
       text +
       this.CODE.Reset

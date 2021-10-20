@@ -1,5 +1,5 @@
-import { Loxer, resetLoxer } from '../dist';
-import { ErrorLox, OutputLox } from '../dist/loxes';
+import { Loxer, resetLoxer } from '../src';
+import { ErrorLox, OutputLox } from '../src/loxes';
 
 let devLogs: OutputLox[] = [];
 function devLog(log: OutputLox) {
@@ -100,7 +100,7 @@ function checkBoxes(expected: string[]) {
         }
       })
       .join('');
-    expect(expected[i]).toBe(type + '.' + mod + '.' + box + message);
+    expect(type + '.' + mod + '.' + box + message).toBe(expected[i]);
   }
 }
 
@@ -129,6 +129,40 @@ test('simple boxing', () => {
     'single.DEFAULT.T-add',
     'error.DEFAULT.T-error',
     'close.DEFAULT.>-close',
+  ]);
+});
+
+test('false boxing', () => {
+  const id = Loxer.open('open');
+  Loxer.of(id).close('close');
+  Loxer.of(id).add('add');
+  Loxer.of(id).error('error');
+  Loxer.of(id).close('close');
+
+  expect(devLogs.length).toBe(3);
+  expect(devErrors.length).toBe(3);
+  expect(devErrors[0].error).toBeInstanceOf(Error);
+  expect(devErrors[0].error.message).toStrictEqual('add');
+  expect(devErrors[0].error.name).toBe('LoxerError');
+  expect(devErrors[1].error).toBeInstanceOf(Error);
+  expect(devErrors[1].error.message).toStrictEqual('error');
+  expect(devErrors[1].error.name).toBe('Error');
+  expect(devErrors[2].error).toBeInstanceOf(Error);
+  expect(devErrors[2].error.message).toStrictEqual('close');
+  expect(devErrors[2].error.name).toBe('LoxerError');
+
+  /* 
+  ╭← open
+  ├─ add
+  ├─ Error: error
+  ╰→ close
+  */
+  checkBoxes([
+    'open.DEFAULT.<-open',
+    'close.DEFAULT.>-close',
+    'error.NONE.add() on a not (anymore) existing Lox. MESSAGE: add',
+    'error.NONE.error() on a not (anymore) existing Lox. ERROR: error',
+    'error.NONE.close() on a not (anymore) existing Lox. MESSAGE: close',
   ]);
 });
 
