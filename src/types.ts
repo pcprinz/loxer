@@ -5,21 +5,21 @@ import { OutputLox } from './loxes/OutputLox';
 
 /** this is the main type of {@link Loxer} */
 export interface Loxer {
-  /** ## Initialize Loxer.
-   * This is a required function to initialize Loxer.
+  /** ## Initialize Loxer
+   * #### Is a required function to initialize Loxer.
    *
    * - if Loxer is not initialized, every log is cached until the initialization is done
    * - call this as soon as possible.
-   * - **ATTENTION**: Do no conditionally leave out the initialization in order to avoid logging!
+   * - **`ATTENTION`**: Do no conditionally leave out the initialization in order to avoid logging!
    *   All the logs will be cached anyways. If you want to conditionally disable Loxer then use
-   *   one of the "disabled" options at the initialization
+   *   one of the "disabled" options in the config({@link LoxerConfig}) at the initialization
    *
    * ---
    * @param options Options for the configuration of Loxer
    */
   init: (options?: LoxerOptions) => void;
-  /** ## Get LogLevel
-   * Returns the configured LogLevel (`number`) of the given `moduleIs`s corresponding Module.
+  /** ## Get a module's LogLevel
+   * #### Returns the configured LogLevel (`number`) of the given `moduleIs`s corresponding Module.
    *
    * - is dependent on the environment: returns actual level (prod || dev)
    * - returns `-1` if there is no corresponding module for the given `moduleID`
@@ -29,14 +29,15 @@ export interface Loxer {
    */
   getModuleLevel: (moduleID: string) => LevelType | -1;
   /** ## Highlight a log
-   * To highlight any log, just chain this function like that:
    *
    * ```typescript
-   * Loxer.highlight().log(...)
-   * Loxer.highlight().open(...)
-   * Loxer.highlight().of(...)
-   * Loxer.highlight().error(...)
+   *     Loxer.highlight().log(...)
+   *     Loxer.highlight().open(...)
+   *     Loxer.highlight().of(...)
+   *     Loxer.highlight().error(...)
    * ```
+   *
+   * #### Highlights logs to make them more visible.
    *
    * - by default the `foregroundColor` and `backgroundColor` of the log will be inverted.
    * - a different highlight color can be set at {@link LoxerConfig.highlightColor} in the {@link LoxerOptions.config} declared in `Loxer.init(options)`
@@ -49,20 +50,21 @@ export interface Loxer {
    */
   highlight: (doit?: boolean) => this;
   /** ## Highlight a log (shortcut)
-   * this is a shortcut for {@link Loxer.highlight | `Loxer.highlight()`}
+   * #### Is a shortcut for {@link Loxer.highlight Loxer.highlight()}.
    *
    * ---
    * @param doit should the log be highlighted
    */
   h: (doit?: boolean) => this;
   /** ## Set the LogLevel for a log
-   * To set the LogLevel for a log, simply chain this function like that:
    *
    * ```typescript
-   * Loxer.level(number).log(...)
-   * Loxer.level(number).open(...)
-   * Loxer.level(number).of(...)
+   *     Loxer.level(number).log(...)
+   *     Loxer.level(number).open(...)
+   *     Loxer.level(number).of(...)
    * ```
+   *
+   * #### Sets levels to logs to automatically disable them with levels for Loxer / Modules.
    *
    * - if you don't chain this function, the default level is `1` (high) for opening logs and the level of the opening
    *   log for any `Loxer.of(...)` log.
@@ -80,19 +82,20 @@ export interface Loxer {
    */
   level: (level: LogLevelType) => this;
   /** ## Set the LogLevel for a log (shortcut)
-   * - this is a shortcut for {@link Loxer.level}
+   * #### Is a shortcut for {@link Loxer.level Loxer.level(...)}
    * ---
    * @param level the level of the log
    */
   l: (level: LogLevelType) => this;
   /** ## Assign a module to a log
-   * To assign a module to a log, simply chain this function like that:
    *
    * ```typescript
-   * Loxer.module(string).log(...)
-   * Loxer.module(string).open(...)
-   * Loxer.module(string).of(...)
+   *     Loxer.module(string).log(...)
+   *     Loxer.module(string).open(...)
+   *     Loxer.module(string).of(...)
    * ```
+   *
+   * #### Assigns modules to logs to set individual categories / colors / levels to specific groups of logs.
    *
    * - if you don't chain this function the module is always `NONE`, which will lead the log to not have the box layout
    * - if you chain the function without a parameter like `Loxer.module().log(...)` the module will be `DEFAULT`,
@@ -105,13 +108,19 @@ export interface Loxer {
    */
   module(moduleId?: string | undefined): this;
   /** ## Assign a module to a log (shortcut)
-   * - this is a shortcut for {@link Loxer.module | `Loxer.module(string)`}
+   * #### Is a shortcut for {@link Loxer.module `Loxer.module(...)`}
    * ---
    * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
    */
   m(moduleId?: string | undefined): this;
   /** ## Simple Log
-   * similar to `console.log()`, but:
+   *
+   * ```typescript
+   *     Loxer.log('Hello World');
+   * ```
+   *
+   * #### Works similar to `console.log()`, but:
+   *
    * - it is cached until the logger is initialized
    * - it won't proceed any output if Loxer is disabled
    * - the output will be streamed out to the {@link LoxerOptions.callbacks} declared in `Loxer.init(options)`
@@ -126,8 +135,14 @@ export interface Loxer {
    * @param item to append
    */
   log: (message: string, item?: any) => void;
-  /** ## advanced error Log
-   * similar to `console.error()`, but:
+  /** ## Advanced error Log
+   *
+   * ```typescript
+   *     Loxer.error(new Error('Goodbye World!'));
+   * ```
+   *
+   * #### Works similar to `console.error()`, but:
+   *
    * - it is cached until the logger is initialized
    * - it won't proceed any output if Loxer is disabled
    * - the errors will be streamed out to the {@link LoxerOptions.callbacks} declared in `Loxer.init(options)`
@@ -150,7 +165,13 @@ export interface Loxer {
    */
   error: (error: ErrorType, item?: any) => void;
   /** ## Open a boxed Log
-   * This function opens a boxed log, that other logs / errors can be assigned to
+   *
+   * ```typescript
+   *     const loxId = Loxer.open('Open World!')
+   * ```
+   *
+   * #### Opens a boxed log to assign other logs / errors to it.
+   *
    * - the log will get a box layout.
    * - it returns an id (`typeof number`) that can be used with `Loxer.of(id)` to assign other logs to it
    * - it is cached until the logger is initialized
@@ -168,19 +189,19 @@ export interface Loxer {
    */
   open: (message: string, item?: any) => number;
   /** ## Assign logs / errors to an opened Log
-   * This function provides functions to add logs / errors and close the box of the given `id`'s opened log.
-   * Usage:
    *
    * ```typescript
-   * // this has to be done before:
-   * const id = Loxer.open('opening message');
-   * // assign a log:
-   * Loxer.of(id).add('next step is reached');
-   * // assign an error:
-   * Loxer.of(id).error('something went wrong');
-   * // close the log box:
-   * Loxer.of(id).close('closing message');
+   *     // this has to be done before:
+   *     const id = Loxer.open('opening message');
+   *     // assign a log:
+   *     Loxer.of(id).add('next step is reached');
+   *     // assign an error:
+   *     Loxer.of(id).error('something went wrong');
+   *     // close the log box:
+   *     Loxer.of(id).close('closing message');
    * ```
+   *
+   * #### Provides chained methods to add logs / errors and close the box of the given `id`'s opened log.
    *
    * - assigned logs / errors will receive a time consumption since the box was opened
    * - it won't proceed any output if Loxer is disabled
@@ -211,10 +232,10 @@ export interface Loxer {
   history: (OutputLox | ErrorLox)[];
 }
 
-/** this is any possible type that a `catch` could return */
+/** Any possible type that a `catch` could return */
 export type ErrorType = Error | string | number | boolean | Record<string, unknown>;
 
-/** these are the functions returned from the {@link Loxer.of} method */
+/** Methods returned from the {@link Loxer.of} method */
 export interface OfLoxes {
   /** assigns a single log to a log box and imitates the behavior of {@link Loxer.log} */
   add: (message: string, item?: any) => void;
@@ -224,7 +245,7 @@ export interface OfLoxes {
   error: (error: ErrorType, item?: any) => void;
 }
 
-/** these are the options for the {@link Loxer.init} method */
+/** Options for the {@link Loxer.init} method */
 export interface LoxerOptions {
   /** ## An object containing all loggable modules
    * an exemplary module "Persons" would look like this:
@@ -306,32 +327,32 @@ export interface LoxerOptions {
   };
 }
 
-/** these are the modules for the {@link LoxerOptions} */
+/** Modules for the {@link LoxerOptions} */
 export type LoxerModules = { [moduleId: string]: Module };
 
-/** the structure of a loggable module for the {@link LoxerModules} */
+/** Structure of a loggable module for the {@link LoxerModules} */
 export interface Module {
-  /** the actual level to show logs in development mode */
+  /** Actual level to show logs in development mode. */
   devLevel: LevelType;
-  /** the actual level to show logs in production mode */
+  /** Actual level to show logs in production mode. */
   prodLevel: LevelType;
-  /** the full name for the logged module */
+  /** Full name for the logged module. */
   fullName: string;
-  /** the color used to identify this Log. Supported formats:
+  /** Color used to identify this Log. Supported formats:
    * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
    * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
    */
   color: string;
 }
 
-/** The Level of a Log
+/** Level of a Log
  * - 1: high
  * - 2: medium
  * - 3: low
  */
 export type LogLevelType = 1 | 2 | 3;
 
-/** The Level of a module that assigned Logs have to be lower than
+/** Level of a module that assigned Logs have to be lower than
  * - 0: no output
  * - 1: high
  * - 2: medium
@@ -339,7 +360,7 @@ export type LogLevelType = 1 | 2 | 3;
  */
 export type LevelType = 0 | 1 | 2 | 3;
 
-/** these are the output stream callbacks for the {@link LoxerOptions} */
+/** Output stream callbacks for the {@link LoxerOptions} */
 export interface LoxerCallbacks {
   /** Function called when logging in development mode.
    * This callback receives an {@link OutputLox} which provides several attributes.
@@ -361,7 +382,7 @@ export interface LoxerCallbacks {
   devError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
 }
 
-/** This is the configuration for the {@link LoxerOptions} */
+/** Configuration for the {@link LoxerOptions} */
 export interface LoxerConfig {
   /** the length where the modules' names will be sliced in order to fit the layout.
    * - defaults to `8`

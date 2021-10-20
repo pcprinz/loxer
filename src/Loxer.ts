@@ -10,6 +10,12 @@ import { Lox, LoxType } from './loxes/Lox';
 import { OutputLox } from './loxes/OutputLox';
 import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
 
+/**
+ * This is the main class of Loxer. It works "static" because it's a singleton instance though you
+ * don't need to call ~`new Loxer()`~. Instead you use it with **`Loxer.log()`** (or any other method).
+ *
+ * ### For an overview of all methods and a guide on how to use it, take a look at the [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md).
+ */
 class LoxerInstance implements LoxerType {
   private _loxes = new Loxes();
   private _history = new LoxHistory();
@@ -306,6 +312,12 @@ class LoxerInstance implements LoxerType {
   }
 }
 
+/**
+ * This is the main class of Loxer. It works "static" because it's a singleton instance though you
+ * don't need to call ~`new Loxer()`~. Instead you use it with **`Loxer.log()`** (or any other method).
+ *
+ * ### For an overview of all methods and a guide on how to use it, take a look at the [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md).
+ */
 export let Loxer: LoxerType = new LoxerInstance();
 
 export function resetLoxer(): void {
