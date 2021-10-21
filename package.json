@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "jest",
+    "test": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "prepare": "yarn build",
     "docs": "typedoc --options typedoc.json"
