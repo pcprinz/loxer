@@ -1,5 +1,14 @@
 import { Loxer, resetLoxer } from '../src';
+import { Loxes } from '../src/core/Loxes';
+import { Modules } from '../src/core/Modules';
 import { ErrorLox, OutputLox } from '../src/loxes';
+import { OutputStreams } from '../src/core/OutputStreams';
+import { Lox } from '../src/loxes/Lox';
+import { LoxHistory } from '../src/core/LoxHistory';
+
+// mock console
+global.console.log = jest.fn();
+global.console.error = jest.fn();
 
 let devLogs: OutputLox[] = [];
 function devLog(log: OutputLox) {
@@ -52,7 +61,7 @@ test('initialization', () => {
     },
     config: {
       moduleTextSlice: 10,
-      historyCacheSize: 50,
+      historyCacheSize: 1,
     },
   });
   expect(devLogs.length).toBe(1);
@@ -95,4 +104,91 @@ test('queueing logs', () => {
 
   expect(devLogs.length).toBe(4);
   expect(devErrors.length).toBe(1);
+});
+
+test('OutputStreams', () => {
+  let os = new OutputStreams({ disableColors: true, endTitleOpacity: 1 });
+  const ol = new OutputLox({
+    highlighted: false,
+    id: 0,
+    item: 'item',
+    level: 1,
+    message: 'log',
+    moduleId: 'NONE',
+    type: 'open',
+  });
+  const cl = new OutputLox({
+    highlighted: false,
+    id: 0,
+    item: undefined,
+    level: 1,
+    message: 'log',
+    moduleId: 'NONE',
+    type: 'close',
+  });
+  const el = new ErrorLox(
+    new Lox({
+      highlighted: false,
+      id: 1,
+      item: 'item',
+      level: 1,
+      message: 'error',
+      moduleId: 'NONE',
+      type: 'error',
+    }),
+    new Error('errorText')
+  );
+  const el2 = new ErrorLox(
+    new Lox({
+      highlighted: true,
+      id: 2,
+      item: undefined,
+      level: 1,
+      message: 'error2',
+      moduleId: 'NONE',
+      type: 'error',
+    }),
+    new Error('errorText2')
+  );
+  el.openLoxes = [ol, cl];
+  el2.openLoxes = [ol, cl];
+  const hy = new LoxHistory(1);
+  hy.add(ol);
+  hy.add(cl);
+  os.logOut(true, ol);
+  os.logOut(true, cl);
+  os.logOut(false, cl);
+  os.errorOut(true, el, hy);
+  os.errorOut(true, el2, hy);
+  os.errorOut(false, el2, hy);
+  os = new OutputStreams({
+    callbacks: {
+      prodError: () => {},
+      prodLog: () => {},
+    },
+  });
+  os.logOut(true, cl);
+  os.logOut(false, cl);
+  os.errorOut(true, el2, hy);
+  os.errorOut(false, el2, hy);
+});
+
+// TODO
+test('Rest', () => {
+  Loxer.init({ dev: false, config: { historyCacheSize: 1 }, callbacks: { devLog, devError } });
+  const l = new Loxes();
+  l.findOpenLox(Number('wrong'));
+
+  const m = new Modules();
+  m.getText(
+    new Lox({
+      highlighted: false,
+      id: 0,
+      item: undefined,
+      level: 1,
+      message: 'm',
+      moduleId: 'wrong',
+      type: 'single',
+    })
+  );
 });

@@ -47,9 +47,9 @@ export class Loxes {
         ? this._pendingLoxQueue.find((item) => item?.lox.type === 'open' && item?.lox.id === id)
             ?.lox
         : this._loxes[id];
-    } else {
-      return undefined;
     }
+
+    return undefined;
   }
 
   /** @internal returns all defined open loxes. used for appending to ErrorLoxes */

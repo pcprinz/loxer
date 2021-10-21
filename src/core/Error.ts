@@ -44,13 +44,9 @@ export function ensureError(error: ErrorType): Error {
   let result;
   if (isError(error)) {
     result = error;
-    result.stack = `\n${result.stack}` ?? undefined;
+    result.stack = result.stack ? `\n${result.stack}` : undefined;
   } else {
-    if (typeof error === 'object') {
-      result = new Error(JSON.stringify(error));
-    } else {
-      result = new Error(error.toString());
-    }
+    result = new Error(typeof error === 'object' ? JSON.stringify(error) : error.toString());
     result.stack = result.stack ? eraseBeginningLines(`\n${result.stack}`, 3) : undefined;
   }
 

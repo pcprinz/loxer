@@ -67,7 +67,6 @@ test('BoxLayout', () => {
   const bs0 = bl.getBoxString(boxx, true);
   const bs1 = bl.getBoxString(boxx, false);
   const bs2 = bl.getBoxString(box1, false);
-  console.log('BOXES', [box1, boxx, bs1, bs2]);
   expect(bs1).toBe(' │ ');
   expect(bs2).toBe('');
 });
