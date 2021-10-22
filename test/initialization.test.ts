@@ -106,6 +106,7 @@ test('queueing logs', () => {
   expect(devErrors.length).toBe(1);
 });
 
+// TODO
 test('OutputStreams', () => {
   let os = new OutputStreams({ disableColors: true, endTitleOpacity: 1 });
   const ol = new OutputLox({
