@@ -4,8 +4,14 @@ on:
     branches: [master]
 
 jobs:
-  checks:
-    runs-on: ubuntu-20.04
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [14.x]
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
