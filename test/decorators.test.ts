@@ -6,9 +6,7 @@ test('initLoxer', () => {
 });
 class Test {
   @trace('NONE') // @ts-ignore
-  async method() {
-    console.log('Worked');
-  }
+  async method(num: number) {}
   @trace({
     moduleId: 'NONE',
     level: 1,
@@ -18,24 +16,28 @@ class Test {
     closeMessage: 'result',
     resultAsItem: true,
   }) // @ts-ignore
-  method2() {
-    console.log('Worked');
-  }
+  method2(num: number) {}
   @trace({ openMessage: 'functionName', closeMessage: 'functionName' }) // @ts-ignore
-  fn() {}
+  fn(num: number) {}
   @trace({ openMessage: 'types', closeMessage: 'prettyResult' }) // @ts-ignore
-  types() {}
+  types(num: number) {}
   @trace({ openMessage: 'className.functionName', closeMessage: 'className.functionName' }) // @ts-ignore
-  classFn() {}
+  classFn(num: number) {}
+  @trace({
+    openMessage: (args) => JSON.stringify(args),
+    closeMessage: (args) => JSON.stringify(args),
+  }) // @ts-ignore
+  fnfn(num: number) {}
 }
 
 // TODO
 test('trace', async () => {
   const a = new Test();
-  await a.method();
+  await a.method(42);
 
-  a.method2();
-  a.fn();
-  a.types();
-  a.classFn();
+  a.method2(42);
+  a.fn(42);
+  a.types(42);
+  a.classFn(42);
+  a.fnfn(42);
 });

@@ -44,10 +44,10 @@ export function ensureError(error: ErrorType): Error {
   let result;
   if (isError(error)) {
     result = error;
-    result.stack = result.stack ? `\n${result.stack}` : undefined;
+    result.stack = `\n${result.stack}`;
   } else {
     result = new Error(typeof error === 'object' ? JSON.stringify(error) : error.toString());
-    result.stack = result.stack ? eraseBeginningLines(`\n${result.stack}`, 3) : undefined;
+    result.stack = eraseBeginningLines(`\n${result.stack}`, 3);
   }
 
   return result;
