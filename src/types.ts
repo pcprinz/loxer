@@ -3,8 +3,9 @@ import { BoxLayoutStyle } from './core/BoxFormat';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 
+export type Loxer = LoxerCore & Modifiers<never>;
 /** this is the main type of {@link Loxer} */
-export interface Loxer {
+export interface LoxerCore {
   /** ## Initialize Loxer
    * #### Is a required function to initialize Loxer.
    *
@@ -17,7 +18,7 @@ export interface Loxer {
    * ---
    * @param options Options for the configuration of Loxer
    */
-  init: (options?: LoxerOptions) => void;
+  init(options?: LoxerOptions): void;
   /** ## Get a module's LogLevel
    * #### Returns the configured LogLevel (`number`) of the given `moduleIs`s corresponding Module.
    *
@@ -27,92 +28,7 @@ export interface Loxer {
    * ---
    * @param moduleId the corresponding key of a module from {@link LoxerOptions.modules} declared in `Loxer.init(options)`
    */
-  getModuleLevel: (moduleID: string) => LevelType | -1;
-  /** ## Highlight a log
-   *
-   * ```typescript
-   *     Loxer.highlight().log(...)
-   *     Loxer.highlight().open(...)
-   *     Loxer.highlight().of(...)
-   *     Loxer.highlight().error(...)
-   * ```
-   *
-   * #### Highlights logs to make them more visible.
-   *
-   * - by default the `foregroundColor` and `backgroundColor` of the log will be inverted.
-   * - a different highlight color can be set at {@link LoxerConfig.highlightColor} in the {@link LoxerOptions.config} declared in `Loxer.init(options)`
-   * - the parameter `doit?: boolean` can conditionally highlight the log with `true`
-   * - this function can be chained with any other chaining function like `.level(...)` or `.module(...)`
-   * - highlighting error logs does not color the message differently but append the stack to the default console output
-   *
-   * ---
-   * @param doit should the log be highlighted
-   */
-  highlight: (doit?: boolean) => this;
-  /** ## Highlight a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.highlight Loxer.highlight()}.
-   *
-   * ---
-   * @param doit should the log be highlighted
-   */
-  h: (doit?: boolean) => this;
-  /** ## Set the LogLevel for a log
-   *
-   * ```typescript
-   *     Loxer.level(number).log(...)
-   *     Loxer.level(number).open(...)
-   *     Loxer.level(number).of(...)
-   * ```
-   *
-   * #### Sets levels to logs to automatically disable them with levels for Loxer / Modules.
-   *
-   * - if you don't chain this function, the default level is `1` (high) for opening logs and the level of the opening
-   *   log for any `Loxer.of(...)` log.
-   * - levels can be activated for different modules at `options.modules.*level` in the `Loxer.init(options)`
-   * - levels on errors (and `Loxer.of(...).error(...)`) will be ignored, but added as an attribute for the output
-   * TODO: is this necessary?:
-   * - levels on `Loxer.of(...).add(...)` will be changed to the minimum level of the opening log, though the box to
-   *   append to might not be logged.
-   * - levels on `Loxer.of(...).close(...)` will be strictly changed to the level of the opening log, though otherwise
-   *   not opened boxes could be closed, or opened boxes could not be closed.
-   * - this function can be chained with any other chaining function like `.highlight(...)` or `.module(...)`
-   *
-   * ---
-   * @param level the level of the log
-   */
-  level: (level: LogLevelType) => this;
-  /** ## Set the LogLevel for a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.level Loxer.level(...)}
-   * ---
-   * @param level the level of the log
-   */
-  l: (level: LogLevelType) => this;
-  /** ## Assign a module to a log
-   *
-   * ```typescript
-   *     Loxer.module(string).log(...)
-   *     Loxer.module(string).open(...)
-   *     Loxer.module(string).of(...)
-   * ```
-   *
-   * #### Assigns modules to logs to set individual categories / colors / levels to specific groups of logs.
-   *
-   * - if you don't chain this function the module is always `NONE`, which will lead the log to not have the box layout
-   * - if you chain the function without a parameter like `Loxer.module().log(...)` the module will be `DEFAULT`,
-   *   which will lead the log to have a box layout but no name
-   * - both of the default modules can be overwritten at {@link LoxerOptions.modules} declared in `Loxer.init(options)`
-   * - modules can be defined at {@link LoxerOptions.modules} declared in `Loxer.init(options)`
-   * - this function can be chained with any other chaining function like `.highlight(...)` or `.level(...)`
-   * ---
-   * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
-   */
-  module(moduleId?: string | undefined): this;
-  /** ## Assign a module to a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.module `Loxer.module(...)`}
-   * ---
-   * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
-   */
-  m(moduleId?: string | undefined): this;
+  getModuleLevel(moduleID: string): LevelType | -1;
   /** ## Simple Log
    *
    * ```typescript
@@ -134,7 +50,7 @@ export interface Loxer {
    * @param message to log
    * @param item to append
    */
-  log: (message: string, item?: any) => void;
+  log(message: string, item?: any): void;
   /** ## Advanced error Log
    *
    * ```typescript
@@ -163,7 +79,7 @@ export interface Loxer {
    * @param error an `Error` or `string` | `number`| `boolean` | `object` (converted to an Error)
    * @param item to append
    */
-  error: (error: ErrorType, item?: any) => void;
+  error(error: ErrorType, item?: any): void;
   /** ## Open a boxed Log
    *
    * ```typescript
@@ -187,7 +103,7 @@ export interface Loxer {
    * @param message to log
    * @param item to append
    */
-  open: (message: string, item?: any) => number;
+  open(message: string, item?: any): number;
   /** ## Assign logs / errors to an opened Log
    *
    * ```typescript
@@ -221,8 +137,8 @@ export interface Loxer {
    * ---
    * @param id the id returned from `Loxer.open()` to reference this log to
    */
-  of: (id: number) => OfLoxes;
-  /** ## Get the History of all log types
+  of(id: number): OfLoxes;
+  /** ## Get the log History
    * This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.
    * - is a reversed stack, so that the most recent element is at `history[0]`
    * - the size of the history can be set at the {@link LoxerConfig.historyCacheSize} in the
@@ -238,11 +154,11 @@ export type ErrorType = Error | string | number | boolean | Record<string, unkno
 /** Methods returned from the {@link Loxer.of} method */
 export interface OfLoxes {
   /** assigns a single log to a log box and imitates the behavior of {@link Loxer.log} */
-  add: (message: string, item?: any) => void;
+  add(message: string, item?: any): void;
   /** closes an opened log box and imitates the behavior of {@link Loxer.log} */
-  close: (message: string, item?: any) => void;
+  close(message: string, item?: any): void;
   /** assigns an error log to a log box and imitates the behavior of {@link Loxer.error} */
-  error: (error: ErrorType, item?: any) => void;
+  error(error: ErrorType, item?: any): void;
 }
 
 /** Options for the {@link Loxer.init} method */
@@ -365,21 +281,21 @@ export interface LoxerCallbacks {
   /** Function called when logging in development mode.
    * This callback receives an {@link OutputLox} which provides several attributes.
    */
-  devLog?: (outputLog: OutputLox) => void;
+  devLog?(outputLog: OutputLox): void;
   /** Function called when logging in production mode.
    * This callback receives an {@link OutputLox} which provides several attributes.
    */
-  prodLog?: (outputLog: OutputLox) => void;
+  prodLog?(outputLog: OutputLox): void;
   /** Function called when errors are recorded in production mode.
    * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
    * specific ones. The provided history is a list of all recent logs until the error was streamed out.
    */
-  prodError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
+  prodError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
   /** Function called when errors are recorded in development mode.
    * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
    * specific ones. The provided history is a list of all recent logs until the error was streamed out.
    */
-  devError?: (errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]) => void;
+  devError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
 }
 
 /** Configuration for the {@link LoxerOptions} */
@@ -435,4 +351,99 @@ export interface LoxerConfig {
    * - **defaults to `50`**
    */
   historyCacheSize?: number;
+}
+
+type LogMethods = Pick<Loxer, 'log' | 'open' | 'of' | 'error'>;
+
+// ##### MODIFIERS ############################################################
+
+type h = 'h' | 'highlight';
+type l = 'l' | 'level';
+type m = 'm' | 'module';
+export interface Modifiers<Delete extends string> {
+  /** ## Highlight a log (shortcut)
+   * #### Is a shortcut for {@link Loxer.highlight Loxer.highlight()}.
+   *
+   * ---
+   * @param doit should the log be highlighted
+   */
+  h(doit?: boolean): LogMethods & Omit<Modifiers<Delete | h>, Delete | h>;
+  /** ## Highlight a log
+   *
+   * ```typescript
+   *     Loxer.highlight().log(...)
+   *     Loxer.highlight().open(...)
+   *     Loxer.highlight().of(...)
+   *     Loxer.highlight().error(...)
+   * ```
+   *
+   * #### Highlights logs to make them more visible.
+   *
+   * - by default the `foregroundColor` and `backgroundColor` of the log will be inverted.
+   * - a different highlight color can be set at {@link LoxerConfig.highlightColor} in the {@link LoxerOptions.config} declared in `Loxer.init(options)`
+   * - the parameter `doit?: boolean` can conditionally highlight the log with `true`
+   * - this function can be chained with any other chaining function like `.level(...)` or `.module(...)`
+   * - highlighting error logs does not color the message differently but append the stack to the default console output
+   *
+   * ---
+   * @param doit should the log be highlighted
+   */
+  highlight(doit?: boolean): LogMethods & Omit<Modifiers<Delete | h>, Delete | h>;
+  /** ## Set the LogLevel for a log (shortcut)
+   * #### Is a shortcut for {@link Loxer.level Loxer.level(...)}
+   * ---
+   * @param level the level of the log
+   */
+  l(level: LogLevelType): LogMethods & Omit<Modifiers<Delete | l>, Delete | l>;
+  /** ## Set the LogLevel for a log
+   *
+   * ```typescript
+   *     Loxer.level(number).log(...)
+   *     Loxer.level(number).open(...)
+   *     Loxer.level(number).of(...)
+   * ```
+   *
+   * #### Sets levels to logs to automatically disable them with levels for Loxer / Modules.
+   *
+   * - if you don't chain this function, the default level is `1` (high) for opening logs and the level of the opening
+   *   log for any `Loxer.of(...)` log.
+   * - levels can be activated for different modules at `options.modules.*level` in the `Loxer.init(options)`
+   * - levels on errors (and `Loxer.of(...).error(...)`) will be ignored, but added as an attribute for the output
+   * TODO: is this necessary?:
+   * - levels on `Loxer.of(...).add(...)` will be changed to the minimum level of the opening log, though the box to
+   *   append to might not be logged.
+   * - levels on `Loxer.of(...).close(...)` will be strictly changed to the level of the opening log, though otherwise
+   *   not opened boxes could be closed, or opened boxes could not be closed.
+   * - this function can be chained with any other chaining function like `.highlight(...)` or `.module(...)`
+   *
+   * ---
+   * @param level the level of the log
+   */
+  level(level: LogLevelType): LogMethods & Omit<Modifiers<Delete | l>, Delete | l>;
+  /** ## Assign a module to a log (shortcut)
+   * #### Is a shortcut for {@link Loxer.module `Loxer.module(...)`}
+   * ---
+   * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
+   */
+  m(moduleId?: string | undefined): LogMethods & Omit<Modifiers<Delete | m>, Delete | m>;
+  /** ## Assign a module to a log
+   *
+   * ```typescript
+   *     Loxer.module(string).log(...)
+   *     Loxer.module(string).open(...)
+   *     Loxer.module(string).of(...)
+   * ```
+   *
+   * #### Assigns modules to logs to set individual categories / colors / levels to specific groups of logs.
+   *
+   * - if you don't chain this function the module is always `NONE`, which will lead the log to not have the box layout
+   * - if you chain the function without a parameter like `Loxer.module().log(...)` the module will be `DEFAULT`,
+   *   which will lead the log to have a box layout but no name
+   * - both of the default modules can be overwritten at {@link LoxerOptions.modules} declared in `Loxer.init(options)`
+   * - modules can be defined at {@link LoxerOptions.modules} declared in `Loxer.init(options)`
+   * - this function can be chained with any other chaining function like `.highlight(...)` or `.level(...)`
+   * ---
+   * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
+   */
+  module(moduleId?: string | undefined): LogMethods & Omit<Modifiers<Delete | m>, Delete | m>;
 }
