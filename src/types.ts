@@ -3,7 +3,7 @@ import { BoxLayoutStyle } from './core/BoxFormat';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 
-export type Loxer = LoxerCore & Modifiers<never>;
+export type Loxer = LoxerCore & LogMethods & Modifiers<never>;
 /** this is the main type of {@link Loxer} */
 export interface LoxerCore {
   /** ## Initialize Loxer
@@ -29,6 +29,210 @@ export interface LoxerCore {
    * @param moduleId the corresponding key of a module from {@link LoxerOptions.modules} declared in `Loxer.init(options)`
    */
   getModuleLevel(moduleID: string): LevelType | -1;
+  /** ## Get the log History
+   * This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.
+   * - is a reversed stack, so that the most recent element is at `history[0]`
+   * - the size of the history can be set at the {@link LoxerConfig.historyCacheSize} in the
+   *   {@link LoxerOptions.config} declared in `Loxer.init(options)`. It defaults to `50`.
+   * - if the history is enabled it will also be appended to the error logs in the `errorOut` callback
+   */
+  history: (OutputLox | ErrorLox)[];
+}
+
+// #################################################################################################
+// ##### OPTIONS ###################################################################################
+// #################################################################################################
+
+/** Options for the {@link Loxer.init} method */
+export interface LoxerOptions {
+  /** ## An object containing all loggable modules
+   * an exemplary module "Persons" would look like this:
+   *
+   * ```typescript
+   *   PERS: { fullName: 'Persons', color: '#0ff', devLevel: 3, prodLevel: 1 }
+   * ```
+   *
+   * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
+   * - the fullName will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
+   *   string at the output
+   * - the color will be applied to the module name and its box layout
+   * - the levels are activation boundaries for the specified logs. All logs that have a level higher than the current
+   *   module level will therefore not be logged.
+   *
+   * ## Given Default Modules
+   * Some default modules will be set and can be overwritten here:
+   *
+   * ### The NONE module
+   * will be automatically set when there is no `.module(...)` chained on `Loxer.log()`, `Loxer.open()` or `Loxer.of()`
+   * when the opening log had no module too. The default is defined as:
+   *
+   * ```typescript
+   *   NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
+   * ```
+   *
+   * This module will not have a module name or a box layout at the output.
+   *
+   * ### The DEFAULT module
+   * will be automatically set when `Loxer.log()` or `Loxer.open()` logs are chained with an empty `.module()`.
+   * The default is defined as:
+   *
+   * ```typescript
+   *   DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
+   * ```
+   *
+   * This module will have an empty module name, but a box layout at the output.
+   *
+   * ### The INVALID module
+   * will be automatically set when any given module does not exist (as a key) in the given {@link LoxerOptions.modules} in the
+   * `Loxer.init(options)`. This module is a visual indicator for misspelled or missing moduleIds. **Additionally this
+   * module is serves as a fallback mechanism and should therefore never be overwritten with `undefined`!**
+   * The default is defined as:
+   *
+   * ```typescript
+   *   INVALID: { fullName: 'INVALIDMODULE', color: '#f00', devLevel: 1, prodLevel: 0 }
+   * ```
+   *
+   * This module will have a moduleName (`INVALIDMODULE`), but no box layout at the output.
+   */
+  modules?: LoxerModules;
+  /** determines if Loxer is running in a development or production environment.
+   * - you can pass any boolean expression here
+   * - `process.env.NODE_ENV === 'development'` is common for *NodeJS*
+   * - `__DEV__` is common for *react-native*
+   * - defaults to `process.env.NODE_ENV === 'development'`
+   */
+  dev?: boolean;
+  /** Functions called as an output stream for Loxer..
+   * The output stream is divided into 4 different streams, depending on the environment and the type of log:
+   * - `devLog`: logs occurring in development environment
+   * - `prodLog`: logs occurring in production environment
+   * - `devError`: errors occurring in development environment
+   * - `prodError`: errors occurring in production environment
+   */
+  callbacks?: LoxerCallbacks;
+  /** The {@link LoxerConfig Configuration} of Loxer. */
+  config?: LoxerConfig;
+  /** The default levels to show logs in production or development. These will automatically be adapted to the default
+   * module `NONE` and `DEFAULT`. If you want to set them differently, then you have to override them in the `modules`
+   * option.
+   * - both default to `devLevel: 1` and `prodLevel: 0`
+   */
+  defaultLevels?: {
+    /** the actual level to show logs in development mode */
+    devLevel: LevelType;
+    /** the actual level to show logs in production mode */
+    prodLevel: LevelType;
+  };
+}
+
+/** Modules for the {@link LoxerOptions} */
+export type LoxerModules = { [moduleId: string]: Module };
+
+/** Structure of a loggable module for the {@link LoxerModules} */
+export interface Module {
+  /** Actual level to show logs in development mode. */
+  devLevel: LevelType;
+  /** Actual level to show logs in production mode. */
+  prodLevel: LevelType;
+  /** Full name for the logged module. */
+  fullName: string;
+  /** Color used to identify this Log. Supported formats:
+   * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
+   * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
+   */
+  color: string;
+}
+
+/** Level of a module that assigned Logs have to be lower than
+ * - 0: no output
+ * - 1: high
+ * - 2: medium
+ * - 3: low
+ */
+export type LevelType = 0 | 1 | 2 | 3;
+
+/** Output stream callbacks for the {@link LoxerOptions} */
+export interface LoxerCallbacks {
+  /** Function called when logging in development mode.
+   * This callback receives an {@link OutputLox} which provides several attributes.
+   */
+  devLog?(outputLog: OutputLox): void;
+  /** Function called when logging in production mode.
+   * This callback receives an {@link OutputLox} which provides several attributes.
+   */
+  prodLog?(outputLog: OutputLox): void;
+  /** Function called when errors are recorded in production mode.
+   * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
+   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
+   */
+  prodError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
+  /** Function called when errors are recorded in development mode.
+   * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
+   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
+   */
+  devError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
+}
+
+/** Configuration for the {@link LoxerOptions} */
+export interface LoxerConfig {
+  /** the length where the modules' names will be sliced in order to fit the layout.
+   * - defaults to `8`
+   */
+  moduleTextSlice?: number;
+  /** the opacity of the moduleText (`options.modules[...].fullName`) that appears on the `Loxer.of(...).close()` log
+   * - number between `[0,1]`
+   * - defaults to `0` which means "hidden"
+   */
+  endTitleOpacity?: number;
+  /** the style of the default Box-layout
+   * - possible values are "round" | "light" | "heavy" | "double" | "off"
+   * - 'off' does not print any Layout but saves the insets, that the box layout would need
+   * - defaults to `'round'`
+   */
+  boxLayoutStyle?: BoxLayoutStyle;
+  /** disables Loxer in production mode.
+   * - if Loxer is initialized with `options.config.disabledInProductionMode: true` then - in production environment - the
+   *   cache is erased and upcoming logs will not be cached anymore
+   * - in fact all logging function then immediately return "nothing" for performance reasons
+   * - defaults to `false`
+   */
+  disabledInProductionMode?: boolean;
+  /** disables Loxer completely.
+   * - this **MUST** be used in order to suppress logging without deleting the Loxer calls!
+   * - without disabling AND init() of Loxer, all the logs will be cached "infinitely", because
+   *   they "wait" for the init().
+   * - if Loxer is initialized with `options.config.disabled: true` then the cache is erased and upcoming logs will not be
+   *   cached anymore
+   * - in fact all logging function then immediately return "nothing" for performance reasons
+   * - defaults to `false`
+   */
+  disabled?: boolean;
+  /** the backgroundColor used for highlighting logs. Supported formats:
+   * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
+   * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
+   * - defaults to "inverted" colors
+   */
+  highlightColor?: string;
+  /** disables all colors for the output.
+   * - use this if the console can't handle `\x1b[38;2;R;G;Bm` colors.
+   * - this only takes effect, if the Callbacks are unset and the console.log is used internally.
+   * - the Callbacks receive colored and uncolored messages separately
+   * - defaults to `false`
+   */
+  disableColors?: boolean;
+  /** determines how many output- / error logs shall be cached in the history.
+   * - is accessible with `Loxer.history`
+   * - will be additionally appended to error outputs
+   * - **defaults to `50`**
+   */
+  historyCacheSize?: number;
+}
+
+// #################################################################################################
+// ##### LOG METHODS ###############################################################################
+// #################################################################################################
+
+export interface LogMethods {
   /** ## Simple Log
    *
    * ```typescript
@@ -138,14 +342,6 @@ export interface LoxerCore {
    * @param id the id returned from `Loxer.open()` to reference this log to
    */
   of(id: number): OfLoxes;
-  /** ## Get the log History
-   * This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.
-   * - is a reversed stack, so that the most recent element is at `history[0]`
-   * - the size of the history can be set at the {@link LoxerConfig.historyCacheSize} in the
-   *   {@link LoxerOptions.config} declared in `Loxer.init(options)`. It defaults to `50`.
-   * - if the history is enabled it will also be appended to the error logs in the `errorOut` callback
-   */
-  history: (OutputLox | ErrorLox)[];
 }
 
 /** Any possible type that a `catch` could return */
@@ -161,201 +357,9 @@ export interface OfLoxes {
   error(error: ErrorType, item?: any): void;
 }
 
-/** Options for the {@link Loxer.init} method */
-export interface LoxerOptions {
-  /** ## An object containing all loggable modules
-   * an exemplary module "Persons" would look like this:
-   *
-   * ```typescript
-   *   PERS: { fullName: 'Persons', color: '#0ff', devLevel: 3, prodLevel: 1 }
-   * ```
-   *
-   * - the key `PERS` will be used to reference the module in the logs and is kept short for laziness
-   * - the fullName will be (possibly sliced - see {@link LoxerConfig.moduleTextSlice}) displayed as the very first
-   *   string at the output
-   * - the color will be applied to the module name and its box layout
-   * - the levels are activation boundaries for the specified logs. All logs that have a level higher than the current
-   *   module level will therefore not be logged.
-   *
-   * ## Given Default Modules
-   * Some default modules will be set and can be overwritten here:
-   *
-   * ### The NONE module
-   * will be automatically set when there is no `.module(...)` chained on `Loxer.log()`, `Loxer.open()` or `Loxer.of()`
-   * when the opening log had no module too. The default is defined as:
-   *
-   * ```typescript
-   *   NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
-   * ```
-   *
-   * This module will not have a module name or a box layout at the output.
-   *
-   * ### The DEFAULT module
-   * will be automatically set when `Loxer.log()` or `Loxer.open()` logs are chained with an empty `.module()`.
-   * The default is defined as:
-   *
-   * ```typescript
-   *   DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 1 }
-   * ```
-   *
-   * This module will have an empty module name, but a box layout at the output.
-   *
-   * ### The INVALID module
-   * will be automatically set when any given module does not exist (as a key) in the given {@link LoxerOptions.modules} in the
-   * `Loxer.init(options)`. This module is a visual indicator for misspelled or missing moduleIds. **Additionally this
-   * module is serves as a fallback mechanism and should therefore never be overwritten with `undefined`!**
-   * The default is defined as:
-   *
-   * ```typescript
-   *   INVALID: { fullName: 'INVALIDMODULE', color: '#f00', devLevel: 1, prodLevel: 0 }
-   * ```
-   *
-   * This module will have a moduleName (`INVALIDMODULE`), but no box layout at the output.
-   */
-  modules?: LoxerModules;
-  /** determines if Loxer is running in a development or production environment.
-   * - you can pass any boolean expression here
-   * - `process.env.NODE_ENV === 'development'` is common for *NodeJS*
-   * - `__DEV__` is common for *react-native*
-   * - defaults to `process.env.NODE_ENV === 'development'`
-   */
-  dev?: boolean;
-  /** Functions called as an output stream for Loxer..
-   * The output stream is divided into 4 different streams, depending on the environment and the type of log:
-   * - `devLog`: logs occurring in development environment
-   * - `prodLog`: logs occurring in production environment
-   * - `devError`: errors occurring in development environment
-   * - `prodError`: errors occurring in production environment
-   */
-  callbacks?: LoxerCallbacks;
-  /** The {@link LoxerConfig Configuration} of Loxer. */
-  config?: LoxerConfig;
-  /** The default levels to show logs in production or development. These will automatically be adapted to the default
-   * module `NONE` and `DEFAULT`. If you want to set them differently, then you have to override them in the `modules`
-   * option.
-   * - both default to `devLevel: 1` and `prodLevel: 0`
-   */
-  defaultLevels?: {
-    /** the actual level to show logs in development mode */
-    devLevel: LevelType;
-    /** the actual level to show logs in production mode */
-    prodLevel: LevelType;
-  };
-}
-
-/** Modules for the {@link LoxerOptions} */
-export type LoxerModules = { [moduleId: string]: Module };
-
-/** Structure of a loggable module for the {@link LoxerModules} */
-export interface Module {
-  /** Actual level to show logs in development mode. */
-  devLevel: LevelType;
-  /** Actual level to show logs in production mode. */
-  prodLevel: LevelType;
-  /** Full name for the logged module. */
-  fullName: string;
-  /** Color used to identify this Log. Supported formats:
-   * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
-   * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
-   */
-  color: string;
-}
-
-/** Level of a Log
- * - 1: high
- * - 2: medium
- * - 3: low
- */
-export type LogLevelType = 1 | 2 | 3;
-
-/** Level of a module that assigned Logs have to be lower than
- * - 0: no output
- * - 1: high
- * - 2: medium
- * - 3: low
- */
-export type LevelType = 0 | 1 | 2 | 3;
-
-/** Output stream callbacks for the {@link LoxerOptions} */
-export interface LoxerCallbacks {
-  /** Function called when logging in development mode.
-   * This callback receives an {@link OutputLox} which provides several attributes.
-   */
-  devLog?(outputLog: OutputLox): void;
-  /** Function called when logging in production mode.
-   * This callback receives an {@link OutputLox} which provides several attributes.
-   */
-  prodLog?(outputLog: OutputLox): void;
-  /** Function called when errors are recorded in production mode.
-   * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
-   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
-   */
-  prodError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
-  /** Function called when errors are recorded in development mode.
-   * This callback provides an {@link ErrorLox} which provides the attributes of an `OutputLox` plus some error
-   * specific ones. The provided history is a list of all recent logs until the error was streamed out.
-   */
-  devError?(errorLog: ErrorLox, history: (OutputLox | ErrorLox)[]): void;
-}
-
-/** Configuration for the {@link LoxerOptions} */
-export interface LoxerConfig {
-  /** the length where the modules' names will be sliced in order to fit the layout.
-   * - defaults to `8`
-   */
-  moduleTextSlice?: number;
-  /** the opacity of the moduleText (`options.modules[...].fullName`) that appears on the `Loxer.of(...).close()` log
-   * - number between `[0,1]`
-   * - defaults to `0` which means "hidden"
-   */
-  endTitleOpacity?: number;
-  /** the style of the default Box-layout
-   * - possible values are "round" | "light" | "heavy" | "double" | "off"
-   * - 'off' does not print any Layout but saves the insets, that the box layout would need
-   * - defaults to `'round'`
-   */
-  boxLayoutStyle?: BoxLayoutStyle;
-  /** disables Loxer in production mode.
-   * - if Loxer is initialized with `options.config.disabledInProductionMode: true` then - in production environment - the
-   *   cache is erased and upcoming logs will not be cached anymore
-   * - in fact all logging function then immediately return "nothing" for performance reasons
-   * - defaults to `false`
-   */
-  disabledInProductionMode?: boolean;
-  /** disables Loxer completely.
-   * - this **MUST** be used in order to suppress logging without deleting the Loxer calls!
-   * - without disabling AND init() of Loxer, all the logs will be cached "infinitely", because
-   *   they "wait" for the init().
-   * - if Loxer is initialized with `options.config.disabled: true` then the cache is erased and upcoming logs will not be
-   *   cached anymore
-   * - in fact all logging function then immediately return "nothing" for performance reasons
-   * - defaults to `false`
-   */
-  disabled?: boolean;
-  /** the backgroundColor used for highlighting logs. Supported formats:
-   * - hex-string: (eg: `'#ff0000'` or `'#f00'` for red)
-   * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
-   * - defaults to "inverted" colors
-   */
-  highlightColor?: string;
-  /** disables all colors for the output.
-   * - use this if the console can't handle `\x1b[38;2;R;G;Bm` colors.
-   * - this only takes effect, if the Callbacks are unset and the console.log is used internally.
-   * - the Callbacks receive colored and uncolored messages separately
-   * - defaults to `false`
-   */
-  disableColors?: boolean;
-  /** determines how many output- / error logs shall be cached in the history.
-   * - is accessible with `Loxer.history`
-   * - will be additionally appended to error outputs
-   * - **defaults to `50`**
-   */
-  historyCacheSize?: number;
-}
-
-type LogMethods = Pick<Loxer, 'log' | 'open' | 'of' | 'error'>;
-
-// ##### MODIFIERS ############################################################
+// #################################################################################################
+// ##### MODIFIERS #################################################################################
+// #################################################################################################
 
 type h = 'h' | 'highlight';
 type l = 'l' | 'level';
@@ -447,3 +451,10 @@ export interface Modifiers<Delete extends string> {
    */
   module(moduleId?: string | undefined): LogMethods & Omit<Modifiers<Delete | m>, Delete | m>;
 }
+
+/** Level of a Log
+ * - 1: high
+ * - 2: medium
+ * - 3: low
+ */
+export type LogLevelType = 1 | 2 | 3;
