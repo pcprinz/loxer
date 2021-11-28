@@ -20,6 +20,7 @@ export interface ItemOptions {
   colored?: boolean;
   indent?: number;
   showVerticalLines?: boolean;
+  keys?: string[];
 }
 
 export class Item {
@@ -28,6 +29,7 @@ export class Item {
   private _printFunction: boolean;
   private _indent: number;
   private _showVerticalLines: boolean;
+  private _keys: string[] | undefined;
 
   constructor(item: ItemType, options?: ItemOptions) {
     this._item = item;
@@ -36,6 +38,7 @@ export class Item {
     this._indent = options?.indent ?? 2;
     this._showVerticalLines =
       options?.showVerticalLines !== undefined ? options.showVerticalLines : false;
+    this._keys = options?.keys;
   }
 
   get item(): ItemType {
@@ -46,7 +49,11 @@ export class Item {
     return `\n${this.prettifyItem(this._item)[colored ? 0 : 1]}`;
   }
 
-  private prettifyItem(item: ItemType, depth: number = 0): [colored: string, plain: string] {
+  private prettifyItem(
+    item: ItemType,
+    depth: number = 0,
+    save: boolean = false
+  ): [colored: string, plain: string] {
     if (item === null) {
       return this.printUndefined(item);
     }
@@ -56,7 +63,7 @@ export class Item {
         return [`[ ${ANSIFormat.fgUndefined('...')} ]`, '[ ... ]'];
       }
 
-      return this.printArray(item, depth);
+      return this.printArray(item, depth, save);
     }
 
     switch (typeof item) {
@@ -79,7 +86,7 @@ export class Item {
           return [`{ ${ANSIFormat.fgUndefined('...')} }`, '{ ... }'];
         }
 
-        return this.printObject(item, depth);
+        return this.printObject(item, depth, save);
       default:
         return this.printDefault(item);
     }
@@ -134,9 +141,24 @@ export class Item {
     return [ANSIFormat.fgFunction(value), value];
   }
 
-  private printArray(items: any[], depth: number = 0): [colored: string, plain: string] {
-    const prettified = items.map((item) => this.prettifyItem(item, depth + 1));
+  private printArray(
+    items: any[],
+    depth: number = 0,
+    save: boolean = false
+  ): [colored: string, plain: string] {
+    const prettified = items
+      .filter(
+        (item) =>
+          !this._keys || save || (typeof item === 'object' && item != null) || Array.isArray(item)
+      )
+      .map((item) => this.prettifyItem(item, depth + 1, save))
+      .filter((pretty) => pretty[1] !== '[...]' && pretty[1] !== '{...}');
     const short = prettified.map((item) => item[1]).join(', ');
+
+    // filtered empty
+    if (prettified.length === 0) {
+      return [ANSIFormat.fgUndefined('[...]'), '[...]'];
+    }
 
     // return short array
     if (short.length < 70) {
@@ -161,15 +183,32 @@ export class Item {
 
   private printObject(
     record: Record<string, unknown>,
-    depth: number
+    depth: number,
+    save: boolean = false
   ): [colored: string, plain: string] {
-    const prettified: [colored: string, plain: string][] = Object.entries(record).map(
-      ([key, value]) => {
-        const pretty = this.prettifyItem(value, depth + 1);
+    const prettified = Object.entries(record)
+      .filter(
+        ([key, value]) =>
+          !this._keys ||
+          save ||
+          typeof value === 'object' ||
+          Array.isArray(value) ||
+          this._keys.includes(key)
+      )
+      .map(([key, value]) => {
+        const pretty = this.prettifyItem(value, depth + 1, save || this._keys?.includes(key));
+        const unColored =
+          pretty[1] !== '{...}' && pretty[1] !== '[...]' ? `${key}: ${pretty[1]}` : '{...}';
 
-        return [`${key}: ${pretty[0]}`, `${key}: ${pretty[1]}`];
-      }
-    );
+        return [`${key}: ${pretty[0]}`, unColored];
+      })
+      .filter((pretty) => pretty[1] !== '[...]' && pretty[1] !== '{...}');
+
+    // filtered empty
+    if (prettified.length === 0) {
+      return [ANSIFormat.fgUndefined('{...}'), '{...}'];
+    }
+
     const short = prettified.map((item) => item[1]).join(', ');
 
     if (short.length < 70) {
