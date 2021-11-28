@@ -84,7 +84,7 @@ export class Item {
 
     if (Array.isArray(item)) {
       if (this._depth > 0 && depth >= this._depth) {
-        return [ANSIFormat.fgUndefined(`${item.length} elements`), `[${item.length} elements]`];
+        return [ANSIFormat.fgUndefined(`[${item.length} elements]`), `[${item.length} elements]`];
       }
 
       return this.printArray(item, depth, save, boxColor);
@@ -108,7 +108,7 @@ export class Item {
       case 'object':
         if (this._depth > 0 && depth >= this._depth) {
           return [
-            ANSIFormat.fgUndefined(`${Object.keys(item).length} entries`),
+            ANSIFormat.fgUndefined(`{${Object.keys(item).length} entries}`),
             `{${Object.keys(item).length} entries}`,
           ];
         }
