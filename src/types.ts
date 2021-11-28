@@ -1,5 +1,6 @@
 /** @module Loxer */
 import { BoxLayoutStyle } from './core/BoxFormat';
+import { ItemOptions, ItemType } from './core/Item';
 import { ErrorLox } from './loxes/ErrorLox';
 import { OutputLox } from './loxes/OutputLox';
 
@@ -254,7 +255,7 @@ export interface LogMethods {
    * @param message to log
    * @param item to append
    */
-  log(message: string, item?: any): void;
+  log(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** ## Advanced error Log
    *
    * ```typescript
@@ -283,7 +284,7 @@ export interface LogMethods {
    * @param error an `Error` or `string` | `number`| `boolean` | `object` (converted to an Error)
    * @param item to append
    */
-  error(error: ErrorType, item?: any): void;
+  error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
   /** ## Open a boxed Log
    *
    * ```typescript
@@ -307,7 +308,7 @@ export interface LogMethods {
    * @param message to log
    * @param item to append
    */
-  open(message: string, item?: any): number;
+  open(message: string, item?: ItemType, itemOptions?: ItemOptions): number;
   /** ## Assign logs / errors to an opened Log
    *
    * ```typescript
@@ -350,11 +351,11 @@ export type ErrorType = Error | string | number | boolean | Record<string, unkno
 /** Methods returned from the {@link Loxer.of} method */
 export interface OfLoxes {
   /** assigns a single log to a log box and imitates the behavior of {@link Loxer.log} */
-  add(message: string, item?: any): void;
+  add(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** closes an opened log box and imitates the behavior of {@link Loxer.log} */
-  close(message: string, item?: any): void;
+  close(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** assigns an error log to a log box and imitates the behavior of {@link Loxer.error} */
-  error(error: ErrorType, item?: any): void;
+  error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
 }
 
 // #################################################################################################

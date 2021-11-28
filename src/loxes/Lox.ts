@@ -1,3 +1,4 @@
+import { Item, ItemOptions, ItemType } from '../core/Item';
 import { is } from '../Helpers';
 import { LevelType } from '../types';
 /** @module Lox */
@@ -9,7 +10,8 @@ export interface LoxProps {
   id: number | undefined;
   message: string;
   highlighted: boolean;
-  item: any | undefined;
+  item: ItemType | undefined;
+  itemOptions: ItemOptions | undefined;
   type: LoxType;
   moduleId: string;
   level: LevelType;
@@ -26,7 +28,9 @@ export class Lox {
   /** determines if the log was highlighted with `Loxer.highlight()` or `Loxer.h()` */
   highlighted: boolean;
   /** an optional item like the `console.log(message,`**_`item`_**`)` */
-  item: any | undefined;
+  item: ItemType | undefined;
+  /** the options for displaying the item */
+  itemOptions: ItemOptions | undefined;
   /** the {@link LoxType type} of the log */
   type: LoxType;
   /** the corresponding key of a module from {@link LoxerOptions.modules}
@@ -46,6 +50,7 @@ export class Lox {
     this.message = props.message;
     this.highlighted = props.highlighted;
     this.item = props.item;
+    this.itemOptions = props.itemOptions;
     this.type = props.type;
     this.moduleId = props.moduleId;
     this.level = props.level;

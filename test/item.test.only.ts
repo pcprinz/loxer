@@ -122,4 +122,5 @@ afterAll(() => {
 test('item', () => {
   expect(true).toBeTruthy();
   Loxer.log('TEST-ITEM', item);
+  Loxer.log('', 2, {});
 });

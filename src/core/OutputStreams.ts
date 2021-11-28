@@ -81,8 +81,8 @@ export class OutputStreams {
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
       const str = `${moduleText}${box}${message}\t${timeText}`;
       if (outputLox.item) {
-        const itm = new Item(outputLox.item, { keys: ['age'] });
-        console.log(str, itm.prettify());
+        const itm = new Item(outputLox.item, outputLox.itemOptions);
+        console.log(str + itm.prettify());
       } else {
         console.log(str);
       }

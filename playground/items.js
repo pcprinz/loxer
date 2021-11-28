@@ -66,5 +66,5 @@ const item = [
 ];
 
 console.log('TEST-ITEM', item);
-Loxer.h().log('TEST-ITEM', item);
-// Loxer.h().log('TEST-ITEM', BoxLayouts);
+Loxer.h().log('TEST-ITEM', item, { keys: ['a', 'nested', 'name'] });
+Loxer.h().log('TEST-ITEM', 2);

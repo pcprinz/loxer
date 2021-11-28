@@ -1,5 +1,6 @@
 import { BoxFactory } from './core/BoxFactory';
 import { ensureError, LoxerError } from './core/Error';
+import { ItemType, ItemOptions } from './core/Item';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
@@ -115,7 +116,7 @@ class LoxerInstance implements LoxerType {
 
   // log functions ##########################################################
 
-  log(message: string = '', item?: any) {
+  log(message: string = '', item?: ItemType, itemOptions?: ItemOptions) {
     if (this._disabled) {
       return;
     }
@@ -124,6 +125,7 @@ class LoxerInstance implements LoxerType {
         id: undefined,
         highlighted: this._highlighted,
         item,
+        itemOptions,
         level: this._level ?? 1,
         message,
         moduleId: this._moduleId,
@@ -132,8 +134,8 @@ class LoxerInstance implements LoxerType {
     );
   }
 
-  error(error: ErrorType, item?: any) {
-    this.internalError(error, undefined, undefined, undefined, item);
+  error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) {
+    this.internalError(error, undefined, undefined, undefined, item, itemOptions);
   }
 
   private internalError(
@@ -141,7 +143,8 @@ class LoxerInstance implements LoxerType {
     logId: number | undefined,
     moduleId: string = this._moduleId,
     messagePrefix: string = '',
-    item?: any
+    item?: ItemType,
+    itemOptions?: ItemOptions
   ) {
     const sureError = ensureError(error);
     this.switchOutput(
@@ -149,6 +152,7 @@ class LoxerInstance implements LoxerType {
         id: logId,
         highlighted: this._highlighted,
         item,
+        itemOptions,
         level: this._level ?? 1,
         message: messagePrefix + sureError.message,
         moduleId,
@@ -158,7 +162,7 @@ class LoxerInstance implements LoxerType {
     );
   }
 
-  open(message: string, item?: any) {
+  open(message: string, item?: ItemType, itemOptions?: ItemOptions) {
     if (this._disabled) {
       return 0;
     }
@@ -166,6 +170,7 @@ class LoxerInstance implements LoxerType {
       id: undefined,
       highlighted: this._highlighted,
       item,
+      itemOptions,
       level: this._level ?? 1,
       message,
       moduleId: this._moduleId !== 'NONE' ? this._moduleId : 'DEFAULT',
@@ -193,50 +198,59 @@ class LoxerInstance implements LoxerType {
     const openLox = this._loxes.findOpenLox(id);
     if (!is(openLox)) {
       return {
-        add: (message: string, item?: any) => {
+        add: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
           this.internalError(
             new LoxerError(message),
             id,
             undefined,
             'add() on a not (anymore) existing Lox. MESSAGE: ',
-            item
+            item,
+            itemOptions
           );
         },
-        close: (message: string, item?: any) => {
+        close: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
           this.internalError(
             new LoxerError(message),
             id,
             undefined,
             'close() on a not (anymore) existing Lox. MESSAGE: ',
-            item
+            item,
+            itemOptions
           );
         },
-        error: (error: ErrorType, item?: any) => {
+        error: (error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) => {
           this.internalError(
             error,
             id,
             undefined,
             'error() on a not (anymore) existing Lox. ERROR: ',
-            item
+            item,
+            itemOptions
           );
         },
       };
     }
 
     return {
-      add: (message: string, item?: any) => {
-        this.appendLox('single', openLox, message, item);
+      add: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
+        this.appendLox('single', openLox, message, item, itemOptions);
       },
-      close: (message: string, item?: any) => {
-        this.appendLox('close', openLox, message, item);
+      close: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
+        this.appendLox('close', openLox, message, item, itemOptions);
       },
-      error: (error: ErrorType, item?: any) => {
-        this.internalError(error, openLox.id, openLox.moduleId, undefined, item);
+      error: (error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) => {
+        this.internalError(error, openLox.id, openLox.moduleId, undefined, item, itemOptions);
       },
     };
   }
 
-  private appendLox(type: LoxType, openLox: Lox, message: string, item?: any) {
+  private appendLox(
+    type: LoxType,
+    openLox: Lox,
+    message: string,
+    item?: ItemType,
+    itemOptions?: ItemOptions
+  ) {
     const { id, moduleId, level: oLevel } = openLox;
     // close level must be open level + added logs must not have a lower level, though the open box could possibly not exist
     const level =
@@ -246,6 +260,7 @@ class LoxerInstance implements LoxerType {
         id,
         highlighted: this._highlighted,
         item,
+        itemOptions,
         level,
         message,
         moduleId,
