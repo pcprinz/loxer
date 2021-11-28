@@ -3,6 +3,7 @@ import { OutputLox } from '../loxes/OutputLox';
 import { LoxerCallbacks } from '../types';
 import { ANSIFormat } from './ANSIFormat';
 import { BoxFactory } from './BoxFactory';
+import { Item } from './Item';
 import { LoxHistory } from './LoxHistory';
 
 interface OutputStreamsProps {
@@ -79,7 +80,12 @@ export class OutputStreams {
         : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
       const str = `${moduleText}${box}${message}\t${timeText}`;
-      outputLox.item ? console.log(str, outputLox.item) : console.log(str);
+      if (outputLox.item) {
+        const itm = new Item(outputLox.item);
+        console.log(str, itm.prettify());
+      } else {
+        console.log(str);
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 const { Loxer, NamedError } = require('../dist');
 
-Loxer.init();
+Loxer.init({ dev: true });
 Loxer.highlight().log('it works!', '...very well');
 const lox = Loxer.m().open('look how it starts');
 Loxer.of(lox).add('it is beautiful');

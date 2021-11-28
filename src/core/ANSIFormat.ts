@@ -138,4 +138,29 @@ export class ANSIFormat {
       timeText: this.fgTime(lox.timeText),
     };
   }
+
+  /** returns a string to color the following text green */
+  static fgNumber(text: string): string {
+    return this.colorForeground(193, 156, 2) + text + this.CODE.Reset;
+  }
+  /** returns a string to color the following text green */
+  static fgString(text: string): string {
+    return this.colorForeground(18, 129, 14) + text + this.CODE.Reset;
+  }
+  /** returns a string to color the following text green */
+  static fgBoolean(text: string): string {
+    return this.colorForeground(18, 93, 229) + text + this.CODE.Reset;
+  }
+  /** returns a string to color the following text green */
+  static fgUndefined(text: string): string {
+    return this.colorForeground(118, 118, 118) + text + this.CODE.Reset;
+  }
+  /** returns a string to color the following text green */
+  static fgFunction(text: string): string {
+    return this.colorForeground(32, 144, 237) + text + this.CODE.Reset;
+  }
+  /** returns a string to color the following text green */
+  static fgLine(text: string): string {
+    return this.colorForeground(45, 45, 45) + text + this.CODE.Reset;
+  }
 }
