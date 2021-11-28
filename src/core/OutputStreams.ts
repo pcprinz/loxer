@@ -12,6 +12,7 @@ interface OutputStreamsProps {
   boxFactory?: BoxFactory;
   endTitleOpacity?: number;
   highlightColor?: string;
+  moduleTextSlice?: number;
 }
 
 /** @internal */
@@ -21,6 +22,7 @@ export class OutputStreams {
   private _boxFactory: BoxFactory;
   private _endTitleOpacity: number = 0;
   private _highlightColor: string | undefined;
+  private _moduleTextSlice: number = 8;
 
   constructor(props?: OutputStreamsProps) {
     this._callbacks = props?.callbacks;
@@ -28,6 +30,7 @@ export class OutputStreams {
     this._boxFactory = props?.boxFactory ?? new BoxFactory();
     this._endTitleOpacity = props?.endTitleOpacity ?? 0;
     this._highlightColor = props?.highlightColor;
+    this._moduleTextSlice = props?.moduleTextSlice ?? 8;
   }
 
   /** @internal **/
@@ -82,7 +85,13 @@ export class OutputStreams {
       const str = `${moduleText}${box}${message}\t${timeText}`;
       if (outputLox.item) {
         const itm = new Item(outputLox.item, outputLox.itemOptions);
-        console.log(str + itm.prettify());
+        console.log(
+          str +
+            itm.prettify(true, {
+              depth: this._moduleTextSlice + outputLox.box.length,
+              color: outputLox.color,
+            })
+        );
       } else {
         console.log(str);
       }

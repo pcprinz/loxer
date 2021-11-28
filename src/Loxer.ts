@@ -45,7 +45,7 @@ class LoxerInstance implements LoxerType {
     this._modules = new Modules({
       dev: this._dev,
       modules: props?.modules,
-      moduleTextSlice: config?.moduleTextSlice,
+      moduleTextSlice: config?.moduleTextSlice ?? 8,
       defaultLevels: props?.defaultLevels,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
@@ -56,6 +56,7 @@ class LoxerInstance implements LoxerType {
       boxFactory: this._boxFactory,
       endTitleOpacity: config?.endTitleOpacity,
       highlightColor: config?.highlightColor,
+      moduleTextSlice: config?.moduleTextSlice ?? 8,
     });
 
     this.highlight().log('Loxer initialized');

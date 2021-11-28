@@ -76,27 +76,31 @@ Loxer.m('Wrong').log('this one to the INVALID module');
 
 step('8.1 open Boxes');
 
+logSpace(3);
+
+step('8.2 full Boxes');
+
 const id = Loxer.module().open('this is an opening message');
 const id2 = Loxer.module('PERS').open('this is an opening message assigned to a module');
 const id3 = Loxer.h().m('CART').open('this one is additionally highlighted');
 
-logSpace(3);
-Loxer.of(id).close('');
-Loxer.of(id2).close('');
-Loxer.of(id3).close('');
-
-step('8.2 full Boxes');
-
 const lox = Loxer.m('BILLING').open('This is the opening log');
-Loxer.of(lox).add('this is a single added log', [
-  42,
-  {
-    abc: '420',
-    d: [12, { e: ['apwoijfuwapoij', 'oesifhesoihfesioh', 'seofheoshfosei8h', 123456789] }],
-  },
-]);
+Loxer.of(id).close('');
+Loxer.of(lox).add(
+  'this is a single added log',
+  [
+    42,
+    {
+      abc: '420',
+      d: [12, { e: ['apwoijfuwapoij', 'oesifhesoihfesioh', 'seofheoshfosei8h', 123456789] }],
+    },
+  ],
+  { showVerticalLines: true }
+);
+Loxer.of(id3).close('');
 Loxer.of(lox).error('this is an added error');
 Loxer.of(lox).close('this is the closing log');
+Loxer.of(id2).close('');
 Loxer.of(lox).add('this log is shown but as error');
 
 logSpace(3);
