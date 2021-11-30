@@ -80,6 +80,7 @@ const lox0 = new OutputLox({
   moduleId: 'Module',
   type: 'open',
   item: undefined,
+  itemOptions: undefined,
 });
 lox0.color = '#fff';
 lox0.moduleText = 'Module';
@@ -93,6 +94,7 @@ const lox1 = new OutputLox({
   moduleId: 'Module',
   type: 'close',
   item: undefined,
+  itemOptions: undefined,
 });
 lox1.color = '#fff';
 lox1.moduleText = 'Module';
@@ -106,6 +108,7 @@ const lox2 = new OutputLox({
   moduleId: 'Module',
   type: 'single',
   item: undefined,
+  itemOptions: undefined,
 });
 lox2.color = '#fff';
 lox2.moduleText = 'Module';
