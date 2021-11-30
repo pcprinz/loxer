@@ -254,6 +254,7 @@ export interface LogMethods {
    * ---
    * @param message to log
    * @param item to append
+   * @param itemOptions to configure the (default) output of the item
    */
   log(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** ## Advanced error Log
@@ -283,6 +284,7 @@ export interface LogMethods {
    * ---
    * @param error an `Error` or `string` | `number`| `boolean` | `object` (converted to an Error)
    * @param item to append
+   * @param itemOptions to configure the (default) output of the item
    */
   error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
   /** ## Open a boxed Log
@@ -307,6 +309,7 @@ export interface LogMethods {
    * ---
    * @param message to log
    * @param item to append
+   * @param itemOptions to configure the (default) output of the item
    */
   open(message: string, item?: ItemType, itemOptions?: ItemOptions): number;
   /** ## Assign logs / errors to an opened Log

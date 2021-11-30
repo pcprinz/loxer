@@ -139,27 +139,27 @@ export class ANSIFormat {
     };
   }
 
-  /** returns a string to color the following text green */
+  /** used to color items of type `number` and `bigInt` */
   static fgNumber(text: string): string {
     return this.colorForeground(193, 156, 2) + text + this.CODE.Reset;
   }
-  /** returns a string to color the following text green */
+  /** used to color items of type `string` and `symbol` */
   static fgString(text: string): string {
     return this.colorForeground(18, 129, 14) + text + this.CODE.Reset;
   }
-  /** returns a string to color the following text green */
+  /** used to color items of type `boolean` */
   static fgBoolean(text: string): string {
     return this.colorForeground(18, 93, 229) + text + this.CODE.Reset;
   }
-  /** returns a string to color the following text green */
+  /** used to color multiple parts of items especially of type `undefined` and `null` */
   static fgUndefined(text: string): string {
     return this.colorForeground(118, 118, 118) + text + this.CODE.Reset;
   }
-  /** returns a string to color the following text green */
+  /** used to color items of type `function` */
   static fgFunction(text: string): string {
     return this.colorForeground(32, 144, 237) + text + this.CODE.Reset;
   }
-  /** returns a string to color the following text green */
+  /** used to color indent indicator lines of items */
   static fgLine(text: string): string {
     return this.colorForeground(45, 45, 45) + text + this.CODE.Reset;
   }

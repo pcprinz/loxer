@@ -1,4 +1,4 @@
-import { Item, ItemOptions, ItemType } from '../core/Item';
+import { ItemOptions, ItemType } from '../core/Item';
 import { is } from '../Helpers';
 import { LevelType } from '../types';
 /** @module Lox */
@@ -17,7 +17,7 @@ export interface LoxProps {
   level: LevelType;
 }
 
-/** The basic log that every {@link OutputLox} and {@link ErrorLox} extend */
+/** The basic log that every {@link OutputLox} and {@link ErrorLox} extends */
 export class Lox {
   /** the internal identifier of the log
    * - this id is used to reference `.of(id)` logs to opening logs
@@ -29,7 +29,7 @@ export class Lox {
   highlighted: boolean;
   /** an optional item like the `console.log(message,`**_`item`_**`)` */
   item: ItemType | undefined;
-  /** the options for displaying the item */
+  /** options to configure the (default) output of the item */
   itemOptions: ItemOptions | undefined;
   /** the {@link LoxType type} of the log */
   type: LoxType;

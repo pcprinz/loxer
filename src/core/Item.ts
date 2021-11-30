@@ -1,5 +1,7 @@
+import { Lox } from '../loxes/Lox';
 import { ANSIFormat } from './ANSIFormat';
 
+/** any primitive and non primitive type that an `Item`can be composed of */
 export type ItemType =
   | number
   | bigint
@@ -11,14 +13,26 @@ export type ItemType =
   | (() => any)
   | null
   | undefined;
+
+/** the options to configure the "default" output of the item */
 export interface ItemOptions {
+  /** at which object / array depth, other objects / arrays should just be displayed as their type + length. defaults to `infinity` */
   depth?: number;
+  /** should a function be printed with its complete declaration. defaults to `false` */
   printFunction?: boolean;
+  /** the indent that nested objects / arrays have (when not shortened to 1 line). defaults to `2` */
   indent?: number;
+  /** should vertical indent indicator lines be printed. defaults to `true` */
   showVerticalLines?: boolean;
+  /** filtered keys for objects.
+   * - helpful for larger objects
+   * - other keys will not be displayed
+   * - objects and arrays that deeply contain the given keys will have an indicator of how many elements where left out
+   */
   keys?: string[];
 }
 
+/** A helper class that can be used to pretty print **items** of `Lox`es */
 export class Item {
   private _item: ItemType;
   private _depth: number;
@@ -27,21 +41,48 @@ export class Item {
   private _showVerticalLines: boolean;
   private _keys: string[] | undefined;
 
-  constructor(item: ItemType, options?: ItemOptions) {
-    this._item = item;
-    this._depth = options?.depth ?? 0;
-    this._printFunction = options?.printFunction ?? false;
-    this._indent = options?.indent ?? 2;
+  /**
+   * @internal
+   * @param lox to pretty print the item of
+   */
+  private constructor(lox: Lox) {
+    this._item = lox.item;
+    this._depth = lox.itemOptions?.depth ?? 0;
+    this._printFunction = lox.itemOptions?.printFunction ?? false;
+    this._indent = lox.itemOptions?.indent ?? 2;
     this._showVerticalLines =
-      options?.showVerticalLines !== undefined ? options.showVerticalLines : false;
-    this._keys = options?.keys;
+      lox.itemOptions?.showVerticalLines !== undefined ? lox.itemOptions.showVerticalLines : true;
+    this._keys = lox.itemOptions?.keys;
   }
 
-  get item(): ItemType {
-    return this._item;
+  /**
+   * @param lox to pretty print the item for
+   * @returns a chained function `prettify(...)` to pretty print the lox
+   */
+  static of(lox: Lox): Item {
+    return new Item(lox);
   }
 
-  prettify(colored: boolean = true, box?: { depth: number; color: string }): string {
+  /**
+   * prettifies the output of a Lox' item - similar to what the `console` methods do, but with some improvements:
+   * - the depth of objects / arrays is not bound to 3
+   * - the indent is configurable
+   * - indent is shown with vertical indicator lines
+   * - objects can be filtered to specific keys (helpful when dealing with large items)
+   *
+   * @param colored should the output be colored (with ANSI colors)
+   * @param box options for the box surrounding the printed item
+   * @returns a pretty string of the item
+   */
+  public prettify(
+    colored: boolean = true,
+    box?: {
+      /** the vertical depth, where the box starts / ends (typically the column of the log's box) */
+      depth: number;
+      /** color of the box and surrounding text (typically the color of the log's box) */
+      color: string;
+    }
+  ): string {
     if (box) {
       const pre = ANSIFormat.colorize(
         '\n┌' +
@@ -72,6 +113,7 @@ export class Item {
     );
   }
 
+  /** @internal */
   private prettifyItem(
     item: ItemType,
     depth: number = 0,
@@ -119,48 +161,56 @@ export class Item {
     }
   }
 
+  /** @internal */
   private printDefault(item: any): [colored: string, plain: string] {
     const value = JSON.stringify(item);
 
     return [ANSIFormat.fgTime(value), value];
   }
 
+  /** @internal */
   private printNum(item: number): [colored: string, plain: string] {
     const value = item.toString();
 
     return [ANSIFormat.fgNumber(value), value];
   }
 
+  /** @internal */
   private printBigint(item: bigint): [colored: string, plain: string] {
     const value = `${item.toString()}n`;
 
     return [ANSIFormat.fgNumber(value), value];
   }
 
+  /** @internal */
   private printSymbol(item: symbol): [colored: string, plain: string] {
     const value = item.toString();
 
     return [ANSIFormat.fgString(value), value];
   }
 
+  /** @internal */
   private printString(item: string): [colored: string, plain: string] {
     const value = `'${item}'`;
 
     return [ANSIFormat.fgString(value), value];
   }
 
+  /** @internal */
   private printBoolean(item: boolean): [colored: string, plain: string] {
     const value = item.toString();
 
     return [ANSIFormat.fgBoolean(value), value];
   }
 
+  /** @internal */
   private printUndefined(item: undefined | null): [colored: string, plain: string] {
     const value = item === undefined ? 'undefined' : 'null';
 
     return [ANSIFormat.fgUndefined(value), value];
   }
 
+  /** @internal */
   private printFunction(item: () => any): [colored: string, plain: string] {
     const fText = item.name ? `: ${item.name}` : ' (anonymous)';
     const value = this._printFunction ? item.toString() : `[Function${fText}]`;
@@ -168,6 +218,7 @@ export class Item {
     return [ANSIFormat.fgFunction(value), value];
   }
 
+  /** @internal */
   private printArray(
     items: any[],
     depth: number = 0,
@@ -217,6 +268,7 @@ export class Item {
     ];
   }
 
+  /** @internal */
   private printObject(
     record: Record<string, any>,
     depth: number,
@@ -286,6 +338,7 @@ export class Item {
     ];
   }
 
+  /** @internal returns a specified string of spaces (and vertical indent indicators) */
   private indentString(depth: number = 0, colored: boolean = true, boxColor?: string) {
     const line = colored ? ANSIFormat.fgLine('┊') : '┊';
     const spaces = Array(depth * this._indent).fill(' ');

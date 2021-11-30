@@ -84,10 +84,9 @@ export class OutputStreams {
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
       const str = `${moduleText}${box}${message}\t${timeText}`;
       if (outputLox.item) {
-        const itm = new Item(outputLox.item, outputLox.itemOptions);
         console.log(
           str +
-            itm.prettify(true, {
+            Item.of(outputLox).prettify(true, {
               depth: this._moduleTextSlice + outputLox.box.length,
               color: outputLox.color,
             })
