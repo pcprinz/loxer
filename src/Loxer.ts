@@ -45,7 +45,7 @@ class LoxerInstance implements LoxerType {
     this._modules = new Modules({
       dev: this._dev,
       modules: props?.modules,
-      moduleTextSlice: config?.moduleTextSlice ?? 8,
+      moduleTextSlice: config?.moduleTextSlice ? config.moduleTextSlice : 8,
       defaultLevels: props?.defaultLevels,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
@@ -56,7 +56,7 @@ class LoxerInstance implements LoxerType {
       boxFactory: this._boxFactory,
       endTitleOpacity: config?.endTitleOpacity,
       highlightColor: config?.highlightColor,
-      moduleTextSlice: config?.moduleTextSlice ?? 8,
+      moduleTextSlice: config?.moduleTextSlice ? config.moduleTextSlice : 8,
     });
 
     this.highlight().log('Loxer initialized');
@@ -127,7 +127,7 @@ class LoxerInstance implements LoxerType {
         highlighted: this._highlighted,
         item,
         itemOptions,
-        level: this._level ?? 1,
+        level: this._level ? this._level : 1,
         message,
         moduleId: this._moduleId,
         type: 'single',
@@ -154,7 +154,7 @@ class LoxerInstance implements LoxerType {
         highlighted: this._highlighted,
         item,
         itemOptions,
-        level: this._level ?? 1,
+        level: this._level ? this._level : 1,
         message: messagePrefix + sureError.message,
         moduleId,
         type: 'error',
@@ -172,7 +172,7 @@ class LoxerInstance implements LoxerType {
       highlighted: this._highlighted,
       item,
       itemOptions,
-      level: this._level ?? 1,
+      level: this._level ? this._level : 1,
       message,
       moduleId: this._moduleId !== 'NONE' ? this._moduleId : 'DEFAULT',
       type: 'open',
@@ -255,7 +255,9 @@ class LoxerInstance implements LoxerType {
     const { id, moduleId, level: oLevel } = openLox;
     // close level must be open level + added logs must not have a lower level, though the open box could possibly not exist
     const level =
-      type === 'single' ? (Math.max(oLevel, this._level ?? oLevel) as LogLevelType) : oLevel;
+      type === 'single'
+        ? (Math.max(oLevel, this._level ? this._level : oLevel) as LogLevelType)
+        : oLevel;
     this.switchOutput(
       new Lox({
         id,

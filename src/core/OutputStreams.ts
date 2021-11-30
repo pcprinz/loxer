@@ -26,11 +26,11 @@ export class OutputStreams {
 
   constructor(props?: OutputStreamsProps) {
     this._callbacks = props?.callbacks;
-    this._colorsDisabled = props?.disableColors ?? false;
-    this._boxFactory = props?.boxFactory ?? new BoxFactory();
-    this._endTitleOpacity = props?.endTitleOpacity ?? 0;
+    this._colorsDisabled = props?.disableColors ? props.disableColors : false;
+    this._boxFactory = props?.boxFactory ? props.boxFactory : new BoxFactory();
+    this._endTitleOpacity = props?.endTitleOpacity ? props.endTitleOpacity : 0;
     this._highlightColor = props?.highlightColor;
-    this._moduleTextSlice = props?.moduleTextSlice ?? 8;
+    this._moduleTextSlice = props?.moduleTextSlice ? props.moduleTextSlice : 8;
   }
 
   /** @internal **/

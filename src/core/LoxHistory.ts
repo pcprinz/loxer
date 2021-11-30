@@ -7,7 +7,7 @@ export class LoxHistory {
   private _size: number;
 
   constructor(size?: number) {
-    this._size = size ?? 50;
+    this._size = size ? size : 50;
   }
 
   /** @internal */

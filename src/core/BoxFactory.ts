@@ -15,7 +15,7 @@ export class BoxFactory {
    * @param boxLayoutStyle The style of the used unicode symbols: `"round" | "light" | "heavy" | "double" | "off"`
    */
   constructor(boxLayoutStyle?: BoxLayoutStyle) {
-    this._boxLayoutStyle = boxLayoutStyle ?? 'round';
+    this._boxLayoutStyle = boxLayoutStyle ? boxLayoutStyle : 'round';
   }
 
   /** @internal */
@@ -56,7 +56,7 @@ export class BoxFactory {
     const color = lox.color;
     let found = false;
     for (const bufferLox of loxes.getBuffer()) {
-      const itemColor = bufferLox?.color ?? '';
+      const itemColor = bufferLox?.color ? bufferLox.color : '';
       if (!found) {
         if (lox.id === bufferLox?.id) {
           // print occurrence

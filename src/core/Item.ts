@@ -29,9 +29,9 @@ export class Item {
 
   constructor(item: ItemType, options?: ItemOptions) {
     this._item = item;
-    this._depth = options?.depth ?? 0;
-    this._printFunction = options?.printFunction ?? false;
-    this._indent = options?.indent ?? 2;
+    this._depth = options?.depth ? options.depth : 0;
+    this._printFunction = options?.printFunction ? options.printFunction : false;
+    this._indent = options?.indent ? options.indent : 2;
     this._showVerticalLines =
       options?.showVerticalLines !== undefined ? options.showVerticalLines : false;
     this._keys = options?.keys;
