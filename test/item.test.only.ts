@@ -27,7 +27,7 @@ const item = [
   'str',
   false,
   Symbol('sym'),
-  12345678901234567890n,
+  // 12345678901234567890n,
   {
     key: 'value',
     arr: [
@@ -44,7 +44,7 @@ const item = [
       'str',
       false,
       Symbol('sym'),
-      12345678901234567890n,
+      // 12345678901234567890n,
       (a: string) => {},
       String,
       String(2),
