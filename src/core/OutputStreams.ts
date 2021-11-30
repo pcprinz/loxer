@@ -59,10 +59,18 @@ export class OutputStreams {
               .map((outputLox) => outputLox.message)
               .join(' <> ')}]`
           : '';
-
-      errorLox.item
-        ? console.error(msg + stack + openLogs, errorLox.item)
-        : console.error(msg + stack + openLogs);
+      const str = msg + stack + openLogs;
+      if (errorLox.item) {
+        console.log(
+          str +
+            Item.of(errorLox).prettify(true, {
+              depth: this._moduleTextSlice + errorLox.box.length,
+              color: errorLox.color,
+            })
+        );
+      } else {
+        console.log(str);
+      }
     }
   }
 

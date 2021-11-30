@@ -148,6 +148,9 @@ export class Item {
       case 'function':
         return this.printFunction(item);
       case 'object':
+        if (item instanceof Date) {
+          return this.printDate(item);
+        }
         if (this._depth > 0 && depth >= this._depth) {
           return [
             ANSIFormat.fgUndefined(`{${Object.keys(item).length} entries}`),
@@ -201,6 +204,13 @@ export class Item {
     const value = item.toString();
 
     return [ANSIFormat.fgBoolean(value), value];
+  }
+
+  /** @internal */
+  private printDate(item: Date): [colored: string, plain: string] {
+    const value = item.toISOString();
+
+    return [ANSIFormat.fgDate(value), value];
   }
 
   /** @internal */

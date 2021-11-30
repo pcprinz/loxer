@@ -159,6 +159,10 @@ export class ANSIFormat {
   static fgFunction(text: string): string {
     return this.colorForeground(32, 144, 237) + text + this.CODE.Reset;
   }
+  /** used to color items instance of `Date` */
+  static fgDate(text: string): string {
+    return this.colorForeground(133, 77, 168) + text + this.CODE.Reset;
+  }
   /** used to color indent indicator lines of items */
   static fgLine(text: string): string {
     return this.colorForeground(45, 45, 45) + text + this.CODE.Reset;
