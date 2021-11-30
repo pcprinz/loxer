@@ -46,7 +46,7 @@ export class Lox {
 
   /** @internal */
   constructor(props: LoxProps) {
-    this.id = props.id ? props.id : Lox.nextId();
+    this.id = props.id ?? Lox.nextId();
     this.message = props.message;
     this.highlighted = props.highlighted;
     this.item = props.item;

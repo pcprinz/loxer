@@ -15,7 +15,7 @@ export class Modules {
   private _moduleTextSlice: number = 8;
 
   constructor(props?: ModulesProps) {
-    this._dev = props?.dev ? props.dev : true;
+    this._dev = props?.dev ?? true;
     if (props?.defaultLevels) {
       DEFAULT_MODULES.NONE.devLevel = props?.defaultLevels.devLevel;
       DEFAULT_MODULES.DEFAULT.devLevel = props?.defaultLevels.devLevel;
@@ -26,7 +26,7 @@ export class Modules {
       ...DEFAULT_MODULES,
       ...props?.modules,
     };
-    this._moduleTextSlice = props?.moduleTextSlice ? props.moduleTextSlice : 8;
+    this._moduleTextSlice = props?.moduleTextSlice ?? 8;
   }
 
   ensureModule(moduleId: string): string {
@@ -41,7 +41,7 @@ export class Modules {
       ? this._modules[moduleId]?.devLevel
       : this._modules[moduleId]?.prodLevel;
 
-    return level ? level : -1;
+    return level ?? -1;
   }
 
   /**
@@ -76,8 +76,8 @@ export class Modules {
    * @internal determines if a log does not fulfill it's level constraints
    */
   isLogHidden(lox: Lox): boolean {
-    const dl = this._modules[lox.moduleId]?.devLevel ? this._modules[lox.moduleId].devLevel : 1;
-    const pl = this._modules[lox.moduleId]?.prodLevel ? this._modules[lox.moduleId].prodLevel : 1;
+    const dl = this._modules[lox.moduleId]?.devLevel ?? 1;
+    const pl = this._modules[lox.moduleId]?.prodLevel ?? 1;
 
     return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
   }

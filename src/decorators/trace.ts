@@ -87,7 +87,7 @@ export function trace(options?: TraceOptions | string) {
         moduleId = o?.moduleId;
       }
 
-      const level = o?.level ? o.level : 1;
+      const level = o?.level ?? 1;
       const h = o?.highlight;
 
       // open message
