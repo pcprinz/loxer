@@ -30,6 +30,13 @@ export interface ItemOptions {
    * - objects and arrays that deeply contain the given keys will have an indicator of how many elements where left out
    */
   keys?: string[];
+  /** shortens objects that have a specific constructor name (other than `'Object'`) as their name
+   * - defaults to `true` (except if the item itself is a class)
+   * - if disabled, the object will be displayed as destructed object with its properties
+   * - **ATTENTION** displaying nested classes (classes have classes as props) can lead to exceeding the stack size,
+   *   especially if the contain cyclic structures
+   */
+  shortenClasses?: boolean;
 }
 
 /** A helper class that can be used to pretty print **items** of `Lox`es */
@@ -40,6 +47,7 @@ export class Item {
   private _indent: number;
   private _showVerticalLines: boolean;
   private _keys: string[] | undefined;
+  private _shortenObjects?: boolean;
 
   /**
    * @internal
@@ -53,6 +61,8 @@ export class Item {
     this._showVerticalLines =
       lox.itemOptions?.showVerticalLines !== undefined ? lox.itemOptions.showVerticalLines : true;
     this._keys = lox.itemOptions?.keys;
+    this._shortenObjects =
+      lox.itemOptions?.shortenClasses !== undefined ? lox.itemOptions.shortenClasses : true;
   }
 
   /**
@@ -150,6 +160,17 @@ export class Item {
       case 'object':
         if (item instanceof Date) {
           return this.printDate(item);
+        }
+        if (item.constructor?.name !== 'Object') {
+          if (this._shortenObjects && depth > 0) {
+            return this.printClass(item.constructor.name);
+          }
+          if (depth === 0) {
+            const prefix = `[Class: ${item.constructor.name}] = `;
+            const content = this.printObject(item, depth, save, boxColor);
+
+            return [ANSIFormat.fgFunction(prefix) + content[0], prefix + content[1]];
+          }
         }
         if (this._depth > 0 && depth >= this._depth) {
           return [
@@ -346,6 +367,13 @@ export class Item {
       `{\n${expandedColored}\n${this.indentString(depth, true, boxColor)}}`,
       `{\n${expanded}\n${this.indentString(depth, false, boxColor)}}`,
     ];
+  }
+
+  /** @internal */
+  private printClass(item: string): [colored: string, plain: string] {
+    const text = `[Class: ${item}]`;
+
+    return [ANSIFormat.fgFunction(text), text];
   }
 
   /** @internal returns a specified string of spaces (and vertical indent indicators) */

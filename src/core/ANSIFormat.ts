@@ -157,7 +157,7 @@ export class ANSIFormat {
   }
   /** used to color items of type `function` */
   static fgFunction(text: string): string {
-    return this.colorForeground(32, 144, 237) + text + this.CODE.Reset;
+    return this.colorForeground(144, 237, 32) + text + this.CODE.Reset;
   }
   /** used to color items instance of `Date` */
   static fgDate(text: string): string {
