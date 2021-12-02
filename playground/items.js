@@ -3,7 +3,7 @@ const { Loxer, BoxLayouts, BoxFactory } = require('../dist');
 Loxer.init({
   dev: true,
   modules: {
-    ACC: { color: '#f00', fullName: 'Persons', devLevel: 1, prodLevel: 1 },
+    AUTH: { color: '#f00', fullName: 'Authentication', devLevel: 1, prodLevel: 1 },
     CART: { color: '#00ff00', fullName: 'Shopping cart', devLevel: 1, prodLevel: 1 },
     PAY: { color: 'rgb(0, 120, 255)', fullName: 'Payment', devLevel: 1, prodLevel: 1 },
   },
@@ -21,22 +21,49 @@ function logSpace(lines) {
 
 logSpace(3);
 
-const invoice = {
+const payment = {
+  paymentId: '5e9g156ds1k193n90c',
   date: new Date('2021-11-30T23:35:46.926Z'),
-  a: new BoxFactory('light'),
-  b: {
-    plain: 'object',
-  },
+  userId: 'awoih-36846-pehcf-wd',
+  articles: [
+    {
+      articleId: 'p5983165428',
+      name: 'Jacket blue',
+      price: 99.67,
+      currency: 'EURO',
+      dealer: {
+        dealerId: 'jjj245986',
+        name: 'JacketsJacketsJackets',
+        isPrivate: false,
+      },
+    },
+    {
+      articleId: 'k23595135251',
+      name: 'Hat',
+      price: 15.99,
+      currency: 'USD',
+      dealer: {
+        dealerId: 'h59205433',
+        name: 'Günther Wolfram',
+        isPrivate: 'true',
+      },
+    },
+  ],
+  paymentAmount: 115.66,
+  paymentMethod: 'on_delivery',
 };
-
-const a1 = Loxer.m('ACC').open('login');
+console.log('payment:', payment);
+logSpace(3);
+const a1 = Loxer.m('AUTH').open('login');
 Loxer.of(a1).add('authenticate user');
 const c1 = Loxer.m('CART').open('restore last order session');
 Loxer.of(a1).close('login successful');
 Loxer.of(c1).add('payment pending');
-const p1 = Loxer.m('PAY').open('restore last order invoice', Loxer, { shortenClasses: true });
-Loxer.of(p1).error('failed to restore last invoice', invoice);
-Loxer.of(p1).close('no invoice restored');
+const p1 = Loxer.m('PAY').open('restore last order payment');
+Loxer.of(p1).error('failed to restore last payment: unable to parse payment!', payment, {
+  keys: ['isPrivate', 'dealerId'],
+});
+Loxer.of(p1).close('no payment restored');
 Loxer.of(c1).close('session restored');
 
 logSpace(3);

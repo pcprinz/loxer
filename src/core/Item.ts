@@ -311,7 +311,7 @@ export class Item {
         ([key, value]) =>
           !this._keys ||
           save ||
-          typeof value === 'object' ||
+          (typeof value === 'object' && value.constructor?.name === 'Object') ||
           Array.isArray(value) ||
           this._keys.includes(key)
       )
