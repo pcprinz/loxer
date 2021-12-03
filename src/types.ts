@@ -351,13 +351,13 @@ export interface LogMethods {
 /** Any possible type that a `catch` could return */
 export type ErrorType = Error | string | number | boolean | Record<string, unknown>;
 
-/** Methods returned from the {@link Loxer.of} method */
+/** Methods returned from the {@link LogMethods.of} method */
 export interface OfLoxes {
-  /** assigns a single log to a log box and imitates the behavior of {@link Loxer.log} */
+  /** assigns a single log to a log box and imitates the behavior of {@link LogMethods.log} */
   add(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
-  /** closes an opened log box and imitates the behavior of {@link Loxer.log} */
+  /** closes an opened log box and imitates the behavior of {@link LogMethods.log} */
   close(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
-  /** assigns an error log to a log box and imitates the behavior of {@link Loxer.error} */
+  /** assigns an error log to a log box and imitates the behavior of {@link LogMethods.error} */
   error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
 }
 
@@ -370,7 +370,7 @@ type l = 'l' | 'level';
 type m = 'm' | 'module';
 export interface Modifiers<Delete extends string> {
   /** ## Highlight a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.highlight Loxer.highlight()}.
+   * #### Is a shortcut for {@link Modifiers.highlight Loxer.highlight()}.
    *
    * ---
    * @param doit should the log be highlighted
@@ -398,7 +398,7 @@ export interface Modifiers<Delete extends string> {
    */
   highlight(doit?: boolean): LogMethods & Omit<Modifiers<Delete | h>, Delete | h>;
   /** ## Set the LogLevel for a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.level Loxer.level(...)}
+   * #### Is a shortcut for {@link Modifiers.level Loxer.level(...)}
    * ---
    * @param level the level of the log
    */
@@ -429,7 +429,7 @@ export interface Modifiers<Delete extends string> {
    */
   level(level: LogLevelType): LogMethods & Omit<Modifiers<Delete | l>, Delete | l>;
   /** ## Assign a module to a log (shortcut)
-   * #### Is a shortcut for {@link Loxer.module `Loxer.module(...)`}
+   * #### Is a shortcut for {@link Modifiers.module `Loxer.module(...)`}
    * ---
    * @param moduleId the key of the module from {@link LoxerOptions.modules}. `undefined` defaults to module `"DEFAULT"`
    */
