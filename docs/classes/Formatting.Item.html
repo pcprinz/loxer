@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Module | Loxer - v0.5.0</title>
+	<title>Item | Loxer - v0.5.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../modules/Loxer.html">Loxer</a>
+					<a href="../modules/Formatting.html">Formatting</a>
 				</li>
 				<li>
-					<a href="Loxer.Module.html">Module</a>
+					<a href="Formatting.Item.html">Item</a>
 				</li>
 			</ul>
 		</div>
@@ -79,30 +79,30 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/Error.html">Error</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/Formatting.html">Formatting</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/Logs.html">Logs</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/Loxer.html">Loxer</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 		<div class="col-7 offset-3 col-content">
-			<h1>Interface Module</h1>
+			<h1>Class Item</h1>
 			<section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography tsd-comment-shorttext">
 					<div class="lead">
-						<p>Structure of a loggable module for the <a href="../modules/Loxer.html#LoxerModules">LoxerModules</a></p>
+						<p>A helper class that can be used to pretty print <strong>items</strong> of <code>Lox</code>es</p>
 					</div>
 			</div></section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Module</span>
+						<span class="target">Item</span>
 					</li>
 				</ul>
 			</section>
@@ -110,70 +110,99 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Loxer.Module.html#devLevel" class="tsd-kind-icon">dev<wbr>Level</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Loxer.Module.html#prodLevel" class="tsd-kind-icon">prod<wbr>Level</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Loxer.Module.html#fullName" class="tsd-kind-icon">full<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Loxer.Module.html#color" class="tsd-kind-icon">color</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Formatting.Item.html#prettify" class="tsd-kind-icon">prettify</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="Formatting.Item.html#of" class="tsd-kind-icon">of</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="devLevel" class="tsd-anchor"></a>
-					<h3>dev<wbr>Level</h3>
-					<div class="tsd-signature tsd-kind-icon">dev<wbr>Level<span class="tsd-signature-symbol">:</span> <a href="../modules/Loxer.html#LevelType" class="tsd-signature-type">LevelType</a></div>
-					<aside class="tsd-sources">
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>Actual level to show logs in development mode.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="prodLevel" class="tsd-anchor"></a>
-					<h3>prod<wbr>Level</h3>
-					<div class="tsd-signature tsd-kind-icon">prod<wbr>Level<span class="tsd-signature-symbol">:</span> <a href="../modules/Loxer.html#LevelType" class="tsd-signature-type">LevelType</a></div>
-					<aside class="tsd-sources">
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>Actual level to show logs in production mode.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fullName" class="tsd-anchor"></a>
-					<h3>full<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">full<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>Full name for the logged module.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="color" class="tsd-anchor"></a>
-					<h3>color</h3>
-					<div class="tsd-signature tsd-kind-icon">color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>Color used to identify this Log. Supported formats:</p>
-							<ul>
-								<li>hex-string: (eg: <code>&#39;#ff0000&#39;</code> or <code>&#39;#f00&#39;</code> for red)</li>
-								<li>rgb-string: (eg: <code>&#39;rgb(255, 0, 0)&#39;</code> for red)</li>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="prettify" class="tsd-anchor"></a>
+					<h3>prettify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">prettify<span class="tsd-signature-symbol">(</span>colored<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, box<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+							</aside>
+							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+								<div class="lead">
+									<p>prettifies the output of a Lox&#39; item - similar to what the <code>console</code> methods do, but with some improvements:</p>
+									<ul>
+										<li>the depth of objects / arrays is not bound to 3</li>
+										<li>the indent is configurable</li>
+										<li>indent is shown with vertical indicator lines</li>
+										<li>objects can be filtered to specific keys (helpful when dealing with large items)</li>
+									</ul>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>colored: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5>
+									<div class="tsd-comment tsd-typography tsd-comment-text">
+										<p>should the output be colored (with ANSI colors)</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> box: <span class="tsd-signature-type">object</span></h5>
+									<div class="tsd-comment tsd-typography tsd-comment-text">
+										<p>options for the box surrounding the printed item</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>depth<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+											<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+												<div class="lead">
+													<p>the vertical depth, where the box starts / ends (typically the column of the log&#39;s box)</p>
+												</div>
+											</div>
+										</li>
+										<li class="tsd-parameter">
+											<h5>color<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+											<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+												<div class="lead">
+													<p>color of the box and surrounding text (typically the color of the log&#39;s box)</p>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</li>
 							</ul>
-						</div>
-					</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>a pretty string of the item</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="of" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> of</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">(</span>lox<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Lox</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="Formatting.Item.html" class="tsd-signature-type">Item</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>lox: <span class="tsd-signature-type">Lox</span></h5>
+									<div class="tsd-comment tsd-typography tsd-comment-text">
+										<p>to pretty print the item for</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="Formatting.Item.html" class="tsd-signature-type">Item</a></h4>
+							<p>a chained function <code>prettify(...)</code> to pretty print the lox</p>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<!--{&quot;options&quot;:&quot;C:\\dev\\loxer\\typedoc.json&quot;,&quot;tsconfig&quot;:&quot;C:\\dev\\loxer&quot;,&quot;packages&quot;:[],&quot;entryPoints&quot;:[&quot;C:\\dev\\loxer\\src\\types.ts&quot;,&quot;C:\\dev\\loxer\\src\\decorators\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\loxes\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\Error.ts&quot;],&quot;exclude&quot;:[],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:false,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:false,&quot;excludeProtected&quot;:false,&quot;disableSources&quot;:true,&quot;includes&quot;:&quot;C:\\dev\\loxer\\assets&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:false,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;C:\\dev\\loxer\\docs&quot;,&quot;json&quot;:&quot;&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;Loxer&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[],&quot;categorizeByGroup&quot;:true,&quot;sort&quot;:[&quot;instance-first&quot;,&quot;source-order&quot;],&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:false,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;treatWarningsAsErrors&quot;:false,&quot;listInvalidSymbolLinks&quot;:false}-->
@@ -181,63 +210,42 @@
 		<div class="col-2 col-menu secondary-menu">
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
-						<a href="../modules/Loxer.html#Loxer-1" class="tsd-kind-icon">Loxer</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.LoxerCore.html" class="tsd-kind-icon">Loxer<wbr>Core</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.LoxerOptions.html" class="tsd-kind-icon">Loxer<wbr>Options</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module root">
+						<a href="Formatting.ANSIFormat.html" class="tsd-kind-icon">ANSIFormat</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
-						<a href="../modules/Loxer.html#LoxerModules" class="tsd-kind-icon">Loxer<wbr>Modules</a>
+						<a href="../modules/Formatting.html#Box" class="tsd-kind-icon">Box</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
+						<a href="../modules/Formatting.html#BoxSegment" class="tsd-kind-icon">Box<wbr>Segment</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module root">
+						<a href="Formatting.BoxFactory.html" class="tsd-kind-icon">Box<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module root">
+						<a href="../interfaces/Formatting.BoxSymbols.html" class="tsd-kind-icon">Box<wbr>Symbols</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
+						<a href="../modules/Formatting.html#ItemType" class="tsd-kind-icon">Item<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module root">
+						<a href="../interfaces/Formatting.ItemOptions.html" class="tsd-kind-icon">Item<wbr>Options</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.Module.html" class="tsd-kind-icon">Module</a>
+					<li class="current tsd-kind-class tsd-parent-kind-module root">
+						<a href="Formatting.Item.html" class="tsd-kind-icon">Item</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="Loxer.Module.html#devLevel" class="tsd-kind-icon">dev<wbr>Level</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="Formatting.Item.html#prettify" class="tsd-kind-icon">prettify</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="Loxer.Module.html#prodLevel" class="tsd-kind-icon">prod<wbr>Level</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="Loxer.Module.html#fullName" class="tsd-kind-icon">full<wbr>Name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="Loxer.Module.html#color" class="tsd-kind-icon">color</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="Formatting.Item.html#of" class="tsd-kind-icon">of</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
-						<a href="../modules/Loxer.html#LevelType" class="tsd-kind-icon">Level<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.LoxerCallbacks.html" class="tsd-kind-icon">Loxer<wbr>Callbacks</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.LoxerConfig.html" class="tsd-kind-icon">Loxer<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.LogMethods.html" class="tsd-kind-icon">Log<wbr>Methods</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
-						<a href="../modules/Loxer.html#ErrorType" class="tsd-kind-icon">Error<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
-						<a href="Loxer.OfLoxes.html" class="tsd-kind-icon">Of<wbr>Loxes</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter root">
-						<a href="Loxer.Modifiers.html" class="tsd-kind-icon">Modifiers</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
-						<a href="../modules/Loxer.html#LogLevelType" class="tsd-kind-icon">Log<wbr>Level<wbr>Type</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

@@ -10,6 +10,8 @@
 - [7. Output - `LoxerCallbacks`](#7-output---loxercallbacks)
 - [8. Boxes](#8-boxes)
 
+Instructions on how to use the Item can be found **[on this separate page](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)**.
+
 
 # Overview
 Loxer's main goal is to increase the safety of applications by showing the developer the data flow of the application with the help of logs. For this, it is possible for him to provide logs with levels, to categorize them in modules, to expand error messages with additional information and to connect logs with one another. A box is created for this, which begins with an opening log, is continued with any number of logs and errors and ends with a closing log. This is then visualized with a kind of branching system. Loxer also serves as a middleware logger by allowing the user to determine the output streams himself using callbacks. In this way, it can be achieved, for example, that the behavior of an application in the production environment is recorded and, in the event of an error, detailed information about the cause is forwarded to an analysis service such as firebase crashlytics.
@@ -57,21 +59,21 @@ More about the details of the options can be found in the following sections.
 
 
 # 2. Simple logs - [`Loxer.log()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#log)
-To make a simple log, all you have to do is call `Loxer.log(message: string, item?: any)`. In the default - unless otherwise specified in `Loxer.init(options.callbacks)` - `message` and `item` are logged with `console.log(message, item)`. All you have to do is replacing `console` with `Loxer`.
+To make a simple log, all you have to do is call `Loxer.log(message: string, item?: ItemType, itemOptions?: ItemOptions)`. In the default - unless otherwise specified in `Loxer.init(options.callbacks)` - `message` and `item` are logged with `console.log(message + ITEM)`, where `ITEM` is a prettified and configurable printed version of the item (any variable). All you have to do is replacing `console` with `Loxer`.
 
 
 ###### Example
 ```typescript
 const person = {name: "John Doe", age: 69};
-console.log('This is the person:', person);  // => This is the person: { name: 'John Doe', age: 69 }
-Loxer.log('This is the person:', person);    // => This is the person: { name: 'John Doe', age: 69 }
+console.log('This is the person:', person);
+Loxer.log('This is the person:', person);
 ```
 
 ###### Console output
-<!-- ![console_output](/assets/docs_images/2.png) -->
-![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/2.png)
+![console_output](/assets/docs_images/2.png)
+<!-- ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/2.png) -->
 
-To see what `item` does take a look at the [MDN Web API](https://developer.mozilla.org/de/docs/Web/API/Console/log)
+On page **[Item](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)** there is a detailed guide about the advantages over the `console` and the possibilities that the `item` brings with it.
 
 > Loxer comes with some improvements for logs:
 > - Logs can be highlighted.
@@ -84,7 +86,7 @@ To see what `item` does take a look at the [MDN Web API](https://developer.mozil
 
 
 # 3. Error logs - [`Loxer.error()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#error)
-Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: any)`. By default this log will be proceeded to `console.error()`.
+Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions)`. By default this log will be proceeded to `console.error()`.
 
 The error parameter must be of `type ErrorType = Error | string | number | boolean | object`, because these are the types that an error of a `catch(error)` phrase can take. The `item?: any` behaves the same way like in the `.log()` method.
 
@@ -308,6 +310,8 @@ To symbolize that the logs are more than just simple messages, they are named `*
   highlighted: boolean;
   /** an optional item */
   item: any | undefined;
+  /** options to configure the (default) output of the item */
+  itemOptions: ItemOptions | undefined;
   /** the type of the log */
   type: LoxType;
   /** the corresponding key of a module from `LoxerOptions.modules` */
@@ -363,8 +367,18 @@ private devLogOut(outputLox: OutputLox) {
       ? outputLox
       : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
     const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
-    const str = moduleText + box + message + '\t' + timeText;
-    outputLox.item ? console.log(str, outputLox.item) : console.log(str);
+    const str = `${moduleText}${box}${message}\t${timeText}`;
+    if (outputLox.item) {
+      console.log(
+        str +
+          Item.of(outputLox).prettify(true, {
+            depth: this._moduleTextSlice + outputLox.box.length,
+            color: outputLox.color,
+          })
+      );
+    } else {
+      console.log(str);
+    }
   }
 }
 ```
@@ -387,12 +401,22 @@ private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
     const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
     const openLogs =
       errorLox.highlighted && errorLox.openLoxes.length > 0
-        ? `\nOPEN_LOGS: [${errorLox.openLoxes.map(outputLox => outputLox.message).join(' <> ')}]`
+        ? `\nOPEN_LOGS: [${errorLox.openLoxes
+            .map((outputLox) => outputLox.message)
+            .join(' <> ')}]`
         : '';
-
-    errorLox.item
-      ? console.error(msg + stack + openLogs, errorLox.item)
-      : console.error(msg + stack + openLogs);
+    const str = msg + stack + openLogs;
+    if (errorLox.item) {
+      console.log(
+        str +
+          Item.of(errorLox).prettify(true, {
+            depth: this._moduleTextSlice + errorLox.box.length,
+            color: errorLox.color,
+          })
+      );
+    } else {
+      console.log(str);
+    }
   }
 }
 ```
@@ -408,7 +432,7 @@ In addition, a box layout is created that shows the course of the box, but with 
 
 ### Create boxes
 
-To use a box, it must be opened with `Loxer.open(message: string, item?: any)`. The `.open()` method returns the `id: number` of the log, which is used to connect other logs to this one. The rest of the structure and functionality is analogous to the `.log()` method. It can also be chained with `.highlight()`, `.level()` and `.module()`, just like the rest of the box methods. **As a reminder**, if the box layout is to be generated, **a module** or at least the default module (`.m()`) **must be assigned** to the log that opens.
+To use a box, it must be opened with `Loxer.open(message: string, item?: ItemType, itemOptions?: ItemOptions)`. The `.open()` method returns the `id: number` of the log, which is used to connect other logs to this one. The rest of the structure and functionality is analogous to the `.log()` method. It can also be chained with `.highlight()`, `.level()` and `.module()`, just like the rest of the box methods. **As a reminder**, if the box layout is to be generated, **a module** or at least the default module (`.m()`) **must be assigned** to the log that opens.
 
 ###### Open a box - [`Loxer.open()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#open)
 ```typescript
@@ -422,9 +446,9 @@ const id3 = Loxer.h().m('CART').open('this one is additionally highlighted');
 ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/8-1.png)
 
 If an open box is to be closed, or further logs / errors are to be added, the `Loxer.of(id: number)` method must be used. This method returns an object with 3 other methods, which enables the next method to be added as a chain. There are 3 methods available for this:
-- `add(message: string, item?: any)` - adds a log to the box and works in the same way as `Loxer.log()`
-- `error(error: ErrorType, item?: any)` - adds an error to the box and works in the same way as `Loxer.error()`
-- `close(message: string, item?: any)` - closes the box and works in the same way as `Loxer.log()`
+- `add(message: string, item?: ItemType, itemOptions?: ItemOptions)` - adds a log to the box and works in the same way as `Loxer.log()`
+- `error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions)` - adds an error to the box and works in the same way as `Loxer.error()`
+- `close(message: string, item?: ItemType, itemOptions?: ItemOptions)` - closes the box and works in the same way as `Loxer.log()`
 
 **ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but logged anyways with a Warning
 

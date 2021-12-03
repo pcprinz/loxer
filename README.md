@@ -11,6 +11,7 @@
 - improve error logs (with more information)
 - get significantly better visualization of the logs
 - visualize the data flow (including time measurement)
+- full Typescript support
 
 With Loxer, logs never have to be deleted again, as they hardly use any resources when switched off. Logs and error records can easily be forwarded to crash reporting systems such as Firebase. This makes it possible to get error reports that are just as good in the production environment as in the development environment. Furthermore, errors in concurrent functional processes can be detected more easily.
 
@@ -21,6 +22,41 @@ The **[Documentation](https://github.com/pcprinz/loxer/blob/master/documentation
 
 The **[Performance Tests](https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md)** documents how small the influence of the package is on the performance of an application.
 
+## Usage
+Write logs in an intuitive way:
+```typescript
+// initialize it somewhere (once) -> singleton
+Loxer.init();
+
+// simple log
+Loxer.log('my message');
+
+// error log
+Loxer.error('something bad happened');
+
+// highlight logs
+Loxer.highlight().log('my message');
+
+// set levels
+Loxer.level(2).log('not that necessary log');
+
+// set modules
+Loxer.module('AUTH').log('user logged in');
+
+// use boxes
+const lox = Loxer.open('opening log');
+Loxer.of(lox).add('appended log');
+Loxer.of(lox).error('appended error');
+Loxer.of(lox).close('closing log');
+
+// combine everything like you want
+Loxer.module('AUTH').level(3).highlight().log('highlighted level 3 log for module Authentication');
+
+// use shortcuts for the methods
+const lox2 = Loxer.l(1).h().m('AUTH').open('highlighted level 1 log for module Authentication');
+```
+
+For a complete guide on how to use everything, definitely take a look at the **[Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md)**
 ## Preview Example
 
 Consider the following log output (without the log date):
@@ -38,29 +74,6 @@ The log messages are exactly the same, but with a litte configuration you can se
 > Watch this [comparison with a slider](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=9e14a828-2f7d-11ec-abb7-b9a7ff2ee17c)
 ## Installation 
 `npm i --save loxer` or `yarn add loxer` thats it.
-
-## Work in progress
-
-This package is still under construction, so consider it as *alpha*. The API will probably change until the Playground is ready and a missing feature (Catch-Guardian) is done. This hopefully won't take too long (weeks). After that the package will stay in *beta* until everything is covered in tests. Therefore the API won'T change anymore (hopefully). Nevertheless, everything seems to work at this moment, though the package is already in production usage.
-
-## What you get
-- use levels to switch logs on / off dependent on their importance
-- categorize logs in modules
-- switch the output stream(s) to whatever you want dependent on the environment, as well as the type of logs
-- relate logs together and build boxes, that can be opened and closed
-- append logs to boxes
-- draw boxes with the unicode box layout
-- trace the time consumption for boxed logs
-- generate rich errors with a log history, open boxes and more
-- use decorators for tracing
-  
-These features are already covered in the [Documentation](https://github.com/pcprinz/loxer/blob/master/documentation/index.md) and [API Reference](https://pcprinz.github.io/loxer/index.html).
-
-## Soon
-- The documentation will get improved 
-- There will be tests to verify the functionality of the existing code
-- There will be a playground to demonstrate everything
-- There will also be a try catch guardian (Decorator?), that will handle error recovery mechanisms like 'retry', 'replace' and 'resume'
 
 ## Deps
 just [color](https://www.npmjs.com/package/color)

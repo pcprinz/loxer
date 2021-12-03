@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Loxer - v0.4.1</title>
+	<title>Loxer - v0.5.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
@@ -25,7 +25,7 @@
 					</ul>
 					<ul class="results-priority" style="display:none">
 					</ul>
-					<a href="index.html" class="title">Loxer - v0.4.1</a>
+					<a href="index.html" class="title">Loxer - v0.5.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -86,12 +86,14 @@
 			</nav>
 		</div>
 		<div class="col-7 offset-3 col-content">
-			<h1>Loxer - v0.4.1</h1>
+			<h1>Loxer - v0.5.0</h1>
 			<div class="tsd-panel tsd-typography">
 				<p><img src="https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png" alt="Loxer_Logo"></p>
-				<a href="#loxer-----" id="loxer-----" style="color: inherit; text-decoration: none;">
-					<h1>Loxer <img src="https://img.shields.io/github/v/release/pcprinz/loxer" alt="GitHub release (latest by date)"> <img src="https://img.shields.io/github/release-date/pcprinz/loxer" alt="GitHub Release Date"> <img src="https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build" alt="GitHub branch checks state"> <img src="https://img.shields.io/bundlephobia/min/loxer" alt="npm bundle size"> <img src="https://img.shields.io/github/license/pcprinz/loxer" alt="GitHub"></h1>
+				<a href="#loxer----" id="loxer----" style="color: inherit; text-decoration: none;">
+					<h1>Loxer <img src="https://img.shields.io/github/v/release/pcprinz/loxer" alt="GitHub release (latest by date)"> <img src="https://img.shields.io/github/release-date/pcprinz/loxer" alt="GitHub Release Date"> <img src="https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build" alt="GitHub branch checks state"> <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pcprinz/329161dbcfd07c60d90c29cc887130fb/raw/loxer__heads_master.json" alt="Coverage Badge"></h1>
 				</a>
+				<p> <img src="https://img.shields.io/bundlephobia/min/loxer" alt="npm bundle size"> <img src="https://img.shields.io/github/license/pcprinz/loxer" alt="GitHub"> </p>
+				<!-- https://shields.io/ -->
 				<p><strong>Loxer</strong> is a middleware logger that allows you to:</p>
 				<ul>
 					<li>distribute logs to different output streams (dev / prod / log / error)</li>
@@ -101,6 +103,7 @@
 					<li>improve error logs (with more information)</li>
 					<li>get significantly better visualization of the logs</li>
 					<li>visualize the data flow (including time measurement)</li>
+					<li>full Typescript support</li>
 				</ul>
 				<p>With Loxer, logs never have to be deleted again, as they hardly use any resources when switched off. Logs and error records can easily be forwarded to crash reporting systems such as Firebase. This makes it possible to get error reports that are just as good in the production environment as in the development environment. Furthermore, errors in concurrent functional processes can be detected more easily.</p>
 				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
@@ -109,6 +112,41 @@
 				<p>The <strong><a href="https://pcprinz.github.io/loxer/index.html">API Reference</a></strong> provides a complete overview of all the features of the package. Furthermore, the complete source code is documented with js-doc and typed with typscript, which guarantees full IDE support.</p>
 				<p>The <strong><a href="https://github.com/pcprinz/loxer/blob/master/documentation/index.md">Documentation</a></strong> contains detailed instructions on how to use the package.</p>
 				<p>The <strong><a href="https://github.com/pcprinz/loxer/blob/master/documentation/Performance.md">Performance Tests</a></strong> documents how small the influence of the package is on the performance of an application.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>Write logs in an intuitive way:</p>
+				<pre><code class="language-typescript"><span style="color: #008000">// initialize it somewhere (once) -&gt; singleton</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">init</span><span style="color: #000000">();</span>
+
+<span style="color: #008000">// simple log</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;my message&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// error log</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;something bad happened&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// highlight logs</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;my message&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// set levels</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">level</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;not that necessary log&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// set modules</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">module</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;AUTH&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;user logged in&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// use boxes</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">lox</span><span style="color: #000000"> = </span><span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">open</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;opening log&#039;</span><span style="color: #000000">);</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">of</span><span style="color: #000000">(</span><span style="color: #001080">lox</span><span style="color: #000000">).</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;appended log&#039;</span><span style="color: #000000">);</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">of</span><span style="color: #000000">(</span><span style="color: #001080">lox</span><span style="color: #000000">).</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;appended error&#039;</span><span style="color: #000000">);</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">of</span><span style="color: #000000">(</span><span style="color: #001080">lox</span><span style="color: #000000">).</span><span style="color: #795E26">close</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;closing log&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// combine everything like you want</span>
+<span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">module</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;AUTH&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">level</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">).</span><span style="color: #795E26">highlight</span><span style="color: #000000">().</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;highlighted level 3 log for module Authentication&#039;</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// use shortcuts for the methods</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">lox2</span><span style="color: #000000"> = </span><span style="color: #001080">Loxer</span><span style="color: #000000">.</span><span style="color: #795E26">l</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">h</span><span style="color: #000000">().</span><span style="color: #795E26">m</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;AUTH&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">open</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;highlighted level 1 log for module Authentication&#039;</span><span style="color: #000000">);</span>
+</code></pre>
+				<p>For a complete guide on how to use everything, definitely take a look at the <strong><a href="https://github.com/pcprinz/loxer/blob/master/documentation/index.md">Documentation</a></strong></p>
 				<a href="#preview-example" id="preview-example" style="color: inherit; text-decoration: none;">
 					<h2>Preview Example</h2>
 				</a>
@@ -127,34 +165,6 @@
 					<h2>Installation</h2>
 				</a>
 				<p><code>npm i --save loxer</code> or <code>yarn add loxer</code> thats it.</p>
-				<a href="#work-in-progress" id="work-in-progress" style="color: inherit; text-decoration: none;">
-					<h2>Work in progress</h2>
-				</a>
-				<p>This package is still under construction, so consider it as <em>alpha</em>. The API will probably change until the Playground is ready and a missing feature (Catch-Guardian) is done. This hopefully won&#39;t take too long (weeks). After that the package will stay in <em>beta</em> until everything is covered in tests. Therefore the API won&#39;T change anymore (hopefully). Nevertheless, everything seems to work at this moment, though the package is already in production usage.</p>
-				<a href="#what-you-get" id="what-you-get" style="color: inherit; text-decoration: none;">
-					<h2>What you get</h2>
-				</a>
-				<ul>
-					<li>use levels to switch logs on / off dependent on their importance</li>
-					<li>categorize logs in modules</li>
-					<li>switch the output stream(s) to whatever you want dependent on the environment, as well as the type of logs</li>
-					<li>relate logs together and build boxes, that can be opened and closed</li>
-					<li>append logs to boxes</li>
-					<li>draw boxes with the unicode box layout</li>
-					<li>trace the time consumption for boxed logs</li>
-					<li>generate rich errors with a log history, open boxes and more</li>
-					<li>use decorators for tracing</li>
-				</ul>
-				<p>These features are already covered in the <a href="https://github.com/pcprinz/loxer/blob/master/documentation/index.md">Documentation</a> and <a href="https://pcprinz.github.io/loxer/index.html">API Reference</a>.</p>
-				<a href="#soon" id="soon" style="color: inherit; text-decoration: none;">
-					<h2>Soon</h2>
-				</a>
-				<ul>
-					<li>The documentation will get improved </li>
-					<li>There will be tests to verify the functionality of the existing code</li>
-					<li>There will be a playground to demonstrate everything</li>
-					<li>There will also be a try catch guardian (Decorator?), that will handle error recovery mechanisms like &#39;retry&#39;, &#39;replace&#39; and &#39;resume&#39;</li>
-				</ul>
 				<a href="#deps" id="deps" style="color: inherit; text-decoration: none;">
 					<h2>Deps</h2>
 				</a>

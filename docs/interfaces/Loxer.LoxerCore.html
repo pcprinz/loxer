@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>OfLoxes | Loxer - v0.5.0</title>
+	<title>LoxerCore | Loxer - v0.5.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,7 +59,7 @@
 					<a href="../modules/Loxer.html">Loxer</a>
 				</li>
 				<li>
-					<a href="Loxer.OfLoxes.html">OfLoxes</a>
+					<a href="Loxer.LoxerCore.html">LoxerCore</a>
 				</li>
 			</ul>
 		</div>
@@ -92,17 +92,17 @@
 			</nav>
 		</div>
 		<div class="col-7 offset-3 col-content">
-			<h1>Interface OfLoxes</h1>
+			<h1>Interface LoxerCore</h1>
 			<section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography tsd-comment-shorttext">
 					<div class="lead">
-						<p>Methods returned from the {@link Loxer.of} method</p>
+						<p>this is the main type of <a href="../modules/Loxer.html#Loxer-1">Loxer</a></p>
 					</div>
 			</div></section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">OfLoxes</span>
+						<span class="target">LoxerCore</span>
 					</li>
 				</ul>
 			</section>
@@ -112,9 +112,14 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="Loxer.OfLoxes.html#add" class="tsd-kind-icon">add</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="Loxer.OfLoxes.html#close" class="tsd-kind-icon">close</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="Loxer.OfLoxes.html#error" class="tsd-kind-icon">error</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="Loxer.LoxerCore.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="Loxer.LoxerCore.html#getModuleLevel" class="tsd-kind-icon">get<wbr>Module<wbr>Level</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Loxer.LoxerCore.html#history" class="tsd-kind-icon">history</a></li>
 							</ul>
 						</section>
 					</div>
@@ -123,10 +128,10 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="add" class="tsd-anchor"></a>
-					<h3>add</h3>
+					<a name="init" class="tsd-anchor"></a>
+					<h3>init</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, item<span class="tsd-signature-symbol">?: </span><a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a>, itemOptions<span class="tsd-signature-symbol">?: </span><a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -134,19 +139,30 @@
 							</aside>
 							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
 								<div class="lead">
-									<p>assigns a single log to a log box and imitates the behavior of {@link Loxer.log}</p>
+									<a href="#initialize-loxer" id="initialize-loxer" style="color: inherit; text-decoration: none;">
+										<h2>Initialize Loxer</h2>
+									</a>
+									<a href="#is-a-required-function-to-initialize-loxer" id="is-a-required-function-to-initialize-loxer" style="color: inherit; text-decoration: none;">
+										<h4>Is a required function to initialize Loxer.</h4>
+									</a>
 								</div>
+								</div><div class="tsd-comment tsd-typography tsd-comment-text">
+								<ul>
+									<li>if Loxer is not initialized, every log is cached until the initialization is done</li>
+									<li>call this as soon as possible.</li>
+									<li><strong><code>ATTENTION</code></strong>: Do no conditionally leave out the initialization in order to avoid logging!
+										All the logs will be cached anyways. If you want to conditionally disable Loxer then use
+									one of the &quot;disabled&quot; options in the config(<a href="Loxer.LoxerConfig.html">LoxerConfig</a>) at the initialization</li>
+								</ul>
+								<hr>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>message: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> item: <a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> itemOptions: <a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="Loxer.LoxerOptions.html" class="tsd-signature-type">LoxerOptions</a></h5>
+									<div class="tsd-comment tsd-typography tsd-comment-text">
+										<p>Options for the configuration of Loxer</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -154,10 +170,10 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="close" class="tsd-anchor"></a>
-					<h3>close</h3>
+					<a name="getModuleLevel" class="tsd-anchor"></a>
+					<h3>get<wbr>Module<wbr>Level</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">close<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, item<span class="tsd-signature-symbol">?: </span><a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a>, itemOptions<span class="tsd-signature-symbol">?: </span><a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Module<wbr>Level<span class="tsd-signature-symbol">(</span>moduleID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/Loxer.html#LevelType" class="tsd-signature-type">LevelType</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"-1"</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -165,55 +181,56 @@
 							</aside>
 							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
 								<div class="lead">
-									<p>closes an opened log box and imitates the behavior of {@link Loxer.log}</p>
+									<a href="#get-a-module39s-loglevel" id="get-a-module39s-loglevel" style="color: inherit; text-decoration: none;">
+										<h2>Get a module&#39;s LogLevel</h2>
+									</a>
+									<a href="#returns-the-configured-loglevel-number-of-the-given-moduleiss-corresponding-module" id="returns-the-configured-loglevel-number-of-the-given-moduleiss-corresponding-module" style="color: inherit; text-decoration: none;">
+										<h4>Returns the configured LogLevel (<code>number</code>) of the given <code>moduleIs</code>s corresponding Module.</h4>
+									</a>
 								</div>
+								</div><div class="tsd-comment tsd-typography tsd-comment-text">
+								<ul>
+									<li>is dependent on the environment: returns actual level (prod || dev)</li>
+									<li>returns <code>-1</code> if there is no corresponding module for the given <code>moduleID</code></li>
+								</ul>
+								<hr>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>message: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> item: <a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> itemOptions: <a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a></h5>
+									<h5>moduleID: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/Loxer.html#LevelType" class="tsd-signature-type">LevelType</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">"-1"</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="error" class="tsd-anchor"></a>
-					<h3>error</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">error<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><a href="../modules/Loxer.html#ErrorType" class="tsd-signature-type">ErrorType</a>, item<span class="tsd-signature-symbol">?: </span><a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a>, itemOptions<span class="tsd-signature-symbol">?: </span><a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-							</aside>
-							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-								<div class="lead">
-									<p>assigns an error log to a log box and imitates the behavior of {@link Loxer.error}</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>error: <a href="../modules/Loxer.html#ErrorType" class="tsd-signature-type">ErrorType</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> item: <a href="../modules/Formatting.html#ItemType" class="tsd-signature-type">ItemType</a></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> itemOptions: <a href="Formatting.ItemOptions.html" class="tsd-signature-type">ItemOptions</a></h5>
-								</li>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="history" class="tsd-anchor"></a>
+					<h3>history</h3>
+					<div class="tsd-signature tsd-kind-icon">history<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><a href="../classes/Logs.OutputLox.html" class="tsd-signature-type">OutputLox</a><span class="tsd-signature-symbol"> | </span><a href="../classes/Logs.ErrorLox.html" class="tsd-signature-type">ErrorLox</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+					</aside>
+					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+						<div class="lead">
+							<a href="#get-the-log-history" id="get-the-log-history" style="color: inherit; text-decoration: none;">
+								<h2>Get the log History</h2>
+							</a>
+							<p>This is a list of all logs / boxes / errors that occurred in the past. It must be enabled by initialization.</p>
+							<ul>
+								<li>is a reversed stack, so that the most recent element is at <code>history[0]</code></li>
+								<li>the size of the history can be set at the <a href="Loxer.LoxerConfig.html#historyCacheSize">LoxerConfig.historyCacheSize</a> in the
+								<a href="Loxer.LoxerOptions.html#config">LoxerOptions.config</a> declared in <code>Loxer.init(options)</code>. It defaults to <code>50</code>.</li>
+								<li>if the history is enabled it will also be appended to the error logs in the <code>errorOut</code> callback</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
+						</div>
+					</div>
 				</section>
 			</section>
 			<!--{&quot;options&quot;:&quot;C:\\dev\\loxer\\typedoc.json&quot;,&quot;tsconfig&quot;:&quot;C:\\dev\\loxer&quot;,&quot;packages&quot;:[],&quot;entryPoints&quot;:[&quot;C:\\dev\\loxer\\src\\types.ts&quot;,&quot;C:\\dev\\loxer\\src\\decorators\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\loxes\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\Error.ts&quot;],&quot;exclude&quot;:[],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:false,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:false,&quot;excludeProtected&quot;:false,&quot;disableSources&quot;:true,&quot;includes&quot;:&quot;C:\\dev\\loxer\\assets&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:false,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;C:\\dev\\loxer\\docs&quot;,&quot;json&quot;:&quot;&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;Loxer&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[],&quot;categorizeByGroup&quot;:true,&quot;sort&quot;:[&quot;instance-first&quot;,&quot;source-order&quot;],&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:false,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;treatWarningsAsErrors&quot;:false,&quot;listInvalidSymbolLinks&quot;:false}-->
@@ -224,9 +241,24 @@
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
 						<a href="../modules/Loxer.html#Loxer-1" class="tsd-kind-icon">Loxer</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module root">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module root">
 						<a href="Loxer.LoxerCore.html" class="tsd-kind-icon">Loxer<wbr>Core</a>
+						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="Loxer.LoxerCore.html#init" class="tsd-kind-icon">init</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="Loxer.LoxerCore.html#getModuleLevel" class="tsd-kind-icon">get<wbr>Module<wbr>Level</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="Loxer.LoxerCore.html#history" class="tsd-kind-icon">history</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module root">
 						<a href="Loxer.LoxerOptions.html" class="tsd-kind-icon">Loxer<wbr>Options</a>
 					</li>
@@ -251,24 +283,9 @@
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module root">
 						<a href="../modules/Loxer.html#ErrorType" class="tsd-kind-icon">Error<wbr>Type</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module root">
+					<li class=" tsd-kind-interface tsd-parent-kind-module root">
 						<a href="Loxer.OfLoxes.html" class="tsd-kind-icon">Of<wbr>Loxes</a>
-						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="Loxer.OfLoxes.html#add" class="tsd-kind-icon">add</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="Loxer.OfLoxes.html#close" class="tsd-kind-icon">close</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="Loxer.OfLoxes.html#error" class="tsd-kind-icon">error</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter root">
 						<a href="Loxer.Modifiers.html" class="tsd-kind-icon">Modifiers</a>
 					</li>

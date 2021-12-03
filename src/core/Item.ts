@@ -41,12 +41,19 @@ export interface ItemOptions {
 
 /** A helper class that can be used to pretty print **items** of `Lox`es */
 export class Item {
+  /** @internal */
   private _item: ItemType;
+  /** @internal */
   private _depth: number;
+  /** @internal */
   private _printFunction: boolean;
+  /** @internal */
   private _indent: number;
+  /** @internal */
   private _showVerticalLines: boolean;
+  /** @internal */
   private _keys: string[] | undefined;
+  /** @internal */
   private _shortenObjects?: boolean;
 
   /**
