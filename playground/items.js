@@ -61,7 +61,7 @@ Loxer.of(a1).close('login successful');
 Loxer.of(c1).add('payment pending');
 const p1 = Loxer.m('PAY').open('restore last order payment');
 Loxer.of(p1).error('failed to restore last payment: unable to parse payment!', payment, {
-  keys: ['isPrivate', 'dealerId'],
+  keys: ['date'],
 });
 Loxer.of(p1).close('no payment restored');
 Loxer.of(c1).close('session restored');

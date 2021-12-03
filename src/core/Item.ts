@@ -94,48 +94,57 @@ export class Item {
   public prettify(
     colored: boolean = true,
     box?: {
-      /** the vertical depth, where the box starts / ends (typically the column of the log's box) */
-      depth: number;
-      /** color of the box and surrounding text (typically the color of the log's box) */
-      color: string;
+      /** the vertical depth, where the box starts / ends (typically the column of the log's box)
+       * - if left `undefined`, the box will be grey
+       */
+      depth?: number;
+      /** color of the box and surrounding text (typically the color of the log's box)
+       * - if left `undefined` the box will have a depth of 20 and is not connected to the surrounding box layout
+       */
+      color?: string;
     }
   ): string {
+    const item = this.prettifyItem(this._item);
     if (box) {
-      const pre = ANSIFormat.colorize(
-        '\n┌' +
-          Array(box.depth - 1)
-            .fill('─')
-            .join('') +
-          '┘ item>\n│',
-        box.color
-      );
-      const post = ANSIFormat.colorize(
-        '\n└' +
-          Array(box.depth - 1)
-            .fill('─')
-            .join('') +
-          '┐ <end',
-        box.color
-      );
+      const color = box.color ?? '#888';
+      const depth = box.depth ?? 20;
+      const end = box.depth !== undefined;
+      let pre;
+      let post;
 
-      return (
-        pre + this.prettifyItem(this._item, undefined, undefined, box.color)[colored ? 0 : 1] + post
-      );
+      if (item[1].length < 50) {
+        pre = ANSIFormat.colorize(`\n${Array(depth).fill(' ').join('')}┃ item> `, color);
+        post = ANSIFormat.colorize(' <item', color);
+      } else {
+        pre = ANSIFormat.colorize(
+          '\n┌' +
+            Array(depth - 1)
+              .fill('─')
+              .join('') +
+            (end ? '┘ item>\n' : '\n'),
+          color
+        );
+        post = ANSIFormat.colorize(
+          '\n└' +
+            Array(depth - 1)
+              .fill('─')
+              .join('') +
+            (end ? '┐ <item' : ''),
+          color
+        );
+      }
+
+      return pre + item[colored ? 0 : 1] + post;
     }
 
-    return (
-      '\n┌───────────────────────────────' +
-      `\n┃${this.prettifyItem(this._item)[colored ? 0 : 1]}` +
-      '\n└───────────────────────────────'
-    );
+    return `\n${item[colored ? 0 : 1]}`;
   }
 
   /** @internal */
   private prettifyItem(
     item: ItemType,
     depth: number = 0,
-    save: boolean = false,
-    boxColor?: string
+    save: boolean = false
   ): [colored: string, plain: string] {
     if (item === null) {
       return this.printUndefined(item);
@@ -146,7 +155,7 @@ export class Item {
         return [ANSIFormat.fgUndefined(`[${item.length} elements]`), `[${item.length} elements]`];
       }
 
-      return this.printArray(item, depth, save, boxColor);
+      return this.printArray(item, depth, save);
     }
 
     switch (typeof item) {
@@ -174,7 +183,7 @@ export class Item {
           }
           if (depth === 0) {
             const prefix = `[Class: ${item.constructor.name}] = `;
-            const content = this.printObject(item, depth, save, boxColor);
+            const content = this.printObject(item, depth, save);
 
             return [ANSIFormat.fgFunction(prefix) + content[0], prefix + content[1]];
           }
@@ -186,7 +195,7 @@ export class Item {
           ];
         }
 
-        return this.printObject(item, depth, save, boxColor);
+        return this.printObject(item, depth, save);
       default:
         return this.printDefault(item);
     }
@@ -260,15 +269,14 @@ export class Item {
   private printArray(
     items: any[],
     depth: number = 0,
-    save: boolean = false,
-    boxColor?: string
+    save: boolean = false
   ): [colored: string, plain: string] {
     const prettified = items
       .filter(
         (item) =>
           !this._keys || save || (typeof item === 'object' && item != null) || Array.isArray(item)
       )
-      .map((item) => this.prettifyItem(item, depth + 1, save, boxColor))
+      .map((item) => this.prettifyItem(item, depth + 1, save))
       .filter(
         (pretty) => !this._keys || (!pretty[1].startsWith('[...') && !pretty[1].startsWith('{...'))
       );
@@ -294,15 +302,15 @@ export class Item {
 
     // return expanded array
     const expanded = prettified
-      .map((item) => this.indentString(depth + 1, false, boxColor) + item[1])
+      .map((item) => this.indentString(depth + 1, false) + item[1])
       .join(',\n');
     const expandedColored = prettified
-      .map((item) => this.indentString(depth + 1, true, boxColor) + item[0])
+      .map((item) => this.indentString(depth + 1, true) + item[0])
       .join(',\n');
 
     return [
-      `[\n${expandedColored}\n${this.indentString(depth, true, boxColor)}]`,
-      `[\n${expanded}\n${this.indentString(depth, false, boxColor)}]`,
+      `[\n${expandedColored}\n${this.indentString(depth, true)}]`,
+      `[\n${expanded}\n${this.indentString(depth, false)}]`,
     ];
   }
 
@@ -310,8 +318,7 @@ export class Item {
   private printObject(
     record: Record<string, any>,
     depth: number,
-    save: boolean = false,
-    boxColor?: string
+    save: boolean = false
   ): [colored: string, plain: string] {
     const prettified = Object.entries(record)
       .filter(
@@ -323,12 +330,7 @@ export class Item {
           this._keys.includes(key)
       )
       .map(([key, value]) => {
-        const pretty = this.prettifyItem(
-          value,
-          depth + 1,
-          save || this._keys?.includes(key),
-          boxColor
-        );
+        const pretty = this.prettifyItem(value, depth + 1, save || this._keys?.includes(key));
         const unColored =
           !pretty[1].startsWith('[...') && !pretty[1].startsWith('{...')
             ? `${key}: ${pretty[1]}`
@@ -364,15 +366,15 @@ export class Item {
 
     // return expanded object
     const expanded = prettified
-      .map((item) => this.indentString(depth + 1, false, boxColor) + item[1])
+      .map((item) => this.indentString(depth + 1, false) + item[1])
       .join(',\n');
     const expandedColored = prettified
-      .map((item) => this.indentString(depth + 1, true, boxColor) + item[0])
+      .map((item) => this.indentString(depth + 1, true) + item[0])
       .join(',\n');
 
     return [
-      `{\n${expandedColored}\n${this.indentString(depth, true, boxColor)}}`,
-      `{\n${expanded}\n${this.indentString(depth, false, boxColor)}}`,
+      `{\n${expandedColored}\n${this.indentString(depth, true)}}`,
+      `{\n${expanded}\n${this.indentString(depth, false)}}`,
     ];
   }
 
@@ -384,14 +386,12 @@ export class Item {
   }
 
   /** @internal returns a specified string of spaces (and vertical indent indicators) */
-  private indentString(depth: number = 0, colored: boolean = true, boxColor?: string) {
+  private indentString(depth: number = 0, colored: boolean = true) {
     const line = colored ? ANSIFormat.fgLine('┊') : '┊';
     const spaces = Array(depth * this._indent).fill(' ');
-    const box = boxColor ? ANSIFormat.colorize('┃', boxColor) : '┃';
-    const indent = this._showVerticalLines
+
+    return this._showVerticalLines
       ? spaces.map((_, index) => (index % this._indent === 0 ? line : ' ')).join('')
       : spaces.join('');
-
-    return box + indent;
   }
 }
