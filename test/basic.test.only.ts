@@ -1,25 +1,25 @@
 // // direct object instantiation -------------------------------
-// const o = {
-//   name: 'Horst',
-//   age: 65,
-//   birthYear: (thisYear: number) => thisYear - o.age,
-// };
+const o = {
+  name: 'Horst',
+  age: 65,
+  birthYear: (thisYear: number) => thisYear - o.age,
+};
 
-// // function declaration --------------------------------------
-// function f(param: string) {
-//   console.log('f: ' + param);
-// }
-// f(JSON.stringify(o) + ' | bYear: ' + o.birthYear(2021));
+// function declaration --------------------------------------
+function f(param: string) {
+  console.log('f: ' + param);
+}
+f(JSON.stringify(o) + ' | bYear: ' + o.birthYear(2021));
 
-// // (arrow) function declaration as constant
-// const g = (param: string) => console.log('g: ' + param);
-// g(JSON.stringify(o) + ' | bYear: ' + o.birthYear(2021));
+// (arrow) function declaration as constant
+const g = (param: string) => console.log('g: ' + param);
+g(JSON.stringify(o) + ' | bYear: ' + o.birthYear(2021));
 
 // // functions as parameters (callbacks) -----------------------
-// function randomCall(callback: (p: string) => void, times: number = 10) {
-//   for (let i = 1; i <= times; i++) {
+// function randomCall(callback: (p: string) => void) {
+//   for (let i = 1; i <= 10; i++) {
 //     if (Math.random() < 0.5) {
-//       callback('called randomly in step ' + i + '/' + times);
+//       callback(`called randomly in step ${i}/10`);
 //     }
 //   }
 // }
@@ -27,15 +27,17 @@
 // randomCall(g); // randomly calls f 3 times which always prints to the console
 
 // // return objects with functions (Function chaining)----------
-// function doThis() {
-//   const thenThat = (withThisParam: string) => console.log(`this>that>${withThisParam}`);
+// function outer() {
+//   function inheritedFunction(withThisParam: string) {
+//     console.log(`outer>inner>${withThisParam}`);
+//   }
 
-//   return { thenThat };
+//   return { inner: inheritedFunction };
 // }
 
-// doThis().thenThat('butWhy?'); // => this>that>butWhy
+// outer().inner('param'); // => outer>inner>param
 
-// test('', () => expect(true).toBeTruthy()); // placeholder test
+test('', () => expect(true).toBeTruthy()); // placeholder test
 
 // // -----------------------------------------------------------------------------
 // // basic testing
@@ -63,9 +65,9 @@
 //   expect(() => failing()).toThrow('this cant just work');
 // });
 
-// // -----------------------------------------------------------------------------
-// // Teardown and scope
-// // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Teardown and scope
+// -----------------------------------------------------------------------------
 
 // let log = 'LOG:';
 // let count = 0;
