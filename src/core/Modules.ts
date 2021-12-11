@@ -1,6 +1,6 @@
 import { is } from '../Helpers';
 import { Lox } from '../loxes/Lox';
-import { LevelType, LoxerModules, LoxerOptions } from '../types';
+import { LevelType, LoxerModules, LoxerOptions, Module } from '../types';
 
 interface ModulesProps {
   dev: boolean;
@@ -8,6 +8,8 @@ interface ModulesProps {
   moduleTextSlice?: number;
   defaultLevels?: LoxerOptions['defaultLevels'];
 }
+
+type ExtendedModule = Module & { hidden: boolean, slicedName: string };
 
 export class Modules {
   private _dev: boolean = false;
@@ -44,7 +46,31 @@ export class Modules {
     return level ?? -1;
   }
 
+  get(lox: Lox): ExtendedModule {
+    let mod = this._modules[lox.moduleId];
+    if (!is(mod)) {
+      lox.moduleId = 'INVALID';
+      mod = this._modules.INVALID;
+    }
+    let slicedName =
+      mod.fullName.length > 0 ? `${mod.fullName.slice(0, this._moduleTextSlice)}: ` : '';
+    const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
+    for (let i = slicedName.length; i < moduleTextLength; i++) {
+      slicedName += ' ';
+    }
+    const dl = mod.devLevel ?? 1;
+    const pl = mod.prodLevel ?? 1;
+    const hidden = this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
+
+    return {
+      ...mod,
+      hidden,
+      slicedName,
+    };
+  }
+
   /**
+   * @deprecated
    * @internal the texts of a specific module ||INVALID module
    */
   getText(lox: Lox): string {
@@ -64,6 +90,7 @@ export class Modules {
   }
 
   /**
+   * @deprecated
    * @internal the color of a specific module || ''
    */
   getColor(moduleId: string): string {
@@ -73,6 +100,7 @@ export class Modules {
   }
 
   /**
+   * @deprecated
    * @internal determines if a log does not fulfill it's level constraints
    */
   isLogHidden(lox: Lox): boolean {

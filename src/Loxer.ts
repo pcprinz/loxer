@@ -49,7 +49,7 @@ class LoxerInstance implements LoxerType {
       defaultLevels: props?.defaultLevels,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
-    this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
+    this._boxFactory = new BoxFactory(config?.defaultBoxLayoutStyle);
     this._output = new OutputStreams({
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
@@ -307,11 +307,11 @@ class LoxerInstance implements LoxerType {
   private toOutputLox(lox: Lox): OutputLox {
     const outputLox = new OutputLox(lox);
     outputLox.setTime(this.getTimeConsumption(outputLox));
-    outputLox.color = this._modules.getColor(outputLox.moduleId);
-    outputLox.moduleText = this._modules.getText(outputLox);
+    const mod = this._modules.get(outputLox);
+    outputLox.moduleText = mod.slicedName;
+    outputLox.color = mod.color;
+    outputLox.hidden = mod.hidden;
     outputLox.box = this._boxFactory.getLogBox(outputLox, this._loxes);
-
-    outputLox.hidden = this._modules.isLogHidden(outputLox);
 
     return outputLox;
   }
