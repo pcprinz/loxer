@@ -35,21 +35,30 @@ export class OutputStreams {
 
   /** @internal **/
   errorOut(dev: boolean, errorLox: ErrorLox, history: LoxHistory): void {
-    dev ? this.devErrorOut(errorLox, history) : this.prodErrorOut(errorLox, history);
+    if (dev) {
+      this.devErrorOut(errorLox, history);
+    } else {
+      this.prodErrorOut(errorLox, history);
+    }
   }
 
   /** @internal **/
   logOut(dev: boolean, outputLox: OutputLox): void {
-    dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
+    if (dev) {
+      this.devLogOut(outputLox);
+    } else {
+      this.prodLogOut(outputLox);
+    }
   }
 
   private devErrorOut(errorLox: ErrorLox, history: LoxHistory): void {
     if (this._callbacks?.devError) {
       this._callbacks.devError(errorLox, history.stack);
     } else {
-      const { message, moduleText, timeText } = this._colorsDisabled
-        ? errorLox
-        : ANSIFormat.colorLox(errorLox);
+      const colored = ANSIFormat.colorLox(errorLox);
+      const message = this._colorsDisabled ? errorLox.message : colored.message;
+      const moduleText = this._colorsDisabled ? errorLox.module.slicedName : colored.moduleText;
+      const timeText = this._colorsDisabled ? errorLox.timeText : colored.timeText;
       const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
       const msg = moduleText + box + message + timeText;
       const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
@@ -65,7 +74,7 @@ export class OutputStreams {
           str +
             Item.of(errorLox).prettify(true, {
               depth: this._moduleTextSlice + errorLox.box.length,
-              color: errorLox.color,
+              color: errorLox.module.color,
             })
         );
       } else {
@@ -86,9 +95,10 @@ export class OutputStreams {
     } else {
       // colored option
       const opacity = outputLox.type === 'close' ? this._endTitleOpacity : 1;
-      const { message, moduleText, timeText } = this._colorsDisabled
-        ? outputLox
-        : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
+      const colored = ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
+      const message = this._colorsDisabled ? outputLox.message : colored.message;
+      const moduleText = this._colorsDisabled ? outputLox.module.slicedName : colored.moduleText;
+      const timeText = this._colorsDisabled ? outputLox.timeText : colored.timeText;
       const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
       const str = `${moduleText}${box}${message}\t${timeText}`;
       if (outputLox.item) {
@@ -96,7 +106,7 @@ export class OutputStreams {
           str +
             Item.of(outputLox).prettify(true, {
               depth: this._moduleTextSlice + outputLox.box.length,
-              color: outputLox.color,
+              color: outputLox.module.color,
             })
         );
       } else {

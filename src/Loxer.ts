@@ -49,7 +49,7 @@ class LoxerInstance implements LoxerType {
       defaultLevels: props?.defaultLevels,
     });
     this._history = new LoxHistory(config?.historyCacheSize);
-    this._boxFactory = new BoxFactory(config?.defaultBoxLayoutStyle);
+    this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
     this._output = new OutputStreams({
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
@@ -279,7 +279,7 @@ class LoxerInstance implements LoxerType {
     if (!this._initialized) {
       this._loxes.enqueue(lox, error);
     } else if (lox.type === 'error') {
-      const errorLox = this.toErrorLox(lox, error!);
+      const errorLox = this.toErrorLox(lox, error ?? new Error());
       this._history.add(errorLox);
       this._output.errorOut(this._dev, errorLox, this._history);
     } else {
@@ -295,8 +295,8 @@ class LoxerInstance implements LoxerType {
   private toErrorLox(lox: Lox, error: Error): ErrorLox {
     const errorLox = new ErrorLox(lox, error);
     errorLox.setTime(this.getTimeConsumption(errorLox));
-    errorLox.color = this._modules.getColor(errorLox.moduleId);
-    errorLox.moduleText = this._modules.getText(errorLox);
+    const { loxModule } = this._modules.getModule(errorLox);
+    errorLox.module = loxModule;
     errorLox.box = this._boxFactory.getLogBox(errorLox, this._loxes);
 
     errorLox.openLoxes = this._loxes.getOpenLoxes();
@@ -307,10 +307,9 @@ class LoxerInstance implements LoxerType {
   private toOutputLox(lox: Lox): OutputLox {
     const outputLox = new OutputLox(lox);
     outputLox.setTime(this.getTimeConsumption(outputLox));
-    const mod = this._modules.get(outputLox);
-    outputLox.moduleText = mod.slicedName;
-    outputLox.color = mod.color;
-    outputLox.hidden = mod.hidden;
+    const { loxModule, hidden } = this._modules.getModule(outputLox);
+    outputLox.module = loxModule;
+    outputLox.hidden = hidden;
     outputLox.box = this._boxFactory.getLogBox(outputLox, this._loxes);
 
     return outputLox;

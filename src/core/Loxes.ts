@@ -21,7 +21,7 @@ export class Loxes {
     if (lox.type === 'open') {
       this._loxes[lox.id] = lox;
       if (!lox.hidden) {
-        this._openBuffer.push({ id: lox.id, color: lox.color });
+        this._openBuffer.push({ id: lox.id, color: lox.module.color });
       }
     } else if (lox.type === 'close') {
       this._loxes[lox.id] = undefined;

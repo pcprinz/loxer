@@ -134,7 +134,7 @@ export class ANSIFormat {
 
     return {
       message,
-      moduleText: this.colorize(lox.moduleText, lox.color, opacity),
+      moduleText: this.colorize(lox.module.slicedName, lox.module.color, opacity),
       timeText: this.fgTime(lox.timeText),
     };
   }

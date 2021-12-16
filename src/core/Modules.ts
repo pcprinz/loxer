@@ -9,7 +9,7 @@ interface ModulesProps {
   defaultLevels?: LoxerOptions['defaultLevels'];
 }
 
-type ExtendedModule = Module & { hidden: boolean, slicedName: string };
+export type ExtendedModule = Module & { slicedName: string };
 
 export class Modules {
   private _dev: boolean = false;
@@ -46,7 +46,8 @@ export class Modules {
     return level ?? -1;
   }
 
-  get(lox: Lox): ExtendedModule {
+  /** @deprecated */
+  get(lox: Lox): ExtendedModule & { hidden: boolean } {
     let mod = this._modules[lox.moduleId];
     if (!is(mod)) {
       lox.moduleId = 'INVALID';
@@ -66,6 +67,31 @@ export class Modules {
       ...mod,
       hidden,
       slicedName,
+    };
+  }
+
+  getModule(lox: Lox): { loxModule: ExtendedModule; hidden: boolean } {
+    let mod = this._modules[lox.moduleId];
+    if (!is(mod)) {
+      lox.moduleId = 'INVALID';
+      mod = this._modules.INVALID;
+    }
+    let slicedName =
+      mod.fullName.length > 0 ? `${mod.fullName.slice(0, this._moduleTextSlice)}: ` : '';
+    const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
+    for (let i = slicedName.length; i < moduleTextLength; i++) {
+      slicedName += ' ';
+    }
+    const dl = mod.devLevel ?? 1;
+    const pl = mod.prodLevel ?? 1;
+    const hidden = this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
+
+    return {
+      loxModule: {
+        ...mod,
+        slicedName,
+      },
+      hidden,
     };
   }
 
@@ -121,4 +147,12 @@ export const DEFAULT_MODULES: LoxerModules = {
     devLevel: 1,
     prodLevel: 0,
   },
+};
+
+export const DEFAULT_EXTENDED_MODULE: ExtendedModule = {
+  fullName: 'INVALIDMODULE',
+  color: '#f00',
+  devLevel: 1,
+  prodLevel: 0,
+  slicedName: '',
 };

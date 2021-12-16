@@ -41,8 +41,8 @@ export class BoxFactory {
       box.push(bufferLox ? { box: 'vertical', color: bufferLox.color } : 'empty');
     }
     // print the start of the box
-    box.push({ box: 'openEdge', color: lox.color });
-    box.push({ box: 'openEnd', color: lox.color });
+    box.push({ box: 'openEdge', color: lox.module.color });
+    box.push({ box: 'openEnd', color: lox.module.color });
 
     return box;
   }
@@ -53,7 +53,7 @@ export class BoxFactory {
       return [];
     }
     const box: Box = [];
-    const color = lox.color;
+    const color = lox.module.color;
     let found = false;
     for (const bufferLox of loxes.getBuffer()) {
       const itemColor = bufferLox?.color ?? '';
