@@ -142,6 +142,10 @@ export interface Module {
    * - rgb-string: (eg: `'rgb(255, 0, 0)'` for red)
    */
   color: string;
+  /** a specific box layout for the boxes of this module.
+   * - this option overrides the `defaultBoxLayoutStyle` of the `LoxerConfig`
+   */
+  boxLayoutStyle?: BoxLayoutStyle;
 }
 
 /** Level of a module that assigned Logs have to be lower than

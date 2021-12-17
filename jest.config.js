@@ -6,6 +6,6 @@ module.exports = {
     // only tests set with only
     '**/?(*.)+(test.only).ts',
     // all tests
-    // '**/?(*.)+(test).ts',
+    '**/?(*.)+(test).ts',
   ],
 };

@@ -41,8 +41,8 @@ test('lox coloring', () => {
   expect(log2.timeText).toBe('\x1b[38;2;70;70;70m123\x1b[0m');
   expect(log2.moduleText).toBe('\x1b[38;2;255;255;255mModule\x1b[0m');
   lox3.highlighted = true;
-  lox3.color = '#fff';
-  lox3.moduleText = 'Module';
+  lox3.module.color = '#fff';
+  lox3.module.slicedName = 'Module';
   lox3.setTime({ timeText: '123', timeConsumption: 123 });
   const log3 = ANSIFormat.colorLox(lox3, 0.6);
   expect(log3.message).toBe(
@@ -53,20 +53,19 @@ test('lox coloring', () => {
 });
 
 test('BoxLayout', () => {
-  const bl = new BoxFactory('round');
   const loxes = new Loxes();
   loxes.proceed(lox0);
   lox1.hidden = true;
-  const box1 = bl.getLogBox(lox1, loxes);
+  const box1 = BoxFactory.getLogBox(lox1, loxes);
 
-  bl.getOpenLogBox(lox0, loxes);
+  BoxFactory.getOpenLogBox(lox0, loxes);
   lox0.moduleId = 'INVALID';
-  bl.getOpenLogBox(lox0, loxes);
-  const boxx: Box = ['empty', { box: 'vertical', color: 'red' }];
+  BoxFactory.getOpenLogBox(lox0, loxes);
+  const boxx: Box = ['empty', { box: 'vertical', color: 'red', boxLayout: 'round' }];
 
-  const bs0 = bl.getBoxString(boxx, true);
-  const bs1 = bl.getBoxString(boxx, false);
-  const bs2 = bl.getBoxString(box1, false);
+  const bs0 = BoxFactory.getBoxString(boxx, true);
+  const bs1 = BoxFactory.getBoxString(boxx, false);
+  const bs2 = BoxFactory.getBoxString(box1, false);
   expect(bs1).toBe(' │ ');
   expect(bs2).toBe('');
 });
@@ -82,8 +81,8 @@ const lox0 = new OutputLox({
   item: undefined,
   itemOptions: undefined,
 });
-lox0.color = '#fff';
-lox0.moduleText = 'Module';
+lox0.module.color = '#fff';
+lox0.module.slicedName = 'Module';
 lox0.setTime({ timeText: '123', timeConsumption: 123 });
 
 const lox1 = new OutputLox({
@@ -96,8 +95,8 @@ const lox1 = new OutputLox({
   item: undefined,
   itemOptions: undefined,
 });
-lox1.color = '#fff';
-lox1.moduleText = 'Module';
+lox1.module.color = '#fff';
+lox1.module.slicedName = 'Module';
 lox1.setTime({ timeText: '123', timeConsumption: 123 });
 
 const lox2 = new OutputLox({
@@ -110,8 +109,8 @@ const lox2 = new OutputLox({
   item: undefined,
   itemOptions: undefined,
 });
-lox2.color = '#fff';
-lox2.moduleText = 'Module';
+lox2.module.color = '#fff';
+lox2.module.slicedName = 'Module';
 lox2.setTime({ timeText: '123', timeConsumption: 123 });
 
 const lox3 = new ErrorLox(lox1, new Error());

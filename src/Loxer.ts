@@ -21,7 +21,6 @@ class LoxerInstance implements LoxerType {
   private _loxes = new Loxes();
   private _history = new LoxHistory();
   private _modules: Modules = new Modules();
-  private _boxFactory: BoxFactory = new BoxFactory();
   private _output: OutputStreams = new OutputStreams();
 
   private _initialized: boolean = false;
@@ -47,16 +46,14 @@ class LoxerInstance implements LoxerType {
       modules: props?.modules,
       moduleTextSlice: config?.moduleTextSlice ?? 8,
       defaultLevels: props?.defaultLevels,
+      defaultBoxLayoutStyle: config?.boxLayoutStyle ?? 'round',
     });
     this._history = new LoxHistory(config?.historyCacheSize);
-    this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
     this._output = new OutputStreams({
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
-      boxFactory: this._boxFactory,
       endTitleOpacity: config?.endTitleOpacity,
       highlightColor: config?.highlightColor,
-      moduleTextSlice: config?.moduleTextSlice ?? 8,
     });
 
     this.highlight().log('Loxer initialized');
@@ -297,7 +294,7 @@ class LoxerInstance implements LoxerType {
     errorLox.setTime(this.getTimeConsumption(errorLox));
     const { loxModule } = this._modules.getModule(errorLox);
     errorLox.module = loxModule;
-    errorLox.box = this._boxFactory.getLogBox(errorLox, this._loxes);
+    errorLox.box = BoxFactory.getLogBox(errorLox, this._loxes);
 
     errorLox.openLoxes = this._loxes.getOpenLoxes();
 
@@ -310,7 +307,7 @@ class LoxerInstance implements LoxerType {
     const { loxModule, hidden } = this._modules.getModule(outputLox);
     outputLox.module = loxModule;
     outputLox.hidden = hidden;
-    outputLox.box = this._boxFactory.getLogBox(outputLox, this._loxes);
+    outputLox.box = BoxFactory.getLogBox(outputLox, this._loxes);
 
     return outputLox;
   }

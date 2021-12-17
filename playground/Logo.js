@@ -1,6 +1,7 @@
 const { Loxer } = require('../dist');
 
 Loxer.init({
+  dev: true,
   config: {
     moduleTextSlice: 16,
     endTitleOpacity: 0.8,
@@ -11,6 +12,7 @@ Loxer.init({
       fullName: 'output streams',
       devLevel: 1,
       prodLevel: 1,
+      boxLayoutStyle: 'light',
     },
     LOG: { color: '#0f0', fullName: 'set levels', devLevel: 1, prodLevel: 1 },
     SEE: {
@@ -18,12 +20,14 @@ Loxer.init({
       fullName: 'see dataflow',
       devLevel: 1,
       prodLevel: 1,
+      boxLayoutStyle: 'heavy',
     },
     TRACE: {
       color: '#ff0',
       fullName: 'trace methods',
       devLevel: 1,
       prodLevel: 1,
+      boxLayoutStyle: 'double',
     },
     TIME: {
       color: '#f0f',

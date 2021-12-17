@@ -1,3 +1,4 @@
+import { BoxLayoutStyle } from '.';
 import { is } from '../Helpers';
 import { Lox } from '../loxes/Lox';
 import { LevelType, LoxerModules, LoxerOptions, Module } from '../types';
@@ -7,9 +8,10 @@ interface ModulesProps {
   modules?: LoxerModules;
   moduleTextSlice?: number;
   defaultLevels?: LoxerOptions['defaultLevels'];
+  defaultBoxLayoutStyle?: BoxLayoutStyle;
 }
 
-export type ExtendedModule = Module & { slicedName: string };
+export type ExtendedModule = Module & { slicedName: string; boxLayoutStyle: BoxLayoutStyle };
 
 export class Modules {
   private _dev: boolean = false;
@@ -24,6 +26,12 @@ export class Modules {
       DEFAULT_MODULES.NONE.prodLevel = props?.defaultLevels.prodLevel;
       DEFAULT_MODULES.DEFAULT.prodLevel = props?.defaultLevels.prodLevel;
     }
+    // assign default box layout
+    const mods = props?.modules ?? {};
+    Object.entries(mods).forEach(([key, module]) => {
+      mods[key].boxLayoutStyle = mods[key].boxLayoutStyle ?? 'round';
+    });
+    // merge modules
     this._modules = {
       ...DEFAULT_MODULES,
       ...props?.modules,
@@ -46,30 +54,6 @@ export class Modules {
     return level ?? -1;
   }
 
-  /** @deprecated */
-  get(lox: Lox): ExtendedModule & { hidden: boolean } {
-    let mod = this._modules[lox.moduleId];
-    if (!is(mod)) {
-      lox.moduleId = 'INVALID';
-      mod = this._modules.INVALID;
-    }
-    let slicedName =
-      mod.fullName.length > 0 ? `${mod.fullName.slice(0, this._moduleTextSlice)}: ` : '';
-    const moduleTextLength = lox.moduleId === 'NONE' ? 0 : this._moduleTextSlice + 2;
-    for (let i = slicedName.length; i < moduleTextLength; i++) {
-      slicedName += ' ';
-    }
-    const dl = mod.devLevel ?? 1;
-    const pl = mod.prodLevel ?? 1;
-    const hidden = this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
-
-    return {
-      ...mod,
-      hidden,
-      slicedName,
-    };
-  }
-
   getModule(lox: Lox): { loxModule: ExtendedModule; hidden: boolean } {
     let mod = this._modules[lox.moduleId];
     if (!is(mod)) {
@@ -85,11 +69,13 @@ export class Modules {
     const dl = mod.devLevel ?? 1;
     const pl = mod.prodLevel ?? 1;
     const hidden = this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
+    const boxLayoutStyle = mod.boxLayoutStyle ?? 'round';
 
     return {
       loxModule: {
         ...mod,
         slicedName,
+        boxLayoutStyle,
       },
       hidden,
     };
@@ -139,13 +125,14 @@ export class Modules {
 
 /** @internal */
 export const DEFAULT_MODULES: LoxerModules = {
-  NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
-  DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0 },
+  NONE: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0, boxLayoutStyle: 'round' },
+  DEFAULT: { fullName: '', color: '#fff', devLevel: 1, prodLevel: 0, boxLayoutStyle: 'round' },
   INVALID: {
     fullName: 'INVALIDMODULE',
     color: '#f00',
     devLevel: 1,
     prodLevel: 0,
+    boxLayoutStyle: 'round',
   },
 };
 
@@ -155,4 +142,5 @@ export const DEFAULT_EXTENDED_MODULE: ExtendedModule = {
   devLevel: 1,
   prodLevel: 0,
   slicedName: '',
+  boxLayoutStyle: 'round',
 };

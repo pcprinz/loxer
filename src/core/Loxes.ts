@@ -1,8 +1,9 @@
 import { filterDef, isNumber } from '../Helpers';
 import { OutputLox } from '../loxes/OutputLox';
 import { Lox } from '../loxes/Lox';
+import { ExtendedModule } from './Modules';
 
-type OpenBoxType = { id: number; color: string };
+type OpenBoxType = { id: number; module: ExtendedModule };
 
 type QueueItemType = { lox: Lox; error?: Error };
 
@@ -21,7 +22,7 @@ export class Loxes {
     if (lox.type === 'open') {
       this._loxes[lox.id] = lox;
       if (!lox.hidden) {
-        this._openBuffer.push({ id: lox.id, color: lox.module.color });
+        this._openBuffer.push({ id: lox.id, module: lox.module });
       }
     } else if (lox.type === 'close') {
       this._loxes[lox.id] = undefined;
