@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ErrorLox | Loxer - v1.0.0</title>
+	<title>ErrorLox | Loxer - v1.1.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -25,7 +25,7 @@
 					</ul>
 					<ul class="results-priority" style="display:none">
 					</ul>
-					<a href="../index.html" class="title">Loxer - v1.0.0</a>
+					<a href="../index.html" class="title">Loxer - v1.1.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -128,12 +128,11 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#moduleId" class="tsd-kind-icon">module<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#level" class="tsd-kind-icon">level</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#timestamp" class="tsd-kind-icon">timestamp</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#moduleText" class="tsd-kind-icon">module<wbr>Text</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#box" class="tsd-kind-icon">box</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#timeText" class="tsd-kind-icon">time<wbr>Text</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#timeConsumption" class="tsd-kind-icon">time<wbr>Consumption</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#color" class="tsd-kind-icon">color</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#hidden" class="tsd-kind-icon">hidden</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#module" class="tsd-kind-icon">module</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
@@ -141,6 +140,12 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="Logs.ErrorLox.html#resetStaticRunningId" class="tsd-kind-icon">reset<wbr>Static<wbr>Running<wbr>Id</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="Logs.ErrorLox.html#moduleText" class="tsd-kind-icon">module<wbr>Text</a></li>
 							</ul>
 						</section>
 					</div>
@@ -298,22 +303,6 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="moduleText" class="tsd-anchor"></a>
-					<h3>module<wbr>Text</h3>
-					<div class="tsd-signature tsd-kind-icon">module<wbr>Text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;&#x27;</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="Logs.OutputLox.html">OutputLox</a>.<a href="Logs.OutputLox.html#moduleText">moduleText</a></p>
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>the possibly sliced text of the logs corresponding module</p>
-							<ul>
-								<li>is <code>&#39;&#39;</code> if no module (<code>NONE</code>) or the default module (<code>DEFAULT</code>) was given</li>
-							</ul>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="box" class="tsd-anchor"></a>
 					<h3>box</h3>
 					<div class="tsd-signature tsd-kind-icon">box<span class="tsd-signature-symbol">:</span> <a href="../modules/Formatting.html#Box" class="tsd-signature-type">Box</a><span class="tsd-signature-symbol"> = []</span></div>
@@ -363,19 +352,6 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="color" class="tsd-anchor"></a>
-					<h3>color</h3>
-					<div class="tsd-signature tsd-kind-icon">color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;&#x27;</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="Logs.OutputLox.html">OutputLox</a>.<a href="Logs.OutputLox.html#color">color</a></p>
-					</aside>
-					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
-						<div class="lead">
-							<p>The string color of the lox&#39; module</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="hidden" class="tsd-anchor"></a>
 					<h3>hidden</h3>
 					<div class="tsd-signature tsd-kind-icon">hidden<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
@@ -385,6 +361,19 @@
 					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
 						<div class="lead">
 							<p>determines if the log has not fulfilled the level that the corresponding module has set</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="module" class="tsd-anchor"></a>
+					<h3>module</h3>
+					<div class="tsd-signature tsd-kind-icon">module<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ExtendedModule</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="Logs.OutputLox.html">OutputLox</a>.<a href="Logs.OutputLox.html#module">module</a></p>
+					</aside>
+					<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+						<div class="lead">
+							<p>the corresponding module of this Lox</p>
 						</div>
 					</div>
 				</section>
@@ -437,6 +426,23 @@
 					</ul>
 				</section>
 			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="moduleText" class="tsd-anchor"></a>
+					<h3>module<wbr>Text</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> moduleText<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
 			<!--{&quot;options&quot;:&quot;C:\\dev\\loxer\\typedoc.json&quot;,&quot;tsconfig&quot;:&quot;C:\\dev\\loxer&quot;,&quot;packages&quot;:[],&quot;entryPoints&quot;:[&quot;C:\\dev\\loxer\\src\\types.ts&quot;,&quot;C:\\dev\\loxer\\src\\decorators\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\loxes\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\index.ts&quot;,&quot;C:\\dev\\loxer\\src\\core\\Error.ts&quot;],&quot;exclude&quot;:[],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:false,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:false,&quot;excludeProtected&quot;:false,&quot;disableSources&quot;:true,&quot;includes&quot;:&quot;C:\\dev\\loxer\\assets&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:false,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;C:\\dev\\loxer\\docs&quot;,&quot;json&quot;:&quot;&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;Loxer&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[],&quot;categorizeByGroup&quot;:true,&quot;sort&quot;:[&quot;instance-first&quot;,&quot;source-order&quot;],&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:false,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;treatWarningsAsErrors&quot;:false,&quot;listInvalidSymbolLinks&quot;:false}-->
 		</div>
 		<div class="col-2 col-menu secondary-menu">
@@ -484,9 +490,6 @@
 								<a href="Logs.ErrorLox.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="Logs.ErrorLox.html#moduleText" class="tsd-kind-icon">module<wbr>Text</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="Logs.ErrorLox.html#box" class="tsd-kind-icon">box</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -496,10 +499,13 @@
 								<a href="Logs.ErrorLox.html#timeConsumption" class="tsd-kind-icon">time<wbr>Consumption</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="Logs.ErrorLox.html#color" class="tsd-kind-icon">color</a>
+								<a href="Logs.ErrorLox.html#hidden" class="tsd-kind-icon">hidden</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="Logs.ErrorLox.html#hidden" class="tsd-kind-icon">hidden</a>
+								<a href="Logs.ErrorLox.html#module" class="tsd-kind-icon">module</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="Logs.ErrorLox.html#moduleText" class="tsd-kind-icon">module<wbr>Text</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="Logs.ErrorLox.html#resetStaticRunningId" class="tsd-kind-icon">reset<wbr>Static<wbr>Running<wbr>Id</a>

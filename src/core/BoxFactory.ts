@@ -10,6 +10,11 @@ export type BoxSegment = { box: keyof BoxSymbols; color: string; boxLayout: BoxL
 /** A Factory used to construct the BoxLayout for `*Lox`es */
 export class BoxFactory {
   /** @internal */
+  private constructor() {
+    // static class
+  }
+
+  /** @internal */
   static getLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.hidden) {
       return [];
@@ -91,11 +96,9 @@ export class BoxFactory {
    * ## Single Usage
    * ```typescript
    * const lox: OutputLox = ... // the lox in an output callback (also `ErrorLox`)
-   * const stringBox = new BoxFactory().getBoxString(lox.box, true);
-   *
-   * // or with a different layout (than 'round')
-   * const otherBox = new BoxFactory('light').getBoxString(lox.box, true);
+   * const box = BoxFactory.getBoxString(lox.box, !this._colorsDisabled);
    * ```
+   *
    * @param box the `Box` of an `OutputLox` or `ErrorLox`
    * @param colored should the symbols be wrapped in ANSI colors
    * @returns a stringified version of the given box

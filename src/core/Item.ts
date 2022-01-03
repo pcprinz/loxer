@@ -72,9 +72,12 @@ export class Item {
       lox.itemOptions?.shortenClasses !== undefined ? lox.itemOptions.shortenClasses : true;
   }
 
-  /**
+  /** The static constructor of the Item helper class. Use it for any `OutputLox` or `ErrorLox`:
+   * ```typescript
+   * Item.of(outputLox)
+   * ```
    * @param lox to pretty print the item for
-   * @returns a chained function `prettify(...)` to pretty print the lox
+   * @returns a chained function `prettify(...)` to pretty print the item of the lox
    */
   static of(lox: Lox): Item {
     return new Item(lox);
@@ -86,6 +89,14 @@ export class Item {
    * - the indent is configurable
    * - indent is shown with vertical indicator lines
    * - objects can be filtered to specific keys (helpful when dealing with large items)
+   *
+   * ###### Example
+   * ```typescript
+   * Item.of(outputLox).prettify(true, {
+   *   depth: outputLox.module.slicedName.length + outputLox.box.length,
+   *   color: outputLox.module.color,
+   * })
+   * ```
    *
    * @param colored should the output be colored (with ANSI colors)
    * @param box options for the box surrounding the printed item
