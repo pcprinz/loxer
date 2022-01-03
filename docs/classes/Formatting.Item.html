@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Item | Loxer - v1.0.0</title>
+	<title>Item | Loxer - v1.1.0</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -25,7 +25,7 @@
 					</ul>
 					<ul class="results-priority" style="display:none">
 					</ul>
-					<a href="../index.html" class="title">Loxer - v1.0.0</a>
+					<a href="../index.html" class="title">Loxer - v1.1.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -141,6 +141,15 @@
 										<li>objects can be filtered to specific keys (helpful when dealing with large items)</li>
 									</ul>
 								</div>
+								</div><div class="tsd-comment tsd-typography tsd-comment-text">
+								<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+									<h6>Example</h6>
+								</a>
+								<pre><code class="language-typescript"><span style="color: #001080">Item</span><span style="color: #000000">.</span><span style="color: #795E26">of</span><span style="color: #000000">(</span><span style="color: #001080">outputLox</span><span style="color: #000000">).</span><span style="color: #795E26">prettify</span><span style="color: #000000">(</span><span style="color: #0000FF">true</span><span style="color: #000000">, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">depth:</span><span style="color: #000000"> </span><span style="color: #001080">outputLox</span><span style="color: #000000">.</span><span style="color: #001080">module</span><span style="color: #000000">.</span><span style="color: #001080">slicedName</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000"> + </span><span style="color: #001080">outputLox</span><span style="color: #000000">.</span><span style="color: #001080">box</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">color:</span><span style="color: #000000"> </span><span style="color: #001080">outputLox</span><span style="color: #000000">.</span><span style="color: #001080">module</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000">,</span>
+<span style="color: #000000">})</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -161,6 +170,9 @@
 											<div class="tsd-comment tsd-typography tsd-comment-shorttext">
 												<div class="lead">
 													<p>the vertical depth, where the box starts / ends (typically the column of the log&#39;s box)</p>
+													<ul>
+														<li>if left <code>undefined</code>, the box will be grey</li>
+													</ul>
 												</div>
 											</div>
 										</li>
@@ -169,6 +181,9 @@
 											<div class="tsd-comment tsd-typography tsd-comment-shorttext">
 												<div class="lead">
 													<p>color of the box and surrounding text (typically the color of the log&#39;s box)</p>
+													<ul>
+														<li>if left <code>undefined</code> the box will have a depth of 20 and is not connected to the surrounding box layout</li>
+													</ul>
 												</div>
 											</div>
 										</li>
@@ -190,6 +205,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 							</aside>
+							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+								<div class="lead">
+									<p>The static constructor of the Item helper class. Use it for any <code>OutputLox</code> or <code>ErrorLox</code>:</p>
+									<pre><code class="language-typescript"><span style="color: #001080">Item</span><span style="color: #000000">.</span><span style="color: #795E26">of</span><span style="color: #000000">(</span><span style="color: #001080">outputLox</span><span style="color: #000000">)</span>
+</code></pre>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -200,7 +222,7 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="Formatting.Item.html" class="tsd-signature-type">Item</a></h4>
-							<p>a chained function <code>prettify(...)</code> to pretty print the lox</p>
+							<p>a chained function <code>prettify(...)</code> to pretty print the item of the lox</p>
 						</li>
 					</ul>
 				</section>

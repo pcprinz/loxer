@@ -21,7 +21,6 @@ class LoxerInstance implements LoxerType {
   private _loxes = new Loxes();
   private _history = new LoxHistory();
   private _modules: Modules = new Modules();
-  private _boxFactory: BoxFactory = new BoxFactory();
   private _output: OutputStreams = new OutputStreams();
 
   private _initialized: boolean = false;
@@ -47,16 +46,14 @@ class LoxerInstance implements LoxerType {
       modules: props?.modules,
       moduleTextSlice: config?.moduleTextSlice ?? 8,
       defaultLevels: props?.defaultLevels,
+      defaultBoxLayoutStyle: config?.boxLayoutStyle ?? 'round',
     });
     this._history = new LoxHistory(config?.historyCacheSize);
-    this._boxFactory = new BoxFactory(config?.boxLayoutStyle);
     this._output = new OutputStreams({
       callbacks: props?.callbacks,
       disableColors: config?.disableColors,
-      boxFactory: this._boxFactory,
       endTitleOpacity: config?.endTitleOpacity,
       highlightColor: config?.highlightColor,
-      moduleTextSlice: config?.moduleTextSlice ?? 8,
     });
 
     this.highlight().log('Loxer initialized');
@@ -279,7 +276,7 @@ class LoxerInstance implements LoxerType {
     if (!this._initialized) {
       this._loxes.enqueue(lox, error);
     } else if (lox.type === 'error') {
-      const errorLox = this.toErrorLox(lox, error!);
+      const errorLox = this.toErrorLox(lox, error ?? new Error());
       this._history.add(errorLox);
       this._output.errorOut(this._dev, errorLox, this._history);
     } else {
@@ -295,9 +292,9 @@ class LoxerInstance implements LoxerType {
   private toErrorLox(lox: Lox, error: Error): ErrorLox {
     const errorLox = new ErrorLox(lox, error);
     errorLox.setTime(this.getTimeConsumption(errorLox));
-    errorLox.color = this._modules.getColor(errorLox.moduleId);
-    errorLox.moduleText = this._modules.getText(errorLox);
-    errorLox.box = this._boxFactory.getLogBox(errorLox, this._loxes);
+    const { loxModule } = this._modules.getModule(errorLox);
+    errorLox.module = loxModule;
+    errorLox.box = BoxFactory.getLogBox(errorLox, this._loxes);
 
     errorLox.openLoxes = this._loxes.getOpenLoxes();
 
@@ -307,11 +304,10 @@ class LoxerInstance implements LoxerType {
   private toOutputLox(lox: Lox): OutputLox {
     const outputLox = new OutputLox(lox);
     outputLox.setTime(this.getTimeConsumption(outputLox));
-    outputLox.color = this._modules.getColor(outputLox.moduleId);
-    outputLox.moduleText = this._modules.getText(outputLox);
-    outputLox.box = this._boxFactory.getLogBox(outputLox, this._loxes);
-
-    outputLox.hidden = this._modules.isLogHidden(outputLox);
+    const { loxModule, hidden } = this._modules.getModule(outputLox);
+    outputLox.module = loxModule;
+    outputLox.hidden = hidden;
+    outputLox.box = BoxFactory.getLogBox(outputLox, this._loxes);
 
     return outputLox;
   }

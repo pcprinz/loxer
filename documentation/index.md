@@ -233,7 +233,7 @@ A [`Module`](https://pcprinz.github.io/loxer/interfaces/Loxer.Module.html) must 
 
 The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color](https://www.npmjs.com/package/color) package.
 
-###### Example
+###### Declaring modules
 ```typescript
 Loxer.init({
   modules: {
@@ -262,6 +262,12 @@ The `DEFAULT` module is automatically assigned, when logs are chained with an em
 
 The `INVALID` module is automatically assigned, when logs are tried to be assigned with non existing modules (giving false moduleIds). The output will have no boxlayout, but the prominent fullName as module name.
 
+###### Example
+```typescript
+Loxer.log('this log is automatically assigned to the module NONE');
+Loxer.m().log('this one to the module DEFAULT');
+Loxer.m('Wrong').log('this one to the INVALID module');
+```
 ###### Console output
 <!-- ![console_output](/assets/docs_images/6-2.png) -->
 ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/6-2.png)
@@ -320,10 +326,6 @@ To symbolize that the logs are more than just simple messages, they are named `*
   level: LevelType;
   /** the time the log appeared */
   timestamp: Date;
-  /** The string color of the lox' module */
-  color: string = '';
-  /** the possibly sliced text of the logs corresponding module fullName */
-  moduleText: string | '' = '';
   /** the box layout of the log */
   box: Box = [];
   /** a string that represents the time consumption from the opening log's `timestamp` until this log appeared */
@@ -332,6 +334,8 @@ To symbolize that the logs are more than just simple messages, they are named `*
   timeConsumption: number | undefined;
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
+  /** the corresponding module of this Lox (for module text / color / etc.) */
+  module: ExtendedModule = DEFAULT_EXTENDED_MODULE;
 }
 ```
 
@@ -361,19 +365,23 @@ private devLogOut(outputLox: OutputLox) {
   if (this._callbacks?.devLog) {
     this._callbacks.devLog(outputLox);
   } else {
-    // colored option
+    // colorize the output if wanted
     const opacity = outputLox.type === 'close' ? this._endTitleOpacity : 1;
-    const { message, moduleText, timeText } = this._colorsDisabled
-      ? outputLox
-      : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
-    const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
+    const colored = ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
+    const message = this._colorsDisabled ? outputLox.message : colored.message;
+    const moduleText = this._colorsDisabled ? outputLox.module.slicedName : colored.moduleText;
+    const timeText = this._colorsDisabled ? outputLox.timeText : colored.timeText;
+    // generate the box layout
+    const box = BoxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
+    // construct the message
     const str = `${moduleText}${box}${message}\t${timeText}`;
+    // prettify the item
     if (outputLox.item) {
       console.log(
         str +
           Item.of(outputLox).prettify(true, {
-            depth: this._moduleTextSlice + outputLox.box.length,
-            color: outputLox.color,
+            depth: outputLox.module.slicedName.length + outputLox.box.length,
+            color: outputLox.module.color,
           })
       );
     } else {
@@ -383,41 +391,49 @@ private devLogOut(outputLox: OutputLox) {
 }
 ```
 
-As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. The helper class `ANSIFormat` offers some static methods for the coloring of the output unsing the `[x1b` ANSI code. The internal method `_boxFactory.getBoxString(...)` simply used the predefined Boxlayout (Unicode) and ANSIFormat to color them.
+As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. 
+- The helper class `ANSIFormat` offers some static methods for the coloring of the output unsing the `[x1b` ANSI code. 
+- The helper class `BoxFactory` offers a method `.getBoxString(...)` which generates the known box layout, that is used by default. 
+- The helper class `Item` offers a method chain `.of(Lox).prettify(OPTIONS)` which lets you refine the inherited `lox.item` to be printed in a similar way as the `console` does with its secondary parameters. For more information on that see page **[Item](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)**
 
 The `ErrorLox` can be used in the same way:
 
 ###### devError internally
 ```typescript
 private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
-  if (this._callbacks?.devError) {
-    this._callbacks.devError(errorLox, history.stack);
-  } else {
-    const { message, moduleText, timeText } = this._colorsDisabled
-      ? errorLox
-      : ANSIFormat.colorLox(errorLox);
-    const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
-    const msg = moduleText + box + message + timeText;
-    const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
-    const openLogs =
-      errorLox.highlighted && errorLox.openLoxes.length > 0
-        ? `\nOPEN_LOGS: [${errorLox.openLoxes
-            .map((outputLox) => outputLox.message)
-            .join(' <> ')}]`
-        : '';
-    const str = msg + stack + openLogs;
-    if (errorLox.item) {
-      console.log(
-        str +
-          Item.of(errorLox).prettify(true, {
-            depth: this._moduleTextSlice + errorLox.box.length,
-            color: errorLox.color,
-          })
-      );
+    if (this._callbacks?.devError) {
+      this._callbacks.devError(errorLox, history.stack);
     } else {
-      console.log(str);
+      // colorize the output if wanted
+      const colored = ANSIFormat.colorLox(errorLox);
+      const message = this._colorsDisabled ? errorLox.message : colored.message;
+      const moduleText = this._colorsDisabled ? errorLox.module.slicedName : colored.moduleText;
+      const timeText = this._colorsDisabled ? errorLox.timeText : colored.timeText;
+      // generate the box layout
+      const box = BoxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
+      // construct the log message
+      const msg = moduleText + box + message + timeText;
+      const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
+      const openLogs =
+        errorLox.highlighted && errorLox.openLoxes.length > 0
+          ? `\nOPEN_LOGS: [${errorLox.openLoxes
+              .map((outputLox) => outputLox.message)
+              .join(' <> ')}]`
+          : '';
+      const str = msg + stack + openLogs;
+      // prettify the item if present
+      if (errorLox.item) {
+        console.log(
+          str +
+            Item.of(errorLox).prettify(true, {
+              depth: errorLox.module.slicedName.length + errorLox.box.length,
+              color: errorLox.module.color,
+            })
+        );
+      } else {
+        console.log(str);
+      }
     }
-  }
 }
 ```
 
@@ -476,27 +492,23 @@ The following is an example of how the box layout is processed internally for th
 
 ###### Getting the box as a colored string: 
 ```typescript
-getBoxString(box: Box, colored: boolean | undefined) {
-  return (
-    box
-      .map(segment => {
-        if (segment === 'empty') {
-          return ' ';
-        } else if (colored) {
-          return ANSIFormat.colorize(
-            BoxLayouts[this._boxLayoutStyle][segment.box],
-            segment.color
-          );
-        } else {
-          return BoxLayouts[this._boxLayoutStyle][segment.box];
-        }
-      })
-      .join('') + ' '
-  );
+static getBoxString(box: Box, colored: boolean | undefined): string {
+  const result = box
+    .map((segment) => {
+      if (segment === 'empty') {
+        return ' ';
+      }
+      if (colored) {
+        return ANSIFormat.colorize(BoxLayouts[segment.boxLayout][segment.box], segment.color);
+      }
+      return BoxLayouts[segment.boxLayout][segment.box];
+    })
+    .join('');
+  return result.length > 0 ? `${result} ` : result;
 }
 ```
 
-The BoxLayouts are a collection of unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/) table. This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). 
+The `BoxLayouts` are a collection of Unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/) table. This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). 
 
 You are free to set own symbols for the personal output streams. In this case, a box layout must implement the following interface:
 

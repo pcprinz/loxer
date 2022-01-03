@@ -3,9 +3,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: [
-    // only tests
+    // only tests set with only
     '**/?(*.)+(test.only).ts',
-    // all tests (that are not listed here)
+    // all tests
     '**/?(*.)+(test).ts',
   ],
 };

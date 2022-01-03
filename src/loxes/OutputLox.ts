@@ -1,13 +1,10 @@
 import { Box } from '../core/BoxFactory';
+import { DEFAULT_EXTENDED_MODULE, ExtendedModule } from '../core/Modules';
 import { Lox } from './Lox';
 /** @module OutputLox */
 
 /** This is a log streamed to the `devLog`or `prodLog` output stream defined at the {@link LoxerCallbacks}. */
 export class OutputLox extends Lox {
-  /** the possibly sliced text of the logs corresponding module
-   * - is `''` if no module (`NONE`) or the default module (`DEFAULT`) was given
-   */
-  moduleText: string | '' = '';
   /** the box layout of the log which an array of `type { box: keyof BoxSymbol; color: string }`, where:
    * - `keyof BoxSymbol` is a string which represents the form of the box segment (character)
    * - `color` is the string color of the box segment (represents the corresponding module color)
@@ -21,14 +18,18 @@ export class OutputLox extends Lox {
    * - is `undefined` when the log is a single `Loxer.log()` or an opening log itself
    */
   timeConsumption: number | undefined;
-  /** The string color of the lox' module */
-  color: string = '';
   /** determines if the log has not fulfilled the level that the corresponding module has set */
   hidden: boolean = false;
+  /** the corresponding module of this Lox */
+  module: ExtendedModule = DEFAULT_EXTENDED_MODULE;
 
   /** @internal */
   setTime(times: { timeText: string; timeConsumption?: number }): void {
     this.timeText = times.timeText;
     this.timeConsumption = times.timeConsumption;
+  }
+
+  get moduleText(): string {
+    return this.module.slicedName;
   }
 }

@@ -1,25 +1,21 @@
-import { BoxLayouts, BoxLayoutStyle, BoxSymbols } from './BoxFormat';
-import { ANSIFormat } from './ANSIFormat';
-import { Loxes } from './Loxes';
 import { OutputLox } from '../loxes/OutputLox';
+import { ANSIFormat } from './ANSIFormat';
+import { BoxLayouts, BoxLayoutStyle, BoxSymbols } from './BoxFormat';
+import { Loxes } from './Loxes';
 
 export type Box = (BoxSegment | 'empty')[];
 
-export type BoxSegment = { box: keyof BoxSymbols; color: string };
+export type BoxSegment = { box: keyof BoxSymbols; color: string; boxLayout: BoxLayoutStyle };
 
 /** A Factory used to construct the BoxLayout for `*Lox`es */
 export class BoxFactory {
-  private _boxLayoutStyle: BoxLayoutStyle;
-
-  /**
-   * @param boxLayoutStyle The style of the used unicode symbols: `"round" | "light" | "heavy" | "double" | "off"`
-   */
-  constructor(boxLayoutStyle?: BoxLayoutStyle) {
-    this._boxLayoutStyle = boxLayoutStyle ?? 'round';
+  /** @internal */
+  private constructor() {
+    // static class
   }
 
   /** @internal */
-  getLogBox(lox: OutputLox, loxes: Loxes): Box {
+  static getLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.hidden) {
       return [];
     }
@@ -28,7 +24,7 @@ export class BoxFactory {
   }
 
   /** @internal */
-  getOpenLogBox(lox: OutputLox, loxes: Loxes): Box {
+  static getOpenLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
@@ -38,41 +34,58 @@ export class BoxFactory {
       if (lox.id === bufferLox?.id) {
         break;
       }
-      box.push(bufferLox ? { box: 'vertical', color: bufferLox.color } : 'empty');
+      box.push(
+        bufferLox
+          ? {
+              box: 'vertical',
+              color: bufferLox.module.color,
+              boxLayout: bufferLox.module.boxLayoutStyle,
+            }
+          : 'empty'
+      );
     }
     // print the start of the box
-    box.push({ box: 'openEdge', color: lox.color });
-    box.push({ box: 'openEnd', color: lox.color });
+    box.push({ box: 'openEdge', color: lox.module.color, boxLayout: lox.module.boxLayoutStyle });
+    box.push({ box: 'openEnd', color: lox.module.color, boxLayout: lox.module.boxLayoutStyle });
 
     return box;
   }
 
   /** @internal */
-  getOfLogBox(lox: OutputLox, loxes: Loxes): Box {
+  static getOfLogBox(lox: OutputLox, loxes: Loxes): Box {
     if (lox.moduleId === 'INVALID' || lox.moduleId === 'NONE') {
       return [];
     }
     const box: Box = [];
-    const color = lox.color;
+    const color = lox.module.color;
     let found = false;
     for (const bufferLox of loxes.getBuffer()) {
-      const itemColor = bufferLox?.color ?? '';
+      const itemColor = bufferLox?.module.color ?? '';
+      const boxLayout = bufferLox?.module.boxLayoutStyle ?? 'round';
       if (!found) {
         if (lox.id === bufferLox?.id) {
           // print occurrence
-          box.push({ box: lox.type === 'close' ? 'closeEdge' : 'single', color });
+          box.push({ box: lox.type === 'close' ? 'closeEdge' : 'single', color, boxLayout });
           found = true;
         } else {
           // print depth before occurrence
-          box.push(bufferLox ? { box: 'vertical', color: itemColor } : 'empty');
+          box.push(bufferLox ? { box: 'vertical', color: itemColor, boxLayout } : 'empty');
         }
       } else {
         // print depth after occurrence
-        box.push(bufferLox ? { box: 'cross', color: itemColor } : { box: 'horizontal', color });
+        box.push(
+          bufferLox
+            ? { box: 'cross', color: itemColor, boxLayout }
+            : { box: 'horizontal', color, boxLayout }
+        );
       }
     }
     // print line end
-    box.push({ box: lox.type === 'close' ? 'closeEnd' : 'horizontal', color });
+    box.push({
+      box: lox.type === 'close' ? 'closeEnd' : 'horizontal',
+      color,
+      boxLayout: lox.module.boxLayoutStyle,
+    });
 
     return box;
   }
@@ -83,26 +96,24 @@ export class BoxFactory {
    * ## Single Usage
    * ```typescript
    * const lox: OutputLox = ... // the lox in an output callback (also `ErrorLox`)
-   * const stringBox = new BoxFactory().getBoxString(lox.box, true);
-   *
-   * // or with a different layout (than 'round')
-   * const otherBox = new BoxFactory('light').getBoxString(lox.box, true);
+   * const box = BoxFactory.getBoxString(lox.box, !this._colorsDisabled);
    * ```
+   *
    * @param box the `Box` of an `OutputLox` or `ErrorLox`
    * @param colored should the symbols be wrapped in ANSI colors
    * @returns a stringified version of the given box
    */
-  getBoxString(box: Box, colored: boolean | undefined): string {
+  static getBoxString(box: Box, colored: boolean | undefined): string {
     const result = box
       .map((segment) => {
         if (segment === 'empty') {
           return ' ';
         }
         if (colored) {
-          return ANSIFormat.colorize(BoxLayouts[this._boxLayoutStyle][segment.box], segment.color);
+          return ANSIFormat.colorize(BoxLayouts[segment.boxLayout][segment.box], segment.color);
         }
 
-        return BoxLayouts[this._boxLayoutStyle][segment.box];
+        return BoxLayouts[segment.boxLayout][segment.box];
       })
       .join('');
 

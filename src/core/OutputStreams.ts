@@ -9,48 +9,54 @@ import { LoxHistory } from './LoxHistory';
 interface OutputStreamsProps {
   callbacks?: LoxerCallbacks;
   disableColors?: boolean;
-  boxFactory?: BoxFactory;
   endTitleOpacity?: number;
   highlightColor?: string;
-  moduleTextSlice?: number;
 }
 
 /** @internal */
 export class OutputStreams {
   private _callbacks: LoxerCallbacks | undefined;
   private _colorsDisabled: boolean;
-  private _boxFactory: BoxFactory;
   private _endTitleOpacity: number = 0;
   private _highlightColor: string | undefined;
-  private _moduleTextSlice: number = 8;
 
   constructor(props?: OutputStreamsProps) {
     this._callbacks = props?.callbacks;
     this._colorsDisabled = props?.disableColors ?? false;
-    this._boxFactory = props?.boxFactory ?? new BoxFactory();
     this._endTitleOpacity = props?.endTitleOpacity ?? 0;
     this._highlightColor = props?.highlightColor;
-    this._moduleTextSlice = props?.moduleTextSlice ?? 8;
   }
 
   /** @internal **/
   errorOut(dev: boolean, errorLox: ErrorLox, history: LoxHistory): void {
-    dev ? this.devErrorOut(errorLox, history) : this.prodErrorOut(errorLox, history);
+    if (dev) {
+      this.devErrorOut(errorLox, history);
+    } else {
+      this.prodErrorOut(errorLox, history);
+    }
   }
 
   /** @internal **/
   logOut(dev: boolean, outputLox: OutputLox): void {
-    dev ? this.devLogOut(outputLox) : this.prodLogOut(outputLox);
+    if (dev) {
+      this.devLogOut(outputLox);
+    } else {
+      this.prodLogOut(outputLox);
+    }
   }
 
   private devErrorOut(errorLox: ErrorLox, history: LoxHistory): void {
     if (this._callbacks?.devError) {
       this._callbacks.devError(errorLox, history.stack);
     } else {
-      const { message, moduleText, timeText } = this._colorsDisabled
-        ? errorLox
-        : ANSIFormat.colorLox(errorLox);
-      const box = this._boxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
+      // colorize the output if wanted
+      const colored = ANSIFormat.colorLox(errorLox);
+      const message = this._colorsDisabled ? errorLox.message : colored.message;
+      const moduleText = this._colorsDisabled ? errorLox.module.slicedName : colored.moduleText;
+      const timeText = this._colorsDisabled ? errorLox.timeText : colored.timeText;
+      // generate the box layout
+      const box = BoxFactory.getBoxString(errorLox.box, !this._colorsDisabled);
+      // construct the log message
       const msg = moduleText + box + message + timeText;
       const stack = errorLox.highlighted && errorLox.error.stack ? errorLox.error.stack : '';
       const openLogs =
@@ -60,12 +66,13 @@ export class OutputStreams {
               .join(' <> ')}]`
           : '';
       const str = msg + stack + openLogs;
+      // prettify the item if present
       if (errorLox.item) {
         console.log(
           str +
             Item.of(errorLox).prettify(true, {
-              depth: this._moduleTextSlice + errorLox.box.length,
-              color: errorLox.color,
+              depth: errorLox.module.slicedName.length + errorLox.box.length,
+              color: errorLox.module.color,
             })
         );
       } else {
@@ -84,19 +91,23 @@ export class OutputStreams {
     if (this._callbacks?.devLog) {
       this._callbacks.devLog(outputLox);
     } else {
-      // colored option
+      // colorize the output if wanted
       const opacity = outputLox.type === 'close' ? this._endTitleOpacity : 1;
-      const { message, moduleText, timeText } = this._colorsDisabled
-        ? outputLox
-        : ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
-      const box = this._boxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
+      const colored = ANSIFormat.colorLox(outputLox, opacity, this._highlightColor);
+      const message = this._colorsDisabled ? outputLox.message : colored.message;
+      const moduleText = this._colorsDisabled ? outputLox.module.slicedName : colored.moduleText;
+      const timeText = this._colorsDisabled ? outputLox.timeText : colored.timeText;
+      // generate the box layout
+      const box = BoxFactory.getBoxString(outputLox.box, !this._colorsDisabled);
+      // construct the message
       const str = `${moduleText}${box}${message}\t${timeText}`;
+      // prettify the item
       if (outputLox.item) {
         console.log(
           str +
             Item.of(outputLox).prettify(true, {
-              depth: this._moduleTextSlice + outputLox.box.length,
-              color: outputLox.color,
+              depth: outputLox.module.slicedName.length + outputLox.box.length,
+              color: outputLox.module.color,
             })
         );
       } else {

@@ -6,8 +6,9 @@ import { OutputLox } from '../loxes/OutputLox';
 export class ANSIFormat {
   /** @internal */
   private constructor() {
-    // not needed
+    // static class
   }
+
   /** ANSI codes to manipulate strings */
   public static CODE = {
     /** this is used to reset everything to the terminals default */
@@ -134,7 +135,7 @@ export class ANSIFormat {
 
     return {
       message,
-      moduleText: this.colorize(lox.moduleText, lox.color, opacity),
+      moduleText: this.colorize(lox.module.slicedName, lox.module.color, opacity),
       timeText: this.fgTime(lox.timeText),
     };
   }
