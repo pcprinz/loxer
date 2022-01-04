@@ -10,16 +10,16 @@
 - [7. Output - `LoxerCallbacks`](#7-output---loxercallbacks)
 - [8. Boxes](#8-boxes)
 
-Instructions on how to use the Item can be found **[on this separate page](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)**.
+Instructions on how to use the Item can be found **[on the Item documentation][itemDocs]**.
 
 
 # Overview
 Loxer's main goal is to increase the safety of applications by showing the developer the data flow of the application with the help of logs. For this, it is possible for him to provide logs with levels, to categorize them in modules, to expand error messages with additional information and to connect logs with one another. A box is created for this, which begins with an opening log, is continued with any number of logs and errors and ends with a closing log. This is then visualized with a kind of branching system. Loxer also serves as a middleware logger by allowing the user to determine the output streams himself using callbacks. In this way, it can be achieved, for example, that the behavior of an application in the production environment is recorded and, in the event of an error, detailed information about the cause is forwarded to an analysis service such as firebase crashlytics.
 
-The following sections describe the use of Loxer in detail. Further information can be found in the [API Reference](https://pcprinz.github.io/loxer/index.html).
+The following sections describe the use of Loxer in detail. Further information can be found in the [API Reference][api].
 
-# 1. Initialization - [`Loxer.init()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#init)
-In order to be able to use Loxer, it must first be initialized. To do this, the method `Loxer.init(options?: LoxerOptions)` must be called once. Loxer can be configured with [`LoxerOptions`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerOptions.html) during initialization. For the simple initialization, the optional options can also be left out.
+# 1. Initialization - [`Loxer.init()`][loxer.init]
+In order to be able to use Loxer, it must first be initialized. To do this, the method `Loxer.init(options?: LoxerOptions)` must be called once. Loxer can be configured with [`LoxerOptions`][loxerOptions] during initialization. For the simple initialization, the optional options can also be left out.
 
 ###### Simple initialization
 ```typescript
@@ -58,7 +58,7 @@ More about the details of the options can be found in the following sections.
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 2. Simple logs - [`Loxer.log()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#log)
+# 2. Simple logs - [`Loxer.log()`][loxer.log]
 To make a simple log, all you have to do is call `Loxer.log(message: string, item?: ItemType, itemOptions?: ItemOptions)`. In the default - unless otherwise specified in `Loxer.init(options.callbacks)` - `message` and `item` are logged with `console.log(message + ITEM)`, where `ITEM` is a prettified and configurable printed version of the item (any variable). All you have to do is replacing `console` with `Loxer`.
 
 
@@ -70,10 +70,10 @@ Loxer.log('This is the person:', person);
 ```
 
 ###### Console output
-![console_output](/assets/docs_images/2.png)
-<!-- ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/2.png) -->
+<!-- ![console_output](/assets/docs_images/2.png) -->
+![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/2.png)
 
-On page **[Item](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)** there is a detailed guide about the advantages over the `console` and the possibilities that the `item` brings with it.
+On page **[Item][itemDocs]** there is a detailed guide about the advantages over the `console` and the possibilities that the `item` brings with it.
 
 > Loxer comes with some improvements for logs:
 > - Logs can be highlighted.
@@ -85,7 +85,7 @@ On page **[Item](https://github.com/pcprinz/loxer/blob/master/documentation/item
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 3. Error logs - [`Loxer.error()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#error)
+# 3. Error logs - [`Loxer.error()`][loxer.error]
 Creating simple error logs is analogous to a simple log. Therefore you write `Loxer.error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions)`. By default this log will be proceeded to `console.error()`.
 
 The error parameter must be of `type ErrorType = Error | string | number | boolean | object`, because these are the types that an error of a `catch(error)` phrase can take. The `item?: any` behaves the same way like in the `.log()` method.
@@ -109,7 +109,7 @@ Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
 
 Loxer internally creates an `Error` out of any other message type than `Error` though it enables to get a Stack even if the thrown error has none.
 
-### [NamedError](https://pcprinz.github.io/loxer/classes/Error.NamedError.html)
+### [NamedError][namedError]
 There is also helper class called `NamedError`. It can be used to create custom errors which can extend any other error. This may be useful for more explicit results of the error in a catch phrase.
 
 ###### Example
@@ -131,8 +131,8 @@ Loxer.error(new NamedError('ErrorError', 'failed hard!', new TypeError('catched 
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 4. Highlighting - [`Loxer.highlight()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#highlight)
-Highlighting logs has the advantage of being able to view a certain log relatively quickly from a large number of logs. To highlight a log, it just needs to be chained with `.highlight()` or `.h()`, with the last one being a shortcut. The output message will then have inverted background and text colors.
+# 4. Highlighting - [`Loxer.highlight()`][loxer.highlight]
+Highlighting logs has the advantage of being able to view a certain log relatively quickly from a large number of logs. To highlight a log, it just needs to be chained with `.highlight()` or `.h()`, with the last one being a shortcut. The output message will then have inverted background and text colors by default. This can be configured in the [LoxerConfig][loxerConfig] which is part of the `Loxer.init(...)`
 
 ###### Example
 ```typescript
@@ -157,7 +157,7 @@ Loxer.h(shouldHighlight).log('This message will be conditionally highlighted');
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 5. Levels - [`Loxer.level()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#level)
+# 5. Levels - [`Loxer.level()`][loxer.level]
 Giving levels is a common feature for any logger. Loxer provides a simple, but extendable solution for this case.
 
 ### Levels on logs
@@ -176,7 +176,7 @@ Loxer.log('this too, because 1 is default');
 > You can also add levels to the logging methods `Loxer.open()` and `Loxer.of()`. Giving `Loxer.error()` a level is no problem, but has no effect on whether it is logged. It always will.
 
 ### Default levels (and module levels)
-Providing logs with levels would make no sense if you couldn't set which level the logger should display / log. Therefore you have to declare the levels as part of the [`LoxerOptions`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerOptions.html) when you initialize `Loxer`.
+Providing logs with levels would make no sense if you couldn't set which level the logger should display / log. Therefore you have to declare the levels as part of the [`LoxerConfig`][loxerConfig] when you initialize `Loxer`.
 
 
 ###### Example
@@ -200,7 +200,7 @@ If you declare modules then you can set separate levels for every module, giving
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 6. Modules - [`Loxer.module()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#module)
+# 6. Modules - [`Loxer.module()`][loxer.module]
 Modules are one way of categorizing logs in order to:
 - To create clarity in the output (with coloring)
 - Set log levels for individual categories
@@ -227,11 +227,11 @@ Loxer.log('this one is automatically assigned to the module NONE');
 > The module methods can be chained with the logging methods `Loxer.error()` and `Loxer.open()`. Assigning a module to `Loxer.of()` is no problem, but has no effect. `.of()` logs always receive the module from their opening log.
 
 ### Declaring modules
-Modules must be declared as part of the [`LoxerOptions`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerOptions.html) when you initialize `Loxer`. Therefore the `options.modules` must receive an object of `type LoxerModules = { [moduleId: string]: Module }`, where the `moduleId` is the key that will be referenced in the `.m()` and `.module()` methods.
+Modules must be declared as part of the [`LoxerOptions`][loxerOptions] when you initialize `Loxer`. Therefore the `options.modules` must receive an object of `type LoxerModules = { [moduleId: string]: Module }`, where the `moduleId` is the key that will be referenced in the `.m()` and `.module()` methods.
 
-A [`Module`](https://pcprinz.github.io/loxer/interfaces/Loxer.Module.html) must be structured as `{ devLevel: LevelType; prodLevel: LevelType; fullName: string; color: string; }`. The two levels are of the same type as the `defaultLevels` and the `fullName` and `color` will be used for the output.
+A [`Module`][loxerModule] must be structured as `{ devLevel: LevelType; prodLevel: LevelType; fullName: string; color: string; }`. The two levels are of the same type as the `defaultLevels` and the `fullName` and `color` will be used for the output.
 
-The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color](https://www.npmjs.com/package/color) package.
+The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color][pkg.color] package.
 
 ###### Declaring modules
 ```typescript
@@ -279,7 +279,7 @@ Loxer.m('Wrong').log('this one to the INVALID module');
 <!-- ------------------------------------------------------------------------------------------- -->
 
 
-# 7. Output - [`LoxerCallbacks`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerCallbacks.html)
+# 7. Output - [`LoxerCallbacks`][loxerCallbacks]
 Loxer isn't just an extension for the console. It is an independent logger that in the default case uses the console as an output medium in the development environment. There are 4 different output streams available, which can be specified as `modules: LoxerCallbacks` in the `Loxer.init(options)`.
 
 The `type LoxerCallbacks` has the following structure:
@@ -303,9 +303,9 @@ The `devLog` and `devError` callbacks default to printing the colored logs to th
 In order to occupy a stream itself, the corresponding output log is passed to the callback.
 
 ### Output logs
-To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the [`OutputLox`](https://pcprinz.github.io/loxer/classes/Logs.OutputLox.html) contains the declared properties level, highlight and module, a time stamp and properties that arise from the box layout. [`ErrorLox`](https://pcprinz.github.io/loxer/classes/Logs.ErrorLox.html) have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
+To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the [`OutputLox`][outputLox] contains the declared properties level, highlight and module, a time stamp and properties that arise from the box layout. [`ErrorLox`][errorLox] have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
 
-###### OutputLox
+###### [OutputLox][outputLox]
 ```typescript
 {
   /** the internal identifier of the log */
@@ -339,7 +339,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
 }
 ```
 
-###### ErrorLox
+###### [ErrorLox][errorLox]
 ```typescript
   // ... all the Properties from OutputLox +
   /** the error that was initially given, or created by Loxer */
@@ -348,13 +348,7 @@ To symbolize that the logs are more than just simple messages, they are named `*
   openLoxes: OutputLox[] = [];
 ```
 
-> For more detailed information about the Lox's properties (as well as all other components of Loxer), a look at the [API reference](https://pcprinz.github.io/loxer/modules/Logs.html) is recommended.
-
-<!-- TODO: this is now found in the Error* callbacks + LoxHistory.ts ### History
-The history, which is attached to the `ErrorLox`, can also be accessed directly with [`Loxer.history`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#history). It is an inverted stack, which means that the most recent log is at `history [0]`. Only those logs / errors are recorded in the history, which (depending on the levels) are also directed into the output stream.
-The size of the history can be set with [`options.config.historyCacheSize`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#historyCacheSize) in the`Loxer.init (options)`. By default it is `50`.
-
-> The history can be used if a user wants to send feedback on the behavior of the application. For this, however, the production levels must also be set accordingly. -->
+> For more detailed information about the Lox's properties (as well as all other components of Loxer), a look at the [API reference][logs] is recommended.
 
 ### Callbacks
 Now that we know how the output streams work and what the transferred `*Lox` look like, it is a good idea to take a look at how the `dev*` streams are used internally.
@@ -392,9 +386,9 @@ private devLogOut(outputLox: OutputLox) {
 ```
 
 As you can see here, the `OutputLox` is forwarded unchanged to the `devLog` stream. The `else` branch (the default) shows how the `OutputLox` can be processed. 
-- The helper class `ANSIFormat` offers some static methods for the coloring of the output unsing the `[x1b` ANSI code. 
-- The helper class `BoxFactory` offers a method `.getBoxString(...)` which generates the known box layout, that is used by default. 
-- The helper class `Item` offers a method chain `.of(Lox).prettify(OPTIONS)` which lets you refine the inherited `lox.item` to be printed in a similar way as the `console` does with its secondary parameters. For more information on that see page **[Item](https://github.com/pcprinz/loxer/blob/master/documentation/item.md)**
+- The helper class [`ANSIFormat`][ansiFormat] offers some static methods for the coloring of the output unsing the `[x1b` ANSI code. 
+- The helper class [`BoxFactory`][boxFactory] offers a method `.getBoxString(...)` which generates the known box layout, that is used by default. 
+- The helper class [`Item`][item] offers a method chain `.of(Lox).prettify(OPTIONS)` which lets you refine the inherited `lox.item` to be printed in a similar way as the `console` does with its secondary parameters. For more information on that see page **[Item][itemDocs]**
 
 The `ErrorLox` can be used in the same way:
 
@@ -437,20 +431,19 @@ private devErrorOut(errorLox: ErrorLox, history: LoxHistory) {
 }
 ```
 
-The `prod*` streams are both just forwarded to the user callbacks. These can be used to interact with other 3rd party services like [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics/).
+The `prod*` streams are both just forwarded to the user callbacks. These can be used to interact with other 3rd party services like [Firebase Crashlytics][pkg.crashlytics].
 
 
 # 8. Boxes
-<!-- TODO exported boxlayout -->
 Another main feature of Loxer is the ability to visualize data flows. To do this, logs are combined into boxes by defining a start and an end log. Further logs as well as errors can be added between the two. In addition, the elapsed time since the opening log is measured for each log / error.
 
 In addition, a box layout is created that shows the course of the box, but with the degree of nesting in relation to other boxes or individual logs. This enables connections between synchronous and asynchronous processes to be recognized and potential sources of error to be tracked down. Furthermore, it can easily be determined whether processes are not terminating, are taking too long, are too short, or are not being carried out at all.
 
 ### Create boxes
 
-To use a box, it must be opened with `Loxer.open(message: string, item?: ItemType, itemOptions?: ItemOptions)`. The `.open()` method returns the `id: number` of the log, which is used to connect other logs to this one. The rest of the structure and functionality is analogous to the `.log()` method. It can also be chained with `.highlight()`, `.level()` and `.module()`, just like the rest of the box methods. **As a reminder**, if the box layout is to be generated, **a module** or at least the default module (`.m()`) **must be assigned** to the log that opens.
+To use a box, it must be opened with `Loxer.open(message: string, item?: ItemType, itemOptions?: ItemOptions)`. The `.open()` method returns the `id: number` of the log, which is used to connect other logs to this one. The rest of the structure and functionality is analogous to the `.log()` method. It can also be chained with `.highlight()`, `.level()` and `.module()`, just like the rest of the log methods. **As a reminder**, if the box layout is to be generated, **a module** or at least the default module (`.m()`) **must be assigned** to the log that opens.
 
-###### Open a box - [`Loxer.open()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#open)
+###### Open a box - [`Loxer.open()`][loxer.open]
 ```typescript
 const id = Loxer.module().open('this is an opening message');
 const id2 = Loxer.module('PERS').open('this is an opening message assigned to a module');
@@ -461,14 +454,14 @@ const id3 = Loxer.h().m('CART').open('this one is additionally highlighted');
 <!-- ![console_output](/assets/docs_images/8-1.png) -->
 ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/8-1.png)
 
-If an open box is to be closed, or further logs / errors are to be added, the `Loxer.of(id: number)` method must be used. This method returns an object with 3 other methods, which enables the next method to be added as a chain. There are 3 methods available for this:
+If an open box is to be closed, or logs / errors are to be added, the `Loxer.of(id: number)` method must be used. This method returns an object with [3 further methods][ofLoxes], which enables the next method to be added as a chain. These are the actual logging methods:
 - `add(message: string, item?: ItemType, itemOptions?: ItemOptions)` - adds a log to the box and works in the same way as `Loxer.log()`
 - `error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions)` - adds an error to the box and works in the same way as `Loxer.error()`
 - `close(message: string, item?: ItemType, itemOptions?: ItemOptions)` - closes the box and works in the same way as `Loxer.log()`
 
-**ATTENTION**: calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but logged anyways with a Warning
+**ATTENTION**: When calling `add()`, `error()` or `close()` after closing the box, the log will not be appended to the box but logged anyways with a Warning!
 
-###### Assigning / closing a box - [`Loxer.of()`](https://pcprinz.github.io/loxer/interfaces/Loxer.Loxer-1.html#of):
+###### Assigning / closing a box - [`Loxer.of()`][loxer.of]:
 ```typescript
 const lox = Loxer.m('BILLING').open('This is the opening log');
 Loxer.of(lox).add('this is a single added log');
@@ -486,7 +479,9 @@ Loxer.of(lox).add('this log is shown but as error');
 > - It is not possible to specify a different `.module()`, since **always** the module of the opening log is used!
 
 ### The Box Layout
-The box layout which is output to the console by default consists of unicode box drawing characters. For this purpose, during the processing of the log, it is determined which row of characters belongs to a log. In addition, the characters are assigned the colors of the respective modules. The resulting list is then added to the log as a property. This list can then be evaluated.
+The box layout which is output to the console by default consists of unicode box drawing characters. For this purpose, during the processing of the log, it is determined which row of box symbols belongs to a log. In addition, the box symbols are assigned the colors of the respective modules. The resulting list is then added to the log as a property. This list can then be evaluated.
+
+The default BoxLayout used for the default output streams can be configured in the [LoxerConfig][loxerConfig] with the property [BoxLayoutStyle][boxLayoutStyle]. Other than that, every [LoxerModule][loxerModule] that is defined at the initialization can take a separate `boxLayoutStyle`.
 
 The following is an example of how the box layout is processed internally for the default console output:
 
@@ -508,7 +503,7 @@ static getBoxString(box: Box, colored: boolean | undefined): string {
 }
 ```
 
-The `BoxLayouts` are a collection of Unicode symbols from the [Box Drawing](https://unicode-table.com/en/blocks/box-drawing/) table. This collection has different types that are also configured via [`options.config.boxLayoutStyle`](https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle). 
+The `BoxLayouts` are a collection of Unicode symbols from the [Box Drawing][pkg.boxDrawing] table. This collection has different types that are also configured via [`options.config.boxLayoutStyle`][boxLayoutStyle]. 
 
 You are free to set own symbols for the personal output streams. In this case, a box layout must implement the following interface:
 
@@ -553,3 +548,36 @@ const myBoxString = outputLox.box
   .map(segment => (segment === 'empty' ? ' ' : myLayout[segment.box]))
   .join('');
 ```
+
+<!------------------------------------------ REFERENCES ------------------------------------------>
+
+[itemDocs]: https://github.com/pcprinz/loxer/blob/master/documentation/item.md
+[api]: https://pcprinz.github.io/loxer/index.html
+[pkg.color]: https://www.npmjs.com/package/color
+[pkg.crashlytics]: https://firebase.google.com/docs/crashlytics/
+[pkg.boxDrawing]: https://unicode-table.com/en/blocks/box-drawing/
+
+[namedError]: https://pcprinz.github.io/loxer/classes/Error.NamedError.html
+[outputLox]: https://pcprinz.github.io/loxer/classes/Logs.OutputLox.html
+[errorLox]: https://pcprinz.github.io/loxer/classes/Logs.ErrorLox.html
+[logs]: https://pcprinz.github.io/loxer/modules/Logs.html
+[boxLayoutStyle]: https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html#boxLayoutStyle
+[boxFactory]: https://pcprinz.github.io/loxer/classes/Formatting.BoxFactory.html
+[ansiFormat]: https://pcprinz.github.io/loxer/classes/Formatting.ANSIFormat.html
+[item]: https://pcprinz.github.io/loxer/classes/Formatting.Item.html
+
+[loxerOptions]: https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerOptions.html
+[loxerConfig]: https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerConfig.html
+[loxerModule]: https://pcprinz.github.io/loxer/interfaces/Loxer.Module.html
+[loxerCallbacks]: https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerCallbacks.html
+
+[loxer.init]: https://pcprinz.github.io/loxer/interfaces/Loxer.LoxerCore.html#init
+[loxer.log]: https://pcprinz.github.io/loxer/interfaces/Loxer.LogMethods.html#log
+[loxer.error]: https://pcprinz.github.io/loxer/interfaces/Loxer.LogMethods.html#error
+[loxer.open]: https://pcprinz.github.io/loxer/interfaces/Loxer.LogMethods.html#open
+[loxer.of]: https://pcprinz.github.io/loxer/interfaces/Loxer.LogMethods.html#of
+[ofLoxes]: https://pcprinz.github.io/loxer/interfaces/Loxer.OfLoxes.html
+
+[loxer.highlight]: https://pcprinz.github.io/loxer/interfaces/Loxer.Modifiers.html#highlight
+[loxer.level]: https://pcprinz.github.io/loxer/interfaces/Loxer.Modifiers.html#level
+[loxer.module]: https://pcprinz.github.io/loxer/interfaces/Loxer.Modifiers.html#module
