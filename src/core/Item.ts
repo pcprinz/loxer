@@ -120,35 +120,65 @@ export class Item {
       const color = box.color ?? '#888';
       const depth = box.depth ?? 20;
       const end = box.depth !== undefined;
-      let pre;
-      let post;
-
-      if (item[1].length < 50) {
-        pre = ANSIFormat.colorize(`\n${Array(depth).fill(' ').join('')}┃ item> `, color);
-        post = ANSIFormat.colorize(' <item', color);
-      } else {
-        pre = ANSIFormat.colorize(
-          '\n┌' +
-            Array(depth - 1)
-              .fill('─')
-              .join('') +
-            (end ? '┘ item>\n' : '\n'),
-          color
-        );
-        post = ANSIFormat.colorize(
-          '\n└' +
-            Array(depth - 1)
-              .fill('─')
-              .join('') +
-            (end ? '┐ <item' : ''),
-          color
-        );
-      }
+      const { pre, post } = this.getItemBox(item, colored, depth, color, end);
 
       return pre + item[colored ? 0 : 1] + post;
     }
 
     return `\n${item[colored ? 0 : 1]}`;
+  }
+
+  /** @internal */
+  private getItemBox(
+    item: [colored: string, plain: string],
+    colored: boolean,
+    depth: number,
+    color: string,
+    end: boolean
+  ) {
+    let pre;
+    let post;
+
+    if (item[1].length < 50) {
+      pre = colored
+        ? ANSIFormat.colorize(`\n${Array(depth).fill(' ').join('')}┃ item> `, color)
+        : `\n${Array(depth).fill(' ').join('')}┃ item> `;
+      post = colored ? ANSIFormat.colorize(' <item', color) : ' <item';
+    } else {
+      const preEnd = end ? '┘ item>\n' : '\n';
+      pre = colored
+        ? ANSIFormat.colorize(
+            '\n┌' +
+              Array(depth - 1)
+                .fill('─')
+                .join('') +
+              preEnd,
+            color
+          )
+        : '\n┌' +
+          Array(depth - 1)
+            .fill('─')
+            .join('') +
+          preEnd;
+
+      const postEnd = end ? '┐ <item' : '';
+      post = colored
+        ? ANSIFormat.colorize(
+            '\n└' +
+              Array(depth - 1)
+                .fill('─')
+                .join('') +
+              postEnd,
+            color
+          )
+        : '\n└' +
+          Array(depth - 1)
+            .fill('─')
+            .join('') +
+          postEnd;
+    }
+
+    return { pre, post };
   }
 
   /** @internal */

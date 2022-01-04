@@ -70,7 +70,7 @@ export class OutputStreams {
       if (errorLox.item) {
         console.log(
           str +
-            Item.of(errorLox).prettify(true, {
+            Item.of(errorLox).prettify(!this._colorsDisabled, {
               depth: errorLox.module.slicedName.length + errorLox.box.length,
               color: errorLox.module.color,
             })
@@ -105,7 +105,7 @@ export class OutputStreams {
       if (outputLox.item) {
         console.log(
           str +
-            Item.of(outputLox).prettify(true, {
+            Item.of(outputLox).prettify(!this._colorsDisabled, {
               depth: outputLox.module.slicedName.length + outputLox.box.length,
               color: outputLox.module.color,
             })

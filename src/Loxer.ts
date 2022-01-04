@@ -280,6 +280,7 @@ class LoxerInstance implements LoxerType {
       this._history.add(errorLox);
       this._output.errorOut(this._dev, errorLox, this._history);
     } else {
+      // TODO compare levels first? [this._modules.getLevel(lox.moduleId)]
       const outputLox = this.toOutputLox(lox);
       if (!outputLox.hidden) {
         this._history.add(outputLox);
