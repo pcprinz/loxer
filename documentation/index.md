@@ -98,7 +98,7 @@ Loxer.error(false);
 Loxer.error({ type: 'ServerError', code: 404 });
 Loxer.error(new RangeError('this is a range error'));
 
-// if using .highlight() of .h() on an error, then the stack ALWAYS will be printed:
+// if using .highlight() or .h() on an error, then the stack ALWAYS will be printed:
 Loxer.highlight().error('this is a highlighted error that prints the stack!!!');
 ```
 
@@ -229,7 +229,17 @@ Loxer.log('this one is automatically assigned to the module NONE');
 ### Declaring modules
 Modules must be declared as part of the [`LoxerOptions`][loxerOptions] when you initialize `Loxer`. Therefore the `options.modules` must receive an object of `type LoxerModules = { [moduleId: string]: Module }`, where the `moduleId` is the key that will be referenced in the `.m()` and `.module()` methods.
 
-A [`Module`][loxerModule] must be structured as `{ devLevel: LevelType; prodLevel: LevelType; fullName: string; color: string; }`. The two levels are of the same type as the `defaultLevels` and the `fullName` and `color` will be used for the output.
+A [`Module`][loxerModule] must be structured as :
+```typescript
+{ 
+  devLevel: LevelType; 
+  prodLevel: LevelType; 
+  fullName: string; 
+  color: string; 
+  boxLayoutStyle?: BoxLayoutStyle; 
+}
+```
+The two levels are of the same type as the `defaultLevels` and the `fullName`, `color` and `boxLayoutStyle` will be used for the output.
 
 The `color` must be either structured in HEX (`'#ff1258'`) or RGB format (`'rgb(255, 0, 0)'`) that will be interpreted by the [color][pkg.color] package.
 
