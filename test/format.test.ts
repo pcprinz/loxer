@@ -34,27 +34,27 @@ test('background coloring', () => {
 test('lox coloring', () => {
   const log1 = ANSIFormat.colorLox(lox1);
   expect(log1.message).toBe('\x1b[38;2;180;255;180mLox1!\x1b[0m');
-  expect(log1.timeText).toBe('\x1b[38;2;70;70;70m123\x1b[0m');
+  expect(log1.timeText).toBe('\x1b[38;2;70;70;70m[123ms]\x1b[0m');
   expect(log1.moduleText).toBe('\x1b[38;2;255;255;255mModule\x1b[0m');
   const log2 = ANSIFormat.colorLox(lox2);
   expect(log2.message).toBe('\x1b[7mLox2!\x1b[0m');
-  expect(log2.timeText).toBe('\x1b[38;2;70;70;70m123\x1b[0m');
+  expect(log2.timeText).toBe('\x1b[38;2;70;70;70m[123ms]\x1b[0m');
   expect(log2.moduleText).toBe('\x1b[38;2;255;255;255mModule\x1b[0m');
   lox3.highlighted = true;
   lox3.module.color = '#fff';
   lox3.module.slicedName = 'Module';
-  lox3.setTime({ timeText: '123', timeConsumption: 123 });
+  lox3.setTime(123);
   const log3 = ANSIFormat.colorLox(lox3, 0.6);
   expect(log3.message).toBe(
     '\x1b[48;2;255;0;0m\x1b[38;2;255;255;255mError\x1b[0m: \x1b[38;2;255;0;0mLox1!\x1b[0m'
   );
-  expect(log3.timeText).toBe('\x1b[38;2;70;70;70m123\x1b[0m');
+  expect(log3.timeText).toBe('\x1b[38;2;70;70;70m[123ms]\x1b[0m');
   expect(log3.moduleText).toBe('\x1b[38;2;153;153;153mModule\x1b[0m');
 });
 
 test('BoxLayout', () => {
   const loxes = new Loxes();
-  loxes.proceed(lox0);
+  loxes.proceedOpenLox(lox0);
   lox1.hidden = true;
   const box1 = BoxFactory.getLogBox(lox1, loxes);
 
@@ -83,7 +83,7 @@ const lox0 = new OutputLox({
 });
 lox0.module.color = '#fff';
 lox0.module.slicedName = 'Module';
-lox0.setTime({ timeText: '123', timeConsumption: 123 });
+lox0.setTime(123);
 
 const lox1 = new OutputLox({
   highlighted: false,
@@ -97,7 +97,7 @@ const lox1 = new OutputLox({
 });
 lox1.module.color = '#fff';
 lox1.module.slicedName = 'Module';
-lox1.setTime({ timeText: '123', timeConsumption: 123 });
+lox1.setTime(123);
 
 const lox2 = new OutputLox({
   highlighted: true,
@@ -111,6 +111,6 @@ const lox2 = new OutputLox({
 });
 lox2.module.color = '#fff';
 lox2.module.slicedName = 'Module';
-lox2.setTime({ timeText: '123', timeConsumption: 123 });
+lox2.setTime(123);
 
 const lox3 = new ErrorLox(lox1, new Error());
