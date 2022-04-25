@@ -15,32 +15,45 @@ export class Loxes {
   private _shouldUseQueue = true;
 
   private _loxes: { [id: string]: OutputLox | undefined } = {};
-  private _openBuffer: (OpenBoxType | undefined)[] = [];
+  private _openLogBuffer: (OpenBoxType | undefined)[] = [];
 
   /** @internal add / removes an open lox from the list of opened logs, depending on it's type */
-  proceed(lox: OutputLox): void {
+  proceedOpenLox(lox: OutputLox): void {
     if (lox.type === 'open') {
-      this._loxes[lox.id] = lox;
-      if (!lox.hidden) {
-        this._openBuffer.push({ id: lox.id, module: lox.module });
-      }
+      this.addOpenLox(lox);
     } else if (lox.type === 'close') {
-      this._loxes[lox.id] = undefined;
-      const index = this._openBuffer.findIndex((buff) => buff?.id === lox.id);
-      if (index > -1) {
-        this._openBuffer[index] = undefined;
-      }
-      // remove undefined buffer end
-      let done = false;
-      while (!done) {
-        if (this._openBuffer.length > 0 && !this._openBuffer[this._openBuffer.length - 1]) {
-          this._openBuffer.pop();
-        } else {
-          done = true;
-        }
+      this.removeCorrespondingOpenLox(lox);
+    }
+  }
+
+  private removeCorrespondingOpenLox(lox: OutputLox) {
+    this._loxes[lox.id] = undefined;
+    const openLogIndex = this._openLogBuffer.findIndex((buff) => buff?.id === lox.id);
+    if (openLogIndex > -1) {
+      this._openLogBuffer[openLogIndex] = undefined;
+    }
+    // remove undefined buffer end
+    this.trimOpenLogBuffer();
+  }
+
+  private trimOpenLogBuffer() {
+    let done = false;
+    while (!done) {
+      if (this._openLogBuffer.length > 0 && !this._openLogBuffer[this._openLogBuffer.length - 1]) {
+        this._openLogBuffer.pop();
+      } else {
+        done = true;
       }
     }
   }
+
+  private addOpenLox(lox: OutputLox) {
+    this._loxes[lox.id] = lox;
+    if (!lox.hidden) {
+      this._openLogBuffer.push({ id: lox.id, module: lox.module });
+    }
+  }
+
   /** @internal finds an opening log || undefined. used for allocation loxes in Loxer.of() and TimeConsumption*/
   findOpenLox(id: number): Lox | undefined {
     if (isNumber(id)) {
@@ -55,14 +68,14 @@ export class Loxes {
 
   /** @internal returns all defined open loxes. used for appending to ErrorLoxes */
   getOpenLoxes(): OutputLox[] {
-    const openLoxes = filterDef(this._openBuffer).map((buff) => this._loxes[buff.id]);
+    const openLoxes = filterDef(this._openLogBuffer).map((buff) => this._loxes[buff.id]);
 
     return filterDef(openLoxes);
   }
 
   /** @internal returns the open lox buffer with all open loxes or undefined. used for the boxlayout in the BoxFactory */
   getBuffer(): (OpenBoxType | undefined)[] {
-    return this._openBuffer;
+    return this._openLogBuffer;
   }
 
   /** @internal enqueues any lox to the pending queue. used in switchOutput when Loxer is not initialized */

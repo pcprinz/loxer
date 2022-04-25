@@ -23,26 +23,26 @@ class LoxerInstance implements LoxerType {
   private _modules: Modules = new Modules();
   private _output: OutputStreams = new OutputStreams();
 
-  private _initialized: boolean = false;
-  private _dev: boolean = false;
-  private _disabled: boolean = false;
+  private _isInitialized: boolean = false;
+  private _isDev: boolean = false;
+  private _isDisabled: boolean = false;
 
   init(props?: LoxerOptions) {
-    this._initialized = true;
+    this._isInitialized = true;
     if (is(props) && is(props?.dev)) {
-      this._dev = props.dev;
+      this._isDev = props.dev;
     } else {
-      this._dev = isNES(process.env.NODE_ENV) ? 'development' === process.env.NODE_ENV : false;
+      this._isDev = isNES(process.env.NODE_ENV) ? 'development' === process.env.NODE_ENV : false;
     }
     // configuration
     const config = props?.config;
     if (config?.disabled) {
-      this._disabled = true;
+      this._isDisabled = true;
     } else {
-      this._disabled = config?.disabledInProductionMode ? !this._dev : false;
+      this._isDisabled = config?.disabledInProductionMode ? !this._isDev : false;
     }
     this._modules = new Modules({
-      dev: this._dev,
+      isDev: this._isDev,
       modules: props?.modules,
       moduleTextSlice: config?.moduleTextSlice ?? 8,
       defaultLevels: props?.defaultLevels,
@@ -69,19 +69,19 @@ class LoxerInstance implements LoxerType {
   }
 
   private resetState() {
-    this._highlighted = false;
+    this._isHighlighted = false;
     this._level = undefined;
     this._moduleId = 'NONE';
   }
 
   // highlight ##############################################################
 
-  private _highlighted: boolean = false;
+  private _isHighlighted: boolean = false;
   highlight(doit: boolean = true) {
     return this.h(doit);
   }
   h(doit: boolean = true) {
-    this._highlighted = doit;
+    this._isHighlighted = doit;
 
     return this;
   }
@@ -115,13 +115,13 @@ class LoxerInstance implements LoxerType {
   // log functions ##########################################################
 
   log(message: string = '', item?: ItemType, itemOptions?: ItemOptions) {
-    if (this._disabled) {
+    if (this._isDisabled) {
       return;
     }
     this.switchOutput(
       new Lox({
         id: undefined,
-        highlighted: this._highlighted,
+        highlighted: this._isHighlighted,
         item,
         itemOptions,
         level: this._level ?? 1,
@@ -148,7 +148,7 @@ class LoxerInstance implements LoxerType {
     this.switchOutput(
       new Lox({
         id: logId,
-        highlighted: this._highlighted,
+        highlighted: this._isHighlighted,
         item,
         itemOptions,
         level: this._level ?? 1,
@@ -161,12 +161,12 @@ class LoxerInstance implements LoxerType {
   }
 
   open(message: string, item?: ItemType, itemOptions?: ItemOptions) {
-    if (this._disabled) {
+    if (this._isDisabled) {
       return 0;
     }
     const lox = new Lox({
       id: undefined,
-      highlighted: this._highlighted,
+      highlighted: this._isHighlighted,
       item,
       itemOptions,
       level: this._level ?? 1,
@@ -180,7 +180,7 @@ class LoxerInstance implements LoxerType {
   }
 
   of(id: number): OfLoxes {
-    if (this._disabled) {
+    if (this._isDisabled) {
       return {
         add: () => {
           /* do nothing */
@@ -231,10 +231,10 @@ class LoxerInstance implements LoxerType {
 
     return {
       add: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
-        this.appendLox('single', openLox, message, item, itemOptions);
+        this.appendToOpenLox('single', openLox, message, item, itemOptions);
       },
       close: (message: string, item?: ItemType, itemOptions?: ItemOptions) => {
-        this.appendLox('close', openLox, message, item, itemOptions);
+        this.appendToOpenLox('close', openLox, message, item, itemOptions);
       },
       error: (error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) => {
         this.internalError(error, openLox.id, openLox.moduleId, undefined, item, itemOptions);
@@ -242,21 +242,23 @@ class LoxerInstance implements LoxerType {
     };
   }
 
-  private appendLox(
+  private appendToOpenLox(
     type: LoxType,
     openLox: Lox,
     message: string,
     item?: ItemType,
     itemOptions?: ItemOptions
   ) {
-    const { id, moduleId, level: oLevel } = openLox;
+    const { id, moduleId, level: openLevel } = openLox;
     // close level must be open level + added logs must not have a lower level, though the open box could possibly not exist
     const level =
-      type === 'single' ? (Math.max(oLevel, this._level ?? oLevel) as LogLevelType) : oLevel;
+      type === 'single'
+        ? (Math.max(openLevel, this._level ?? openLevel) as LogLevelType)
+        : openLevel;
     this.switchOutput(
       new Lox({
         id,
-        highlighted: this._highlighted,
+        highlighted: this._isHighlighted,
         item,
         itemOptions,
         level,
@@ -273,20 +275,20 @@ class LoxerInstance implements LoxerType {
     this.resetState();
 
     // TODO should errors really be hold back until init?
-    if (!this._initialized) {
+    if (!this._isInitialized) {
       this._loxes.enqueue(lox, error);
     } else if (lox.type === 'error') {
       const errorLox = this.toErrorLox(lox, error ?? new Error());
       this._history.add(errorLox);
-      this._output.errorOut(this._dev, errorLox, this._history);
+      this._output.errorOut(this._isDev, errorLox, this._history);
     } else {
       // TODO compare levels first? [this._modules.getLevel(lox.moduleId)]
       const outputLox = this.toOutputLox(lox);
       if (!outputLox.hidden) {
         this._history.add(outputLox);
-        this._output.logOut(this._dev, outputLox);
+        this._output.logOut(this._isDev, outputLox);
       }
-      this._loxes.proceed(outputLox);
+      this._loxes.proceedOpenLox(outputLox);
     }
   }
 
@@ -315,13 +317,9 @@ class LoxerInstance implements LoxerType {
 
   private getTimeConsumption(lox: Lox) {
     const openLox = this._loxes.findOpenLox(lox.id);
-    if (lox.type === 'open' || !is(openLox)) {
-      return { coloredTimeText: '', timeText: '' };
+    if (lox.type !== 'open' && is(openLox)) {
+      return lox.timestamp.getTime() - openLox.timestamp.getTime();
     }
-    const timeConsumption = lox.timestamp.getTime() - openLox.timestamp.getTime();
-    const timeText = `[${timeConsumption.toString()}ms]`;
-
-    return { timeConsumption, timeText };
   }
 }
 

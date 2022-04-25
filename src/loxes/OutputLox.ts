@@ -24,9 +24,11 @@ export class OutputLox extends Lox {
   module: ExtendedModule = DEFAULT_EXTENDED_MODULE;
 
   /** @internal */
-  setTime(times: { timeText: string; timeConsumption?: number }): void {
-    this.timeText = times.timeText;
-    this.timeConsumption = times.timeConsumption;
+  setTime(timeConsumption?: number): void {
+    if (timeConsumption !== undefined) {
+      this.timeConsumption = timeConsumption;
+      this.timeText = `[${timeConsumption.toString()}ms]`;
+    }
   }
 
   get moduleText(): string {

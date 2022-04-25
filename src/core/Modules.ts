@@ -4,7 +4,7 @@ import { Lox } from '../loxes/Lox';
 import { LevelType, LoxerModules, LoxerOptions, Module } from '../types';
 
 interface ModulesProps {
-  dev: boolean;
+  isDev: boolean;
   modules?: LoxerModules;
   moduleTextSlice?: number;
   defaultLevels?: LoxerOptions['defaultLevels'];
@@ -14,12 +14,12 @@ interface ModulesProps {
 export type ExtendedModule = Module & { slicedName: string; boxLayoutStyle: BoxLayoutStyle };
 
 export class Modules {
-  private _dev: boolean = false;
+  private _isDev: boolean = false;
   private _modules: LoxerModules = DEFAULT_MODULES;
   private _moduleTextSlice: number = 8;
 
   constructor(props?: ModulesProps) {
-    this._dev = props?.dev ?? true;
+    this._isDev = props?.isDev ?? true;
     if (props?.defaultLevels) {
       DEFAULT_MODULES.NONE.devLevel = props?.defaultLevels.devLevel;
       DEFAULT_MODULES.DEFAULT.devLevel = props?.defaultLevels.devLevel;
@@ -27,9 +27,9 @@ export class Modules {
       DEFAULT_MODULES.DEFAULT.prodLevel = props?.defaultLevels.prodLevel;
     }
     // assign default box layout
-    const mods = props?.modules ?? {};
-    Object.entries(mods).forEach(([key, module]) => {
-      mods[key].boxLayoutStyle = mods[key].boxLayoutStyle ?? 'round';
+    const modules = props?.modules ?? {};
+    Object.entries(modules).forEach(([key]) => {
+      modules[key].boxLayoutStyle = modules[key].boxLayoutStyle ?? 'round';
     });
     // merge modules
     this._modules = {
@@ -47,7 +47,7 @@ export class Modules {
    * @internal the level of a specific module || -1
    */
   getLevel(moduleId: string): LevelType | -1 {
-    const level = this._dev
+    const level = this._isDev
       ? this._modules[moduleId]?.devLevel
       : this._modules[moduleId]?.prodLevel;
 
@@ -68,7 +68,7 @@ export class Modules {
     }
     const dl = mod.devLevel ?? 1;
     const pl = mod.prodLevel ?? 1;
-    const hidden = this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
+    const hidden = this._isDev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
     const boxLayoutStyle = mod.boxLayoutStyle ?? 'round';
 
     return {
@@ -119,7 +119,7 @@ export class Modules {
     const dl = this._modules[lox.moduleId]?.devLevel ?? 1;
     const pl = this._modules[lox.moduleId]?.prodLevel ?? 1;
 
-    return this._dev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
+    return this._isDev ? dl === 0 || lox.level > dl : pl === 0 || lox.level > pl;
   }
 }
 
