@@ -1,5 +1,5 @@
 import { BoxFactory } from './core/BoxFactory';
-import { castError, LoxerError } from './core/Error';
+import { castError, LoxerError, NamedError } from './core/Error';
 import { ItemType, ItemOptions } from './core/Item';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
@@ -139,6 +139,23 @@ class LoxerInstance implements LoxerType {
     );
   }
 
+  namedError(
+    name: string,
+    message: string,
+    existingError?: unknown,
+    item?: ItemType,
+    itemOptions?: ItemOptions
+  ) {
+    this.internalError(
+      new NamedError(name, message, existingError),
+      undefined,
+      undefined,
+      undefined,
+      item,
+      itemOptions
+    );
+  }
+
   error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) {
     this.internalError(error, undefined, undefined, undefined, item, itemOptions);
   }
@@ -180,6 +197,9 @@ class LoxerInstance implements LoxerType {
         error: () => {
           /* do nothing */
         },
+        namedError: () => {
+          /* do nothing */
+        },
       };
     }
     const lox = new Lox({
@@ -211,6 +231,9 @@ class LoxerInstance implements LoxerType {
           /* do nothing */
         },
         error: () => {
+          /* do nothing */
+        },
+        namedError: () => {
           /* do nothing */
         },
       };
@@ -248,6 +271,22 @@ class LoxerInstance implements LoxerType {
             itemOptions
           );
         },
+        namedError: (
+          name: string,
+          message: string,
+          existingError?: unknown,
+          item?: ItemType,
+          itemOptions?: ItemOptions
+        ) => {
+          this.internalError(
+            new NamedError(name, message, existingError),
+            id,
+            undefined,
+            'error() on a not (anymore) existing Lox. ERROR: ',
+            item,
+            itemOptions
+          );
+        },
       };
     }
 
@@ -260,6 +299,22 @@ class LoxerInstance implements LoxerType {
       },
       error: (error: ErrorType, item?: ItemType, itemOptions?: ItemOptions) => {
         this.internalError(error, openLox.id, openLox.moduleId, undefined, item, itemOptions);
+      },
+      namedError: (
+        name: string,
+        message: string,
+        existingError?: unknown,
+        item?: ItemType,
+        itemOptions?: ItemOptions
+      ) => {
+        this.internalError(
+          new NamedError(name, message, existingError),
+          openLox.id,
+          openLox.moduleId,
+          undefined,
+          item,
+          itemOptions
+        );
       },
     };
   }

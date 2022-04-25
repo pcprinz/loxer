@@ -363,6 +363,14 @@ export interface OfLoxes {
   close(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** assigns an error log to a log box and imitates the behavior of {@link LogMethods.error} */
   error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
+  /** a direct shortcut for Loxer.of(...).error(new NamedError(...)) */
+  namedError(
+    name: string,
+    message: string,
+    existingError?: unknown,
+    item?: ItemType,
+    itemOptions?: ItemOptions
+  ): void;
 }
 
 export interface OpenedLox extends OfLoxes {
