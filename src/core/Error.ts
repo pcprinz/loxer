@@ -1,5 +1,6 @@
 /** @module Error */
 import { eraseBeginningLines, isError } from '../Helpers';
+import { ErrorType } from '../types';
 
 /** A customizable Error, that may be created from an existing Error */
 export class NamedError extends Error {
@@ -36,8 +37,6 @@ export class NamedError extends Error {
     }
   }
 }
-
-type ErrorType = Error | string | number | boolean | Record<string, unknown>;
 
 /** @internal */
 export function castError(error: ErrorType): Error {

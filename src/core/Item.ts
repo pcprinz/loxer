@@ -8,7 +8,8 @@ export type ItemType =
   | symbol
   | string
   | boolean
-  | Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  | Object
   | any[]
   | (() => any)
   | null
@@ -299,7 +300,8 @@ export class Item {
   }
 
   /** @internal */
-  private printFunction(item: () => any): [colored: string, plain: string] {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  private printFunction(item: Function | (() => any)): [colored: string, plain: string] {
     const fText = item.name ? `: ${item.name}` : ' (anonymous)';
     const value = this._printFunction ? item.toString() : `[Function${fText}]`;
 

@@ -353,7 +353,7 @@ export interface LogMethods {
 }
 
 /** Any possible type that a `catch` could return */
-export type ErrorType = Error | string | number | boolean | Record<string, unknown>;
+export type ErrorType = Error | string | number | boolean | Record<string | number, unknown>;
 
 /** Methods returned from the {@link LogMethods.of} method */
 export interface OfLoxes {
