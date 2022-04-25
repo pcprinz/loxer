@@ -9,7 +9,14 @@ import { is, isError, isNES } from './Helpers';
 import { ErrorLox } from './loxes/ErrorLox';
 import { Lox, LoxType } from './loxes/Lox';
 import { OutputLox } from './loxes/OutputLox';
-import { ErrorType, LogLevelType, Loxer as LoxerType, LoxerOptions, OfLoxes } from './types';
+import {
+  ErrorType,
+  LogLevelType,
+  Loxer as LoxerType,
+  LoxerOptions,
+  OfLoxes,
+  OpenedLox,
+} from './types';
 
 /**
  * This is the main class of Loxer. It works "static" because it's a singleton instance though you
@@ -162,7 +169,18 @@ class LoxerInstance implements LoxerType {
 
   open(message: string, item?: ItemType, itemOptions?: ItemOptions) {
     if (this._isDisabled) {
-      return 0;
+      return {
+        id: 0,
+        add: () => {
+          /* do nothing */
+        },
+        close: () => {
+          /* do nothing */
+        },
+        error: () => {
+          /* do nothing */
+        },
+      };
     }
     const lox = new Lox({
       id: undefined,
@@ -176,10 +194,14 @@ class LoxerInstance implements LoxerType {
     });
     this.switchOutput(lox);
 
-    return lox.id;
+    const result = this.of(lox.id) as OpenedLox;
+    result.id = lox.id;
+
+    return result;
   }
 
-  of(id: number): OfLoxes {
+  of(opened: number | OpenedLox): OfLoxes {
+    const id = typeof opened === 'number' ? opened : opened.id;
     if (this._isDisabled) {
       return {
         add: () => {

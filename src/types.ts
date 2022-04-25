@@ -315,7 +315,7 @@ export interface LogMethods {
    * @param item to append
    * @param itemOptions to configure the (default) output of the item
    */
-  open(message: string, item?: ItemType, itemOptions?: ItemOptions): number;
+  open(message: string, item?: ItemType, itemOptions?: ItemOptions): OpenedLox;
   /** ## Assign logs / errors to an opened Log
    *
    * ```typescript
@@ -349,7 +349,7 @@ export interface LogMethods {
    * ---
    * @param id the id returned from `Loxer.open()` to reference this log to
    */
-  of(id: number): OfLoxes;
+  of(id: number | OpenedLox): OfLoxes;
 }
 
 /** Any possible type that a `catch` could return */
@@ -363,6 +363,11 @@ export interface OfLoxes {
   close(message: string, item?: ItemType, itemOptions?: ItemOptions): void;
   /** assigns an error log to a log box and imitates the behavior of {@link LogMethods.error} */
   error(error: ErrorType, item?: ItemType, itemOptions?: ItemOptions): void;
+}
+
+export interface OpenedLox extends OfLoxes {
+  /** the identifier of the opening log */
+  id: number;
 }
 
 // #################################################################################################
