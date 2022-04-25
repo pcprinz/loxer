@@ -1,6 +1,7 @@
 ![Loxer_Logo](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/Logo.png)
-# Loxer ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pcprinz/loxer) ![GitHub Release Date](https://img.shields.io/github/release-date/pcprinz/loxer) ![GitHub branch checks state](https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build) ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pcprinz/329161dbcfd07c60d90c29cc887130fb/raw/loxer__heads_master.json)
- ![npm bundle size](https://img.shields.io/bundlephobia/min/loxer) ![GitHub](https://img.shields.io/github/license/pcprinz/loxer) 
+# Loxer ![GitHub release (latest by date)](https://img.shields.io/github/v/release/pcprinz/loxer) ![GitHub Release Date](https://img.shields.io/github/release-date/pcprinz/loxer) ![GitHub branch checks state](https://img.shields.io/github/checks-status/pcprinz/loxer/master?label=build) ![npm bundle size](https://img.shields.io/bundlephobia/min/loxer) ![GitHub](https://img.shields.io/github/license/pcprinz/loxer) 
+<!-- ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/pcprinz/329161dbcfd07c60d90c29cc887130fb/raw/loxer__heads_master.json) -->
+ 
 <!-- https://shields.io/ -->
 
 **Loxer** is a middleware logger that allows you to:
