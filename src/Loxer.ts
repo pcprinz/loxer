@@ -1,11 +1,11 @@
 import { BoxFactory } from './core/BoxFactory';
-import { ensureError, LoxerError } from './core/Error';
+import { castError, LoxerError } from './core/Error';
 import { ItemType, ItemOptions } from './core/Item';
 import { Loxes } from './core/Loxes';
 import { LoxHistory } from './core/LoxHistory';
 import { Modules } from './core/Modules';
 import { OutputStreams } from './core/OutputStreams';
-import { is, isNES } from './Helpers';
+import { is, isError, isNES } from './Helpers';
 import { ErrorLox } from './loxes/ErrorLox';
 import { Lox, LoxType } from './loxes/Lox';
 import { OutputLox } from './loxes/OutputLox';
@@ -144,7 +144,7 @@ class LoxerInstance implements LoxerType {
     item?: ItemType,
     itemOptions?: ItemOptions
   ) {
-    const sureError = ensureError(error);
+    const sureError = isError(error) ? error : castError(error);
     this.switchOutput(
       new Lox({
         id: logId,

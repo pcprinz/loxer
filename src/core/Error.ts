@@ -30,7 +30,7 @@ export class NamedError extends Error {
     this.message = message;
     this.name = name;
     if (existingError !== undefined) {
-      const sureError = ensureError(existingError as ErrorType);
+      const sureError = castError(existingError as ErrorType);
       this.message += ` =[${sureError.name}]=> ${sureError.message}`;
       this.stack = sureError.stack;
     }
@@ -40,17 +40,17 @@ export class NamedError extends Error {
 type ErrorType = Error | string | number | boolean | Record<string, unknown>;
 
 /** @internal */
-export function ensureError(error: ErrorType): Error {
-  let result;
+export function castError(error: ErrorType): Error {
   if (isError(error)) {
-    result = error;
-    result.stack = `\n${result.stack}`;
-  } else {
-    result = new Error(typeof error === 'object' ? JSON.stringify(error) : error.toString());
-    result.stack = eraseBeginningLines(`\n${result.stack}`, 3);
-  }
+    error.stack = eraseBeginningLines(`${error.stack}`, 1);
 
-  return result;
+    return error;
+  } else {
+    const result = new Error(typeof error === 'object' ? JSON.stringify(error) : error.toString());
+    result.stack = eraseBeginningLines(`${result.stack}`, 3);
+
+    return result;
+  }
 }
 
 /** @internal */
