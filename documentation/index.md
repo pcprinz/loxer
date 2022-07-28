@@ -290,7 +290,7 @@ Loxer.m('Wrong').log('this one to the INVALID module');
 
 
 # 7. Output - [`LoxerCallbacks`][loxerCallbacks]
-Loxer isn't just an extension for the console. It is an independent logger that in the default case uses the console as an output medium in the development environment. There are 4 different output streams available, which can be specified as `modules: LoxerCallbacks` in the `Loxer.init(options)`.
+Loxer isn't just an extension for the console. It is an independent logger that in the default case uses the console as an output medium in the development environment. There are 4 different output streams available, which can be specified as `callbacks: LoxerCallbacks` in the `Loxer.init(options)`.
 
 The `type LoxerCallbacks` has the following structure:
 ```typescript
