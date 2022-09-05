@@ -19,7 +19,7 @@ Loxer's main goal is to increase the safety of applications by showing the devel
 The following sections describe the use of Loxer in detail. Further information can be found in the [API Reference][api].
 
 # 1. Initialization - [`Loxer.init()`][loxer.init]
-In order to be able to use Loxer, it must first be initialized. To do this, the method `Loxer.init(options?: LoxerOptions)` must be called once. Loxer can be configured with [`LoxerOptions`][loxerOptions] during initialization. For the simple initialization, the optional options can also be left out.
+In order to be able to use Loxer, it must first be initialized. To do this, the method `Loxer.init(options?: LoxerOptions)` must be called once. Loxer can be configured with [`LoxerOptions`][loxerOptions] during initialization. For the simple initialization, the options can also be left out.
 
 ###### Simple initialization
 ```typescript
@@ -36,7 +36,7 @@ This method can be called anywhere in your application.
 Anyways, the options are an object with the following structure: 
 
 ```typescript
-  // An object containing all loggable modules
+  // An object containing all log-able modules
   modules?: LoxerModules;
   // determines if Loxer is running in a development or production environment
   dev?: boolean;
@@ -122,9 +122,26 @@ Loxer.error(new NamedError('ObjectError', 'failed hard!', { type: 'ServerError',
 Loxer.error(new NamedError('ErrorError', 'failed hard!', new TypeError('catched Error')));
 ```
 
+
 ###### Console output
 <!-- ![console_output](/assets/docs_images/3-2.png) -->
 ![console_output](https://raw.githubusercontent.com/pcprinz/loxer/master/assets/docs_images/3-2.png)
+
+There is also a shortcut for the creation of `NamedError`s in combination with `Loxer.of(...).error(...)`, which combines the parameters of the `NamedError` followed by the parameters of the `.error(...)` method:
+```typescript
+Loxer.of(...).namedError(
+    name: string,
+    message: string,
+    existingError?: unknown,
+    item?: ItemType,
+    itemOptions?: ItemOptions
+  );
+
+// Example:
+Loxer.of(lox).namedError('MyError', 'crashed', someGivenError, someItem);
+// is equivalent to:
+Loxer.of(lox).error(new NamedError('MyError', 'crashed', someGivenError), someItem) ;
+```
 
 > More on that in the sections about boxes and output.
 
@@ -173,7 +190,7 @@ Loxer.l(1).log('this has the default level 1 = high');
 Loxer.log('this too, because 1 is default');
 ```
 
-> You can also add levels to the logging methods `Loxer.open()` and `Loxer.of()`. Giving `Loxer.error()` a level is no problem, but has no effect on whether it is logged. It always will.
+> You can also add levels to the logging methods `Loxer.open()` and `Loxer.of().add()`. `Loxer.of().close()` will always receive the level of it's opening log to prevent leaving boxes unclosed. Giving `Loxer.error()` a level is no problem, but has no effect on whether it is logged. It always will.
 
 ### Default levels (and module levels)
 Providing logs with levels would make no sense if you couldn't set which level the logger should display / log. Therefore you have to declare the levels as part of the [`LoxerConfig`][loxerConfig] when you initialize `Loxer`.
@@ -182,9 +199,9 @@ Providing logs with levels would make no sense if you couldn't set which level t
 ###### Example
 ```typescript
 Loxer.init({
-    defaultLevels: {
-      devLevel: 3,  // the level in development environment
-      prodLevel: 1,   // the level in production environment
+  defaultLevels: {
+    devLevel: 3,  // the level in development environment
+    prodLevel: 1,   // the level in production environment
   }
 });
 ```
@@ -311,6 +328,17 @@ Whenever a log with its level fulfills the requirements of the default levels or
 The `devLog` and `devError` callbacks default to printing the colored logs to the console. `prodLog` and `prodError` default to log nothing in order to keep the application clean in production environment. This is expressed in the fact that the production streams only interact with the user-specific ones and have no defaults.
 
 In order to occupy a stream itself, the corresponding output log is passed to the callback.
+
+###### Example Declaration
+```typescript
+Loxer.init({
+  callbacks: {
+    devLog: (outputLog) => {
+      // ... do something with the OutputLox
+    }
+  }
+})
+```
 
 ### Output logs
 To symbolize that the logs are more than just simple messages, they are named `* Lox`. There are two different types. In addition to the original message and item parameters, the [`OutputLox`][outputLox] contains the declared properties level, highlight and module, a time stamp and properties that arise from the box layout. [`ErrorLox`][errorLox] have the same properties, but also carry information such as the `Error` that has occurred and properties that represent the log status during the occurrence of the error.
